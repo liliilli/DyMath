@@ -60,7 +60,25 @@ Dy(DianYing) Common Math (a.k.a `DyMath`) has value category to support automati
 * Make subdirectory `build`, and follow below sequences in terminal (powershell, etc).
 
 ``` bash
-> cmake ..
+> cmake .. -DMATH_BUILD_LIB=ON
+> build . // If you want to build it as Debug mode
+> build . --config Release // If you want to build it as Release mode
+```
+
+* If you don't want to build library file, just remove `-DMATH_BUILD_LIB` option when build.
+
+### How to use `boost` dependent codes
+
+To use `boost` library dependent code in `DyMath` (such as `DUuid`), you have to set up boost library on below specified path following platform.
+
+| Platform | Path |
+| --- | --- |
+| Windows | C:/boost |
+
+* When install with `cmake`, option `-DMATH_BUILD_WITH_BOOST` must be specified as additional argument with `ON`.
+
+``` bash
+> cmake .. -DMATH_BUILD_LIB=ON -DMATH_BUILD_WITH_BOOST=ON
 > build . // If you want to build it as Debug mode
 > build . --config Release // If you want to build it as Release mode
 ```
