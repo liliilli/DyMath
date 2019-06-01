@@ -13,31 +13,33 @@
 ///
 
 #include <Math/Common/XGlobalMacroes.h>
-#include <Math/Common/Inline/TGlobalTypes.inl>
 #include <Math/Type/Math/DVector3.h>
 
 namespace dy::math
 {
 
-/// @class DSphere
-/// @tparam TType Real type
-/// @brief Sphere class
-template <typename TType> 
-struct MATH_NODISCARD DSphere 
+/// @struct DRay
+/// @tparam TType Real type.
+/// @brief Ray type that has origin (position) and direction (normalized)
+template <typename TType>
+struct MATH_NODISCARD DRay final
 {
-public:
-  static_assert(
-    kCategoryOf<TType> == EValueCategory::Real, 
-    "Failed to make DSphere, DSphere only supports Real type.");
+  static_assert(kIsRealType<TType> == true, "DRay only supports real type.");
   using TValueType = TType;
 
-  DSphere(const DVector3<TValueType>& origin, TValueType radius);
+  DRay(
+    const DVector3<TValueType>& origin, 
+    const DVector3<TValueType>& direction,
+    bool doNormalize = true);
 
   /// @brief Get ray's origin position.
-  const DVector3<TValueType>& GetOrigin() const noexcept ;
+  const DVector3<TValueType>& GetOrigin() const noexcept; 
 
   /// @brief Get ray's direction (normalized)
-  TValueType GetRadius() const noexcept;
+  const DVector3<TValueType>& GetDirection() const noexcept;
+
+  /// @brief Get proceeded position with t. (origin + t * direction)
+  DVector3<TValueType> GetPointAtParam(TReal t) const;
 
   /// @brief Check value has NaN.
   bool HasNaN() const noexcept;
@@ -50,8 +52,8 @@ public:
 
 private:
   DVector3<TValueType> mOrigin;
-  TValueType mRadius; 
+  DVector3<TValueType> mDirection;
 };
 
 } /// ::dy::math namespace
-#include <Math/Type/Inline/DSphere/DSphere.inl>
+#include <Math/Type/Inline/DRay/DRay.inl>

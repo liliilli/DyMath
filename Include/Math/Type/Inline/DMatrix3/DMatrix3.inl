@@ -13,7 +13,6 @@
 ///
 
 #include <Math/Type/Math/DVector3.h>
-#include "..\..\Math\DMatrix3.h"
 
 namespace dy::math
 {

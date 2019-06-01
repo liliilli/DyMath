@@ -38,7 +38,7 @@ enum class EPosPlaneState
 ///  /---------------\ <= Plane \n
 /// \n
 template <typename TType>
-struct MATH_NODISCARD DPlane final
+struct MATH_NODISCARD DPlane 
 {
   static_assert(kIsRealType<TType> == true, "DPlane only supports real type.");
   using TValueType = TType;

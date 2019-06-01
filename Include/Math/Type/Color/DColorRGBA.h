@@ -1,5 +1,4 @@
-#ifndef GUARD_DY_HELPER_TYPE_COLOR_H
-#define GUARD_DY_HELPER_TYPE_COLOR_H
+#pragma once
 ///
 /// MIT License
 /// Copyright (c) 2018-2019 Jongmin Yun
@@ -13,79 +12,76 @@
 /// SOFTWARE.
 ///
 
-#include <Dy/Helper/Type/DVector3.h>
-#include <Dy/Helper/Type/DVector4.h>
-#include <nlohmann/json_fwd.hpp>
+#include <Math/Common/XGlobalMacroes.h>
+#include <Math/Type/Micellanous/DClamp.h>
+#include <Math/Type/Color/DColorRGB.h>
+#include <Math/Type/Math/DVector4.h>
 
-namespace dy {
+namespace dy::math
+{
 
 /// @class DColorRGBA
-/// @brief Float color [0, 1) type which stores 4 components (R, G, B, A)
+/// @brief Float color type which stores 3 components (R, G, B)
 /// (h, s, v) does not support but can be converted calling HsvToRgb().
-struct DColorRGBA final
+template <typename TType>
+struct MATH_NODISCARD DColorRGBA final
 {
-  TF32 R = 0.0f, G = 0.0f, B = 0.0f, A = 0.0f; 
+private:
+  static_assert(
+    kCategoryOf<TType> == EValueCategory::Real,
+    "Failed to make DMatrix, DMatrix only supports Real type.");
+
+public:
+  using TValueType = TType;
+  DClamp<TType, 0, 1> R = 0.0f;
+  DClamp<TType, 0, 1> G = 0.0f;
+  DClamp<TType, 0, 1> B = 0.0f;
+  DClamp<TType, 0, 1> A = 0.0f;
 
   DColorRGBA() = default;
-  explicit DColorRGBA(TF32 r, TF32 g, TF32 b) noexcept;
-  explicit DColorRGBA(TF32 r, TF32 g, TF32 b, TF32 a) noexcept;
-  explicit DColorRGBA(const std::array<TF32, 4>& iGlRgbaColor) noexcept;
+  DColorRGBA(TType gray, TType alpha) noexcept;
+  DColorRGBA(const DColorRGB<TType>& color, TType alpha) noexcept;
+  DColorRGBA(TType r, TType g, TType b, TType a) noexcept;
 
-  //!
-  //! Methods
-  //!
+  /// @brief Get values with index. index must be 0, 1 or 2.
+  TValueType& operator[](TIndex index);
+  /// @brief Get values with index. index must be 0, 1 or 2.
+  const TValueType& operator[](TIndex index) const;
 
-  /// @brief Check it is opaque (A == 1.0f) or not (otherwise).
-  MDY_NODISCARD bool IsOpaque() const noexcept;
+  /// @brief Get color's gray scale value following sRGB.
+  TType ToGrayScale() const noexcept;
 
-  /// @brief Set this color to be opaque.
-  void SetOpaque() noexcept;
+  /// @brief Get Data pointer
+  TType* Data() noexcept;
+  /// @brief Get Data pointer
+  const TType* Data() const noexcept;
 
-  /// @brief Get color's grayscale value following sRGB.
-  MDY_NODISCARD TF32 GetGrayScale() const noexcept;
+  DColorRGBA& operator+=(const DColorRGBA& value) noexcept;
+  DColorRGBA& operator-=(const DColorRGBA& value) noexcept;
+  DColorRGBA& operator*=(TValueType value) noexcept;
+  DColorRGBA& operator*=(const DColorRGBA& value) noexcept;
+  DColorRGBA& operator/=(TValueType value) noexcept;
+  DColorRGBA& operator/=(const DColorRGBA& value) noexcept;
 
-  /// @brief  Data pointer
-  /// @return Data pointer sequence.
-  MDY_NODISCARD const TF32* Data() const noexcept;
+  /// @brief Cconvert it to DVector4 explicitly.
+  explicit operator DVector4<TValueType>() const noexcept;
 
-  /// @brief Get array version of RGBA.
-  std::array<TF32, 4> ToArray() const noexcept;
-
-  //!
-  //! Conversion operators
-  //!
-
-  /// @brief Can be convert DVector3 explicitly, but alpha information passed.
-  explicit operator DVector3() const noexcept;
-  explicit operator glm::vec3() const noexcept;
-
-  operator glm::vec4() const noexcept;
-  operator DVector4() const noexcept;
-
-  //!
-  //! Statics
-  //!
-
-  static const DColorRGBA Aqua;
-  static const DColorRGBA Black;
-  static const DColorRGBA Blue;
-  static const DColorRGBA DarkRed;
-  static const DColorRGBA DarkGray;
-  static const DColorRGBA DarkGreen;
-  static const DColorRGBA Gold;
-  static const DColorRGBA Gray;
-  static const DColorRGBA Green;
-  static const DColorRGBA Magenta;
-  static const DColorRGBA Orange;
-  static const DColorRGBA Purple;
-  static const DColorRGBA Red;
-  static const DColorRGBA White;
-  static const DColorRGBA Yellow;
+  inline static const DColorRGBA Aqua;
+  inline static const DColorRGBA Black;
+  inline static const DColorRGBA Blue;
+  inline static const DColorRGBA DarkRed;
+  inline static const DColorRGBA DarkGray;
+  inline static const DColorRGBA DarkGreen;
+  inline static const DColorRGBA Gold;
+  inline static const DColorRGBA Gray = { 0.5f };
+  inline static const DColorRGBA Green;
+  inline static const DColorRGBA Magenta;
+  inline static const DColorRGBA Orange;
+  inline static const DColorRGBA Purple;
+  inline static const DColorRGBA Red;
+  inline static const DColorRGBA White = { 1.0f };
+  inline static const DColorRGBA Yellow;
 };
 
-void to_json(nlohmann::json& oJson, const DColorRGBA& iItem);
-void from_json(const nlohmann::json& iJson, DColorRGBA& oItem);
-
-} /// ::dy namespace
-
-#endif /// GUARD_DY_HELPER_TYPE_COLOR_H
+} /// ::dy::math namespace
+#include <Math/Type/Inline/DColor/DColorRGBA.inl>

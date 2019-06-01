@@ -31,6 +31,10 @@ public:
   /// @param newParent parent value to insert.
   void UpdateParent(bool newParent) noexcept;
 
+  /// @brief Get parent's flag (true/false) of this instance.
+  /// @return parent flag value.
+  bool GetParentFlag() const noexcept;
+
   /// @brief Get output value.
   /// @return Output value.
   bool GetOutput() const noexcept;
