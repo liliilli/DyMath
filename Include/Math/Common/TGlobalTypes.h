@@ -37,7 +37,7 @@ using TI64 = int64_t;   // 64-bit integer.  [-2^63, 2^63)
 using TF32 = float;       // 32-bit single precision type.
 using TF64 = double;      // 64-bit double precision type.
 using TPointer = void*;   // Pointer Address type.
-using TIndex   = size_t;  // Index or size type.
+using TIndex   = std::size_t;  // Index or size type.
 
 //! To use TReal type as double (TF64) type, define MATH_USE_REAL_AS_DOUBLE macro
 //! above of math library header file.

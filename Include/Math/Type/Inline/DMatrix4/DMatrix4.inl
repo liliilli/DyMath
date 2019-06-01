@@ -13,7 +13,6 @@
 ///
 
 #include <Math/Type/Math/DVector4.h>
-#include "..\..\Math\DMatrix4.h"
 
 namespace dy::math
 {

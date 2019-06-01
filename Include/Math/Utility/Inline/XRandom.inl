@@ -12,10 +12,10 @@
 /// SOFTWARE.
 ///
 
+#include <chrono>
 #include <random>
 #include <Math/Utility/XMath.h>
 #include <Math/Common/XGlobalMacroes.h>
-#include "..\XRandom.h"
 
 namespace dy::math
 {
@@ -27,6 +27,14 @@ inline std::mt19937& GetRandomDevice() noexcept
 {
   static std::random_device randomDevice;
   static std::mt19937 rngGenerator(randomDevice());
+
+  static bool isInitilaized = false;
+  if (isInitilaized == false)
+  {
+    rngGenerator.seed(
+      static_cast<unsigned int>(std::chrono::system_clock::now().time_since_epoch().count()));
+    isInitilaized = true;
+  }
 
   return rngGenerator;
 }

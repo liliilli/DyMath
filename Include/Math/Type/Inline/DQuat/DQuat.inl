@@ -15,7 +15,6 @@
 #include <Math/Utility/XMath.h>
 #include <Math/Utility/XLinearMath.h>
 #include <Math/Utility/XMathTrigonometry.h>
-#include "..\..\Math\DQuat.h"
 
 namespace dy::math
 {

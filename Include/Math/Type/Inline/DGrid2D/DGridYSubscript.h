@@ -12,15 +12,32 @@
 /// SOFTWARE.
 ///
 
-namespace dy::math
-{
+#include <cstdint>
 
-/// @enum EGraphics
-/// @brief Specifies graphics api.
-enum class EGraphics
+template <typename TType>
+class DGridYSubscript final
 {
-  OpenGL,
-  DirectX,
+public:
+  using value_type = TType;
+  using size_type  = std::size_t;
+  using reference  = value_type&;
+
+  DGridYSubscript(value_type*& ptr, size_type xSize)
+    : mPtr{ptr}, mGridX{xSize}
+  { }
+
+  reference operator[](std::size_t b)
+  {
+    return *(mPtr + b);
+  }
+
+  const reference operator[](std::size_t b) const
+  {
+    return *(mPtr + b);
+  }
+
+private:
+  value_type* mPtr = nullptr;
+  size_type mGridX = 0;
+
 };
-
-} /// ::dy::math namespac

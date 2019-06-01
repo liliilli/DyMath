@@ -82,6 +82,7 @@ private:
 };
 
 bool operator==(const DUuid& lhs, const DUuid& rhs) noexcept;
+bool operator!=(const DUuid& lhs, const DUuid& rhs) noexcept;
 
 } /// ::dy::math namespace
 

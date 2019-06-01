@@ -12,6 +12,7 @@
 /// SOFTWARE.
 ///
 
+#include <cmath>
 #ifndef M_NOUSE_THROW
 #include <stdexcept>
 #else

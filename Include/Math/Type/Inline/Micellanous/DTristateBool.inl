@@ -12,6 +12,8 @@
 /// SOFTWARE.
 ///
 
+#include <ostream>
+
 namespace dy::math
 {
 
@@ -33,6 +35,11 @@ inline void DTristateBool::UpdateParent(bool newParent) noexcept
   this->pUpdateOutputs();
 }
 
+inline bool DTristateBool::GetParentFlag() const noexcept
+{
+  return this->mParent;
+}
+
 inline bool DTristateBool::GetOutput() const noexcept
 {
   return this->mOutput;
@@ -52,6 +59,14 @@ inline void DTristateBool::pUpdateOutputs()
 {
   this->mOldOutput = this->mOutput;
   this->mOutput    = this->mParent && this->mInput;
+}
+
+template <typename TChar, typename TTraits>
+std::basic_ostream<TChar, TTraits>&
+operator<<(std::basic_ostream<TChar, TTraits>& os, const DTristateBool& vec)
+{
+  os << "[Parent : " << vec.GetParentFlag() << ", Output : " << vec.GetOutput() << ']';
+  return os;
 }
 
 } /// ::dy::math namespace

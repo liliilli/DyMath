@@ -12,6 +12,7 @@
 /// SOFTWARE.
 ///
 
+#include <algorithm>
 #include <Math/Common/TGlobalTypes.h>
 #include <Math/Type/Math/DVector2.h>
 #include <Math/Type/Math/DVector3.h>
@@ -101,6 +102,55 @@ TF32 Lerp(TF32 lhs, TF32 rhs, TReal offset);
 /// @brief Do linear interpolation with double type.
 /// If something wrong has been happened, return lowest value of double.
 TF64 Lerp(TF64 lhs, TF64 rhs, TReal offset);
+
+/// @brief Extract only fractional part.
+template <typename TType>
+TType Frac(TType realValue) noexcept
+{
+  return realValue - static_cast<TI32>(realValue);
+}
+
+/// @brief Clamp vector's all elements to [0, 1].
+/// @param vector Vector value.
+/// @return Saturated vector instance.
+template <typename TType>
+DVector2<TType> Saturate(const DVector2<TType>& vector)
+{
+  return
+  {
+    std::clamp(vector.X, static_cast<TType>(0), static_cast<TType>(1)),
+    std::clamp(vector.Y, static_cast<TType>(0), static_cast<TType>(1)),
+  };
+}
+
+/// @brief Clamp vector's all elements to [0, 1].
+/// @param vector Vector value.
+/// @return Saturated vector instance.
+template <typename TType>
+DVector3<TType> Saturate(const DVector3<TType>& vector)
+{
+  return
+  {
+    std::clamp(vector.X, static_cast<TType>(0), static_cast<TType>(1)),
+    std::clamp(vector.Y, static_cast<TType>(0), static_cast<TType>(1)),
+    std::clamp(vector.Z, static_cast<TType>(0), static_cast<TType>(1)),
+  };
+}
+
+/// @brief Clamp vector's all elements to [0, 1].
+/// @param vector Vector value.
+/// @return Saturated vector instance.
+template <typename TType>
+DVector4<TType> Saturate(const DVector4<TType>& vector)
+{
+  return
+  {
+    std::clamp(vector.X, static_cast<TType>(0), static_cast<TType>(1)),
+    std::clamp(vector.Y, static_cast<TType>(0), static_cast<TType>(1)),
+    std::clamp(vector.Z, static_cast<TType>(0), static_cast<TType>(1)),
+    std::clamp(vector.W, static_cast<TType>(0), static_cast<TType>(1)),
+  };
+}
 
 /// @brief Get minimum value vector (x, y)
 template <typename TLeft, typename TRight>

@@ -107,4 +107,12 @@ bool operator!=(const DVector4<TType>& lhs, const DVector4<TType>& rhs) noexcept
   return !(lhs == rhs);
 }
 
+template <typename TChar, typename TTraits, typename TVecType>
+std::basic_ostream<TChar, TTraits>&
+operator<<(std::basic_ostream<TChar, TTraits>& os, const DVector4<TVecType>& vec)
+{
+  os << '[' << vec.X << ", " << vec.Y << ", " << vec.Z << ", " << vec.W << ']';
+  return os;
+}
+
 } /// ::dy::math namespace
