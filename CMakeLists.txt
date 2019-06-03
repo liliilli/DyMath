@@ -90,5 +90,18 @@ if (MATH_BUILD_LIB)
 		LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}\\lib\\${CMAKE_BUILD_TYPE}"
 		RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}\\bin\\${CMAKE_BUILD_TYPE}"
 	)
+
+	if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+		message(STATUS "Build ${PROJECT_NAME} with ${CMAKE_CXX_COMPILER_ID}...")
+		# Warning level 4 as warning to error.
+		# Enable Multiple core building.
+		# Force to always compile with W4
+		if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
+			string(REGEX REPLACE "/W[0-4]" "/W4" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+		else()
+			set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
+		endif()
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /WX /MP")
+	endif()
 endif()
 
