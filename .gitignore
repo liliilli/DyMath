@@ -1,25 +1,70 @@
 
-# Created by https://www.gitignore.io/api/c++,cmake,executable,visualstudio
-# Edit at https://www.gitignore.io/?templates=c++,cmake,executable,visualstudio
+# Created by https://www.gitignore.io/api/c,c++,cmake,linux,executable,visualstudio,visualstudiocode
+# Edit at https://www.gitignore.io/?templates=c,c++,cmake,linux,executable,visualstudio,visualstudiocode
 
-### C++ ###
+### C ###
 # Prerequisites
 *.d
 
-# Compiled Object files
-*.slo
-*.lo
+# Object files
 *.o
+*.ko
 *.obj
+*.elf
+
+# Linker output
+*.ilk
+*.map
+*.exp
 
 # Precompiled Headers
 *.gch
 *.pch
 
-# Compiled Dynamic libraries
-*.so
-*.dylib
+# Libraries
+*.lib
+*.a
+*.la
+*.lo
+
+# Shared objects (inc. Windows DLLs)
 *.dll
+*.so
+*.so.*
+*.dylib
+
+# Executables
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# Kernel Module Compile Results
+*.mod*
+*.cmd
+.tmp_versions/
+modules.order
+Module.symvers
+Mkfile.old
+dkms.conf
+
+### C++ ###
+# Prerequisites
+
+# Compiled Object files
+*.slo
+
+# Precompiled Headers
+
+# Compiled Dynamic libraries
 
 # Fortran module files
 *.mod
@@ -27,14 +72,8 @@
 
 # Compiled Static libraries
 *.lai
-*.la
-*.a
-*.lib
 
 # Executables
-*.exe
-*.out
-*.app
 
 ### CMake ###
 CMakeLists.txt.user
@@ -62,6 +101,32 @@ _deps
 *.pif
 *.vb
 *.wsf
+
+### Linux ###
+*~
+
+# temporary files which can be created if a process still has a handle open of a deleted file
+.fuse_hidden*
+
+# KDE directory preferences
+.directory
+
+# Linux trash folder which might appear on any partition or disk
+.Trash-*
+
+# .nfs files are created when an open file is removed but is still being accessed
+.nfs*
+
+### VisualStudioCode ###
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+### VisualStudioCode Patch ###
+# Ignore all local history of files
+.history
 
 ### VisualStudio ###
 ## Ignore Visual Studio temporary files, build results, and
@@ -132,10 +197,8 @@ StyleCopReport.xml
 *_i.c
 *_p.c
 *_h.h
-*.ilk
 *.meta
 *.iobj
-*.pdb
 *.ipdb
 *.pgc
 *.pgd
@@ -285,7 +348,6 @@ _pkginfo.txt
 # Others
 ClientBin/
 ~$*
-*~
 *.dbmdl
 *.dbproj.schemaview
 *.jfm
@@ -407,5 +469,5 @@ healthchecksdb
 # Backup folder for Package Reference Convert tool in Visual Studio 2017
 MigrationBackup/
 
-# End of https://www.gitignore.io/api/c++,cmake,executable,visualstudio
+# End of https://www.gitignore.io/api/c,c++,cmake,linux,executable,visualstudio,visualstudiocode
 
