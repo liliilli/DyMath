@@ -1,4 +1,7 @@
 # DyMath
+
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/bd3be6eb9a714b0aaef947e1c9bf589d)](https://app.codacy.com/app/liliilli/DyMath?utm_source=github.com&utm_medium=referral&utm_content=liliilli/DyMath&utm_campaign=Badge_Grade_Dashboard)
+
 C++17 Math, Graphics Shape Library of Dy. This library can be used independently.
 
 ## Usage
