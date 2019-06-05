@@ -6,6 +6,10 @@ set(CMAKE_CXX_STANDARD_REQAUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_VERBOSE_MAKEFILE true)
 
+set(CMAKE_CXX_FLAGS_COMMON "-Wall -Werror -pedantic")
+set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 -pg")
+set(CMKAE_CXX_FLAGS_RELEASE "-s -O2 -DNDEBUG -march=native")
+
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 	# Do something 
 endif()
@@ -93,8 +97,19 @@ if (MATH_BUILD_LIB)
 		RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}\\bin\\${CMAKE_BUILD_TYPE}"
 	)
 
-	if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-		message(STATUS "Build ${PROJECT_NAME} with ${CMAKE_CXX_COMPILER_ID}...")
+	# If compiler is GNUC, set flags following CMAKE variables.
+	message(STATUS 
+		"Build ${PROJECT_NAME} with ${CMAKE_CXX_COMPILER_ID} as ${CMAKE_BUILD_TYPE} mode...")
+	if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_COMMON}")
+		if ("${CMAKE_BUILD_TYPE}" STREQUAL "DEBUG")
+			set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_DEBUG}")
+		elseif ("${CMAKE_BUILD_TYPE}" STREQUAL "RELEASE")
+			set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMKAE_CXX_FLAGS_RELEASE}")
+		else()
+			message(FATAL_ERROR "CMAKE_BUILD_TYPE is not specified. Failed to build.")
+		endif()
+	elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 		# Warning level 4 as warning to error.
 		# Enable Multiple core building.
 		# Force to always compile with W4
