@@ -12,11 +12,12 @@
 ///
 
 #include <Math/Utility/XBoost.h>
+#include <exception>
 
 namespace boost
 {
 	void throw_exception(const std::exception&)
 	{
-    terminate();
+		std::terminate();
 	}
 }

@@ -37,7 +37,7 @@ template <typename TType>
 DVector4<TType, std::enable_if_t<kIsIntegerType<TType>>>
 ::DVector4(const DVector3<TValueType>& value, TValueType w) noexcept
   : X{value.X}, Y{value.Y}, Z{value.Z}, W{w}
-{ };
+{ }
 
 template <typename TType>
 template <typename TAnotherType>
