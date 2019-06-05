@@ -30,12 +30,12 @@ std::optional<DVector3<TType>> Refract(
   const auto mu = TType(incidentIor) / TType(transmitIor);
   const auto nm = normal * -1.0f;
   const auto ni = Dot(incident, nm);
-  const auto disc2 = 1 - (mu * mu) * (1 - (ni * ni));
+  const auto disc2 = TReal(1 - (mu * mu) * (1 - (ni * ni)));
 
   // Transmitted vector's the angle must be less than pi / 2. (90' degree).
   if (disc2 < 0) { return std::nullopt; }
 
-  return (sqrt(disc2) * nm) + (mu * (incident - (ni * nm))) * TType(-1.0);
+  return (std::sqrt(disc2) * nm) + (mu * (incident - (ni * nm))) * TType(-1.0);
 }
 
 template <typename TType, typename TScalar>
