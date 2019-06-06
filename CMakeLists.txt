@@ -6,9 +6,11 @@ set(CMAKE_CXX_STANDARD_REQAUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_VERBOSE_MAKEFILE true)
 
-set(CMAKE_CXX_FLAGS_COMMON "-Wall -Werror -pedantic")
-set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 -pg")
-set(CMKAE_CXX_FLAGS_RELEASE "-s -O2 -DNDEBUG -march=native")
+if (${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
+	set(CMAKE_CXX_FLAGS_COMMON	"-Wall -Werror -pedantic")
+	set(CMAKE_CXX_FLAGS_DEBUG	"-g -O0 -pg")
+	set(CMKAE_CXX_FLAGS_RELEASE "-s -O2 -DNDEBUG -march=native")
+endif()
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 	# Do something 
@@ -62,15 +64,16 @@ if (MATH_BUILD_WITH_BOOST)
 endif()
 
 # Add library with include files.
-if (MATH_BUILD_LIB)
-	add_library(DyMath STATIC ${SOURCE})
+if (${MATH_BUILD_LIB} STREQUAL "ON")
 	if (MATH_BUILD_WITH_BOOST)
+		add_library(DyMath STATIC ${SOURCE})
 		target_include_directories(DyMath
 		PRIVATE
 			${CMAKE_CURRENT_SOURCE_DIR}/Include
 			${Boost_INCLUDE_DIRS}
 		)
 	else()
+		add_library(DyMath STATIC)
 		target_include_directories(DyMath
 		PRIVATE
 			${CMAKE_CURRENT_SOURCE_DIR}/Include
@@ -120,5 +123,7 @@ if (MATH_BUILD_LIB)
 		endif()
 		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /WX /MP")
 	endif()
+else()
+	add_library(${PROJECT_NAME} INTERFACE)
 endif()
 
