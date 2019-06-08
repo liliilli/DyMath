@@ -243,7 +243,7 @@ DMatrix4<TType> LookAt(
   const DVector3<TType>& lookPosition,
   const DVector3<TType>& unitY)
 {
-  return OpenGlLookAt(position, lookPosition, unitY);
+  return detail::OpenGlLookAt(position, lookPosition, unitY);
 }
 
 template <typename TType>
