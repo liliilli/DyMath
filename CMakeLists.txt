@@ -6,26 +6,51 @@ set(CMAKE_CXX_STANDARD_REQAUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_VERBOSE_MAKEFILE true)
 
-if (${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
+OPTION(MATH_BUILD_LIB "Build as library" OFF)
+OPTION(MATH_BUILD_WITH_BOOST "Build with boost" OFF)
+if (${UTIL_BUILD_WITH_MT} STREQUAL "ON")
+	OPTION(MATH_BUILD_WITH_MT "Build as MTd or MT" ON)
+else()
+	OPTION(MATH_BUILD_WITH_MT "Build as MTd or MT" OFF)
+endif()
+
+# If GNU or Clang, Add common/debug/release flags.
+if(GNU)
 	set(CMAKE_CXX_FLAGS_COMMON	"-Wall -Werror -pedantic")
 	set(CMAKE_CXX_FLAGS_DEBUG	"-g -O0 -pg")
 	set(CMKAE_CXX_FLAGS_RELEASE "-s -O2 -DNDEBUG -march=native")
-endif()
+endif(GNU)
+if(Clang)
+	set(CMAKE_CXX_FLAGS_COMMON	"-Wall -Werror -pedantic")
+	set(CMAKE_CXX_FLAGS_DEBUG	"-g -O0 -pg")
+	set(CMKAE_CXX_FLAGS_RELEASE "-s -O2 -DNDEBUG -march=native")
+endif(Clang)
 
-if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-	# Do something 
-endif()
-if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-	# Do something 
-endif()
+# If MSVC, Convert MD and MDd to MT and MTd.
+if(${MATH_BUILD_WITH_MT} STREQUAL "ON")
+	if (MSVC)
+		set(CompilerFlags
+			CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
+			CMAKE_C_FLAGS CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_RELEASE
+		)
+		if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+			foreach(CompilerFlag ${CompilerFlags}) 
+			string(REPLACE "/MDd" "/MTd" ${CompilerFlag} "${${CompilerFlag}}")
+			endforeach()
+		elseif (${CMAKE_BUILD_TYPE} STREQUAL "Release")
+			foreach(CompilerFlag ${CompilerFlags}) 
+			string(REPLACE "/MD" "/MT" ${CompilerFlag} "${${CompilerFlag}}")
+			endforeach()
+		else()
+			message(FATAL_ERROR "Unexpected error branch.")
+		endif()
+	endif(MSVC)
+endif(${MATH_BUILD_WITH_MT} STREQUAL "ON")
 
 # Find files
 file(GLOB_RECURSE INCLUDE RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/Include" "*.h")
 file(GLOB_RECURSE INLINE RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/Include" "*.inl")
 file(GLOB_RECURSE SOURCE RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/Source" "*.cc")
-
-OPTION(MATH_BUILD_WITH_BOOST "Build with boost" OFF)
-OPTION(MATH_BUILD_LIB "Build as library" OFF)
 
 if (MATH_BUILD_LIB)
 	message(STATUS "BUild DyMath as library file...")
@@ -36,23 +61,24 @@ if (MATH_BUILD_LIB)
 			Source/Utility/XBoost.cc
 		)
 	else()
-		set(SOURCE "")
+		message(FATAL_ERROR "MATH_BUILD_WITH_BOOST flag must be enabled.")
 	endif()
 endif()
 
-# https://stackoverflow.com/questions/2110795/how-to-use-all-c-files-in-a-directory-with-the-cmake-build-system
-# AUX_SOURCE_DIRECTORY("${CMAKE_CURRENT_SOURCE_DIR}/Source" SOURCE)
-
 # Set static library setting.
 include_directories("./Include")
-if (MATH_BUILD_WITH_BOOST)
+if (${MATH_BUILD_WITH_BOOST} STREQUAL "ON")
 	set (Boost_DETAILED_FAILURE_MSG ON)
 	if (WIN32)
 		set (BOOST_ROOT "C:/boost")
-	elseif (UNIT AND NOT APPLE)
+	elseif (UNIX AND NOT APPLE)
 		set (BOOST_ROOT "/usr/include")
 	endif()
-	set (BOOST_DEBUG ON)
+	if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+		set (BOOST_DEBUG ON)
+	elseif (${CMAKE_BUILD_TYPE} STREQUAL "DEBUG")
+		set (BOOST_DEBUG ON)
+	endif()
 
 	find_package(Boost)
 	if (Boost_FOUND)
@@ -103,11 +129,11 @@ if (${MATH_BUILD_LIB} STREQUAL "ON")
 	# If compiler is GNUC, set flags following CMAKE variables.
 	message(STATUS 
 		"Build ${PROJECT_NAME} with ${CMAKE_CXX_COMPILER_ID} as ${CMAKE_BUILD_TYPE} mode...")
-	if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+	if (${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
 		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_COMMON}")
-		if ("${CMAKE_BUILD_TYPE}" STREQUAL "DEBUG")
+		if (${CMAKE_BUILD_TYPE} STREQUAL "DEBUG")
 			set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_DEBUG}")
-		elseif ("${CMAKE_BUILD_TYPE}" STREQUAL "RELEASE")
+		elseif (${CMAKE_BUILD_TYPE} STREQUAL "RELEASE")
 			set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMKAE_CXX_FLAGS_RELEASE}")
 		else()
 			message(FATAL_ERROR "CMAKE_BUILD_TYPE is not specified. Failed to build.")
