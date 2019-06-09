@@ -20,6 +20,7 @@
 
 #include <Math/Type/Shape/DRay.h>
 #include <Math/Type/Shape/DSphere.h>
+#include <Math/Type/Shape/DBox.h>
 
 namespace dy::math
 {
@@ -149,6 +150,15 @@ TReal Schlick(
 /// @brief Check that Ray is intersected into Sphere.
 template <typename TType>
 [[nodiscard]] bool IsRayIntersected(const DRay<TType>& ray, const DSphere<TType>& sphere);
+
+/// @brief Check that Ray is intersected into DBox.
+/// @param ray Ray instance in world-space.
+/// @param box Box instance.
+/// @param rotMatrix World-rotation matrix of box instance.
+template <typename TType>
+[[nodiscard]] bool IsRayIntersected(
+  const DRay<TType>& ray, const DBox<TType>& box, 
+  const DMatrix4<TType>& rotMatrix);
 
 /// @brief Get signed distance value of sphere model from point.
 template <typename TType>

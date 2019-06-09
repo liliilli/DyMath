@@ -35,6 +35,16 @@ bool IsRayIntersected(const DRay<TType>& ray, const DSphere<TType>& sphere)
   return result1 >= 0 || result2 >= 0;
 }
 
+template <typename TType>
+bool IsRayIntersected(const DRay<TType>& ray, const DBox<TType>& box, const DMatrix4<TType>& rotMatrix)
+{
+  // We regards box is symmetrical and origin is located on origin of box space.
+  // We need to convert ray of world-space into box-space.
+  const auto invRotMat = rotMatrix.Transpose();
+
+  return false;
+}
+
 /// @brief Get signed distance value of sphere model from point.
 template <typename TType>
 TReal GetSDFValueOf(const DVector3<TType>& point, const DSphere<TType>& sphere)
