@@ -60,9 +60,13 @@ struct MATH_NODISCARD DVector4<TType, std::enable_if_t<kIsIntegerType<TType>>> f
   explicit operator DVector4<TAnotherType>() const noexcept;
 
   /// @brief Narrow conversion.
-  explicit operator DVector2<TValueType>() const noexcept;
+  explicit operator DVector2<
+    TValueType,
+    std::enable_if_t<kIsIntegerType<TType>>>() const noexcept;
   /// @brief Narrow conversion.
-  explicit operator DVector3<TValueType>() const noexcept;
+  explicit operator DVector3<
+    TValueType, 
+    std::enable_if_t<kIsIntegerType<TType>>>() const noexcept;
 
   /// @brief Get values with index. index must be 0, 1 or 2.
   TValueType& operator[](TIndex index);

@@ -16,15 +16,18 @@ endif()
 
 # If GNU or Clang, Add common/debug/release flags.
 if(GNU)
-	set(CMAKE_CXX_FLAGS_COMMON	"-Wall -Werror -pedantic")
+	set(CMAKE_CXX_FLAGS_COMMON	"-std=c++17 -Wall -Werror -pedantic")
 	set(CMAKE_CXX_FLAGS_DEBUG	"-g -O0 -pg")
 	set(CMKAE_CXX_FLAGS_RELEASE "-s -O2 -DNDEBUG -march=native")
 endif(GNU)
 if(Clang)
-	set(CMAKE_CXX_FLAGS_COMMON	"-Wall -Werror -pedantic")
+	set(CMAKE_CXX_FLAGS_COMMON	"-std=c++17 -Wall -Werror -pedantic")
 	set(CMAKE_CXX_FLAGS_DEBUG	"-g -O0 -pg")
 	set(CMKAE_CXX_FLAGS_RELEASE "-s -O2 -DNDEBUG -march=native")
 endif(Clang)
+if(MSVC)
+	set(CMAKE_CXX_FLAGS_COMMON	"/std:c++17 /WX /MP")
+endif(MSVC)
 
 # If MSVC, Convert MD and MDd to MT and MTd.
 if(${MATH_BUILD_WITH_MT} STREQUAL "ON")
@@ -127,9 +130,8 @@ if (${MATH_BUILD_LIB} STREQUAL "ON")
 	)
 
 	# If compiler is GNUC, set flags following CMAKE variables.
-	message(STATUS 
-		"Build ${PROJECT_NAME} with ${CMAKE_CXX_COMPILER_ID} as ${CMAKE_BUILD_TYPE} mode...")
-	if (${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
+	message(STATUS "Build ${PROJECT_NAME} with ${CMAKE_CXX_COMPILER_ID} as ${CMAKE_BUILD_TYPE} mode...")
+	if (GNU)
 		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_COMMON}")
 		if (${CMAKE_BUILD_TYPE} STREQUAL "DEBUG")
 			set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_DEBUG}")
@@ -138,7 +140,7 @@ if (${MATH_BUILD_LIB} STREQUAL "ON")
 		else()
 			message(FATAL_ERROR "CMAKE_BUILD_TYPE is not specified. Failed to build.")
 		endif()
-	elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+	elseif (MSVC)
 		# Warning level 4 as warning to error.
 		# Enable Multiple core building.
 		# Force to always compile with W4
@@ -147,7 +149,7 @@ if (${MATH_BUILD_LIB} STREQUAL "ON")
 		else()
 			set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
 		endif()
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /WX /MP")
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_COMMON}")
 	endif()
 else()
 	add_library(${PROJECT_NAME} INTERFACE)

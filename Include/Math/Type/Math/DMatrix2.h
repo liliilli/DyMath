@@ -13,6 +13,7 @@
 ///
 
 #include <array>
+#include <vector>
 #include <Math/Type/Math/DVector2.h>
 
 namespace dy::math

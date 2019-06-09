@@ -12,8 +12,7 @@
 /// SOFTWARE.
 ///
 
-#include <Math/Type/Math/DVector2.h>
-#include "..\..\Math\DMatrix2.h"
+#include <Math/Type/Math/DMatrix2.h>
 
 namespace dy::math
 {

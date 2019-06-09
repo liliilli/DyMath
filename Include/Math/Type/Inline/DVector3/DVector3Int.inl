@@ -49,8 +49,8 @@ DVector3<TType, std::enable_if_t<kIsIntegerType<TType>>>
 }
 
 template <typename TType>
-DVector3<TType, std::enable_if_t<kIsIntegerType<TType>>>
-::operator DVector2<TType>() const noexcept
+DVector3<TType, std::enable_if_t<kIsIntegerType<TType>>>::operator 
+DVector2<TType, std::enable_if_t<kIsIntegerType<TType>>>() const noexcept
 {
   return DVector2<TType>{this->X, this->Y};
 }
