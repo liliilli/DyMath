@@ -45,11 +45,31 @@ bool IsRayIntersected(const DRay<TType>& ray, const DBox<TType>& box, const DMat
   return false;
 }
 
+template <typename TType>
+bool IsRayIntersected(const DRay<TType>& ray, const DPlane<TType>& plane)
+{
+  // plane is just stretch to infinity, 
+  // so we can just only check whether ray direction is forward to plane or not.
+  const auto sdfValue = GetSDFValueOf(ray.GetOrigin(), plane);
+  if (sdfValue == 0.0f) { return true; }
+
+  // SDF value is positive when ray point is on normal-forwarded region,
+  // so need to invert normal when SDF is positive.
+  const auto normal = plane.GetNormal() * (sdfValue > TType(0) ? TType(-1) : TType(1));
+  return Dot(ray.GetDirection(), normal) > 0.0f;
+}
+
 /// @brief Get signed distance value of sphere model from point.
 template <typename TType>
 TReal GetSDFValueOf(const DVector3<TType>& point, const DSphere<TType>& sphere)
 {
   return (point - sphere.GetOrigin()).GetLength() - sphere.GetRadius();
+}
+
+template <typename TType>
+TReal GetSDFValueOf(const DVector3<TType>& point, const DPlane<TType>& plane)
+{
+  return (Dot(point, plane.GetNormal()) + plane.GetD()) / plane.GetNormal().GetLength();
 }
 
 template <typename TType>
@@ -77,6 +97,22 @@ std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DSphere<TType>& sp
   return result;
 }
 
+/// @brief Get positive 't' list to the point of given DPlane from given ray.
+template <typename TType>
+std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DPlane<TType>& plane)
+{
+  if (IsRayIntersected(ray, plane) == false) { return {}; }
+  
+  // Get normal and do. vector `n1` and `n2` length are 1.
+  const auto normal = plane.GetNormal().Normalize();
+  const auto p1 = Dot(ray.GetDirection(), normal);
+  const auto p2 = Dot(ray.GetDirection(), normal * TType(-1));
+  
+  // Get positive p value and return alpha (a) value.
+  const auto cos = std::max(p1, p2);
+  return {std::abs(GetSDFValueOf(ray.GetOrigin(), plane)) / cos}; 
+}
+
 /// @brief Get positive `t` to the closest point of given sphere from given ray.
 /// If not found, just return nullopt value.
 template <typename TType>
@@ -90,6 +126,15 @@ std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DSphere<TT
 
   return tValueList.front();
 } 
+
+template <typename TType>
+std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DPlane<TType>& plane)
+{
+  const auto tValueList = GetTValuesOf(ray, plane);
+  if (tValueList.empty() == true) { return std::nullopt; }
+
+  return tValueList.front();
+}
 
 /// @brief Try to get normal vector of sphere, when ray is intersected.
 template <typename TType>
@@ -114,6 +159,17 @@ std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DSphere
 
   DVector3<TType> result = DVector3<TType>{x, y, z};
   return result.Normalize();
+}
+
+/// @brief Try to get normal vector of plane, when ray is intersected.
+template <typename TType>
+std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DPlane<TType>& plane)
+{
+  // Check
+  if (IsRayIntersected(ray, plane) == false) { return std::nullopt; }
+
+  const auto sdfValue = GetSDFValueOf(ray.GetOrigin(), plane);
+  return plane.GetNormal() * (sdfValue > TType(0) ? TType(1) : TType(-1));
 }
 
 } /// ::dy::math namespace
