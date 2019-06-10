@@ -31,6 +31,16 @@ DPlane<TType>::DPlane(const DVector3<TValueType>& normalizedVector, TValueType d
   : mNormal{normalizedVector}, mD{d}
 { }
 
+template <typename TType>
+DPlane<TType>::DPlane(
+  const DVector3<TValueType>& pos1, const DVector3<TValueType>& pos2, const DVector3<TValueType>& pos3)
+{
+  const auto vec1 = (pos2 - pos1).Normalize();
+  const auto vec2 = (pos3 - pos1).Normalize();
+  this->mNormal = Cross(vec1, vec2);
+  this->mD = Dot(this->mNormal, pos1) * TValueType(-1);
+}
+
 template<typename TType>
 void DPlane<TType>::SetNormalVector(const DVector3<TValueType>& iNormalVector)
 {
@@ -39,9 +49,16 @@ void DPlane<TType>::SetNormalVector(const DVector3<TValueType>& iNormalVector)
 
 template <typename TType>
 DVector3<typename DPlane<TType>::TValueType> 
-DPlane<TType>::GetNormalVector() const noexcept
+DPlane<TType>::GetNormal() const noexcept
 {
   return this->mNormal;
+}
+
+template <typename TType>
+typename DPlane<TType>::TValueType
+DPlane<TType>::GetD() const noexcept
+{
+  return this->mD;
 }
 
 template <typename TType>
@@ -79,7 +96,25 @@ template <typename TType>
 DVector3<typename DPlane<TType>::TValueType> 
 DPlane<TType>::GetClosestPoint(const DVector3<TValueType>& iPoint) const noexcept
 {
-  return iPoint - this->GetNormalVector() * this->GetSignedDistanceFrom(iPoint);
+  return iPoint - this->GetNormal() * this->GetSignedDistanceFrom(iPoint);
+}
+
+template<typename TType>
+inline bool DPlane<TType>::HasNaN() const noexcept
+{
+  return this->mNormal.HasNaN() || std::isnan(this->mD);
+}
+
+template<typename TType>
+inline bool DPlane<TType>::HasInfinity() const noexcept
+{
+  return this->mNormal.HasInfinity() || std::isinf(this->mD);
+}
+
+template<typename TType>
+inline bool DPlane<TType>::HasOnlyNormal() const noexcept
+{
+  return this->mNormal.HasOnlyNormal() || std::isnormal(this->mD);
 }
 
 } /// ::dy::math namespace

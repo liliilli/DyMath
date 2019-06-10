@@ -43,10 +43,13 @@ struct MATH_NODISCARD DPlane
   static_assert(kIsRealType<TType> == true, "DPlane only supports real type.");
   using TValueType = TType;
 
-  /// @brief a, b, c will be normalized values as |a, b, c| == 1
   DPlane() = default;
+  /// @brief a, b, c will be normalized values as |a, b, c| == 1
   DPlane(TValueType a, TValueType b, TValueType c, TValueType d);
+  /// @brief Construct DPlane with normalized vector and just d.
   DPlane(const DVector3<TValueType>& normalizedVector, TValueType d);
+  /// @brief Construt DPlane with (pos2 - pos1) and (pos3 - pos1) vector.
+  DPlane(const DVector3<TValueType>& pos1, const DVector3<TValueType>& pos2, const DVector3<TValueType>& pos3);
 
   /// @brief Set new normal vector to plane.
   /// Vector must be normalized when input.
@@ -54,7 +57,10 @@ struct MATH_NODISCARD DPlane
 
   /// @brief Get normal vector.
   /// Returned normal vector does not guarantees that length is 1.
-  DVector3<TValueType> GetNormalVector() const noexcept;
+  DVector3<TValueType> GetNormal() const noexcept;
+
+  /// @brief Get D value.
+  TValueType GetD() const noexcept;
 
   /// @brief Check given point is on plane, on front (pos), on behind (neg).
   EPosPlaneState CheckPointStatusOnPlane(const DVector3<TValueType>& iPoint) const noexcept;
@@ -68,12 +74,21 @@ struct MATH_NODISCARD DPlane
   /// @brief Get closest on-plane point of given point.
   DVector3<TValueType> GetClosestPoint(const DVector3<TValueType>& iPoint) const noexcept;
 
+  /// @brief Check value has NaN.
+  bool HasNaN() const noexcept;
+
+  /// @brief Check value has Infinity.
+  bool HasInfinity() const noexcept;
+
+  /// @brief Check values are normal value, neither NaN nor Inf.
+  bool HasOnlyNormal() const noexcept;
+
 private:
   /// @brief Normal value.
   DVector3<TValueType> mNormal = DVector3<TValueType>::UnitY(); 
   /// @brief D value.
-  TValueType mD;
+  TValueType mD = TValueType{};
 };
 
 } /// ::dy::math namespace
-#include <Math/Type/Inline/DPlane/DPlane.inl>
+#include <Math/Type/Inline/XShape/DPlane.inl>
