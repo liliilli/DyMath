@@ -83,7 +83,7 @@ struct MATH_NODISCARD DPlane
   /// @brief Check values are normal value, neither NaN nor Inf.
   bool HasOnlyNormal() const noexcept;
 
-private:
+protected:
   /// @brief Normal value.
   DVector3<TValueType> mNormal = DVector3<TValueType>::UnitY(); 
   /// @brief D value.
