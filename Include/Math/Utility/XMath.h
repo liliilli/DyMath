@@ -182,9 +182,31 @@ template <typename TLeft, typename TRight>
 DVector4<GetBiggerType<TLeft, TRight>>
 ExtractMax(const DVector4<TLeft>& lhs, const DVector4<TRight>& rhs) noexcept;
 
+/// @brief Absolutize vector values.
+/// @param vector input vector.
+/// @tparam TType The type of vector.
+/// @return Absolutized vector value.
+template <typename TType>
+DVector2<TType> Abs(const DVector2<TType>& vector) noexcept;
+
+/// @brief Absolutize vector values.
+/// @param vector input vector.
+/// @tparam TType The type of vector.
+/// @return Absolutized vector value.
+template <typename TType>
+DVector3<TType> Abs(const DVector3<TType>& vector) noexcept;
+
+/// @brief Absolutize vector values.
+/// @param vector input vector.
+/// @tparam TType The type of vector.
+/// @return Absolutized vector value.
+template <typename TType>
+DVector4<TType> Abs(const DVector4<TType>& vector) noexcept;
+
 } /// ::dy::math namespace
 #include <Math/Utility/Inline/XMath/MapValue.inl>
 #include <Math/Utility/Inline/XMath/IsNearlyEqual.inl>
 #include <Math/Utility/Inline/XMath/Lerp.inl>
 #include <Math/Utility/Inline/XMath/ToNormalized.inl>
 #include <Math/Utility/Inline/XMath/MinMax.inl>
+#include <Math/Utility/Inline/XMath/Abs.inl>
