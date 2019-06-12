@@ -14,6 +14,7 @@
 
 #include <utility>
 #include <vector>
+#include <Math/Common/TGlobalTypes.h>
 
 namespace dy::math
 {
@@ -36,13 +37,53 @@ bool IsRayIntersected(const DRay<TType>& ray, const DSphere<TType>& sphere)
 }
 
 template <typename TType>
-bool IsRayIntersected(const DRay<TType>& ray, const DBox<TType>& box, const DMatrix4<TType>& rotMatrix)
+bool IsRayIntersected(const DRay<TType>& ray, const DBox<TType>& box)
+{
+  // Use 3-dimensional slab method [Kay and Kajyia].
+  TType tMin = kMinValueOf<TType>;
+  TType tMax = kMaxValueOf<TType>;
+
+  const auto& ro = ray.GetOrigin();
+  const auto& rd = ray.GetDirection();
+  const auto min = box.GetMinPos();
+  const auto max = box.GetMaxPos();
+
+  if (rd.X != TType(0))
+  {
+    TType tx1 = (min.X - ro.X) / rd.X;
+    TType tx2 = (max.X - ro.X) / rd.X;
+    tMin = std::max(tMin, std::min(tx1, tx2));
+    tMax = std::min(tMax, std::max(tx1, tx2));
+  }
+
+  if (rd.Y != TType(0))
+  {
+    TType ty1 = (min.Y - ro.Y) / rd.Y;
+    TType ty2 = (max.Y - ro.Y) / rd.Y;
+    tMin = std::max(tMin, std::min(ty1, ty2));
+    tMax = std::min(tMax, std::max(ty1, ty2));
+  }
+
+  if (rd.Z != TType(0))
+  {
+    TType tz1 = (min.Z - ro.Z) / rd.Z;
+    TType tz2 = (max.Z - ro.Z) / rd.Z;
+    tMin = std::max(tMin, std::min(tz1, tz2));
+    tMax = std::min(tMax, std::max(tz1, tz2));
+  }
+
+  return tMax >= tMin && tMax >= 0;
+}
+
+template <typename TType>
+bool IsRayIntersected(const DRay<TType>& ray, const DBox<TType>& box, const DMatrix3<TType>& rotMatrix)
 {
   // We regards box is symmetrical and origin is located on origin of box space.
   // We need to convert ray of world-space into box-space.
   const auto invRotMat = rotMatrix.Transpose();
+  const auto localSpaceRayDir = invRotMat * ray.GetDirection();
 
-  return false;
+  return IsRayIntersected(DRay<TType>{ray.GetOrigin(), localSpaceRayDir}, box);
 }
 
 template <typename TType>

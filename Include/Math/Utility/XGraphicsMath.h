@@ -153,13 +153,18 @@ template <typename TType>
 [[nodiscard]] bool IsRayIntersected(const DRay<TType>& ray, const DSphere<TType>& sphere);
 
 /// @brief Check that Ray is intersected into DBox.
+/// In this function, DBox's x, y, z is aligned to world-space X, Y, Z axis (AABB).
+/// @param ray Ray instance in world-space.
+/// @param box Box instance.
+template <typename TType>
+[[nodiscard]] bool IsRayIntersected(const DRay<TType>& ray, const DBox<TType>& box);
+
+/// @brief Check that Ray is intersected into DBox.
 /// @param ray Ray instance in world-space.
 /// @param box Box instance.
 /// @param rotMatrix World-rotation matrix of box instance.
 template <typename TType>
-[[nodiscard]] bool IsRayIntersected(
-  const DRay<TType>& ray, const DBox<TType>& box, 
-  const DMatrix4<TType>& rotMatrix);
+[[nodiscard]] bool IsRayIntersected(const DRay<TType>& ray, const DBox<TType>& box, const DMatrix3<TType>& rot);
 
 /// @brief Check that Ray is intersected into DBox.
 /// @param ray Ray instance in world-space.
