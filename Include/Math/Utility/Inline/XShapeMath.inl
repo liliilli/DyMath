@@ -39,40 +39,8 @@ bool IsRayIntersected(const DRay<TType>& ray, const DSphere<TType>& sphere)
 template <typename TType>
 bool IsRayIntersected(const DRay<TType>& ray, const DBox<TType>& box)
 {
-  // Use 3-dimensional slab method [Kay and Kajyia].
-  TType tMin = kMinValueOf<TType>;
-  TType tMax = kMaxValueOf<TType>;
-
-  const auto& ro = ray.GetOrigin();
-  const auto& rd = ray.GetDirection();
-  const auto min = box.GetMinPos();
-  const auto max = box.GetMaxPos();
-
-  if (rd.X != TType(0))
-  {
-    TType tx1 = (min.X - ro.X) / rd.X;
-    TType tx2 = (max.X - ro.X) / rd.X;
-    tMin = std::max(tMin, std::min(tx1, tx2));
-    tMax = std::min(tMax, std::max(tx1, tx2));
-  }
-
-  if (rd.Y != TType(0))
-  {
-    TType ty1 = (min.Y - ro.Y) / rd.Y;
-    TType ty2 = (max.Y - ro.Y) / rd.Y;
-    tMin = std::max(tMin, std::min(ty1, ty2));
-    tMax = std::min(tMax, std::max(ty1, ty2));
-  }
-
-  if (rd.Z != TType(0))
-  {
-    TType tz1 = (min.Z - ro.Z) / rd.Z;
-    TType tz2 = (max.Z - ro.Z) / rd.Z;
-    tMin = std::max(tMin, std::min(tz1, tz2));
-    tMax = std::min(tMax, std::max(tz1, tz2));
-  }
-
-  return tMax >= tMin && tMax >= 0;
+  const auto tResult = GetTValuesOf(ray, box);
+  return tResult.empty() == false;
 }
 
 template <typename TType>
@@ -84,6 +52,12 @@ bool IsRayIntersected(const DRay<TType>& ray, const DBox<TType>& box, const DMat
   const auto localSpaceRayDir = invRotMat * ray.GetDirection();
 
   return IsRayIntersected(DRay<TType>{ray.GetOrigin(), localSpaceRayDir}, box);
+}
+
+template <typename TType>
+bool IsRayIntersected(const DRay<TType>& ray, const DBox<TType>& box, const DQuaternion<TType>& rot)
+{
+  return IsRayIntersected(ray, box, rot.ToMatrix3());
 }
 
 template <typename TType>
@@ -100,6 +74,10 @@ bool IsRayIntersected(const DRay<TType>& ray, const DPlane<TType>& plane)
   return Dot(ray.GetDirection(), normal) > 0.0f;
 }
 
+//!
+//! GetSDFValueOf
+//!
+
 /// @brief Get signed distance value of sphere model from point.
 template <typename TType>
 TReal GetSDFValueOf(const DVector3<TType>& point, const DSphere<TType>& sphere)
@@ -108,10 +86,62 @@ TReal GetSDFValueOf(const DVector3<TType>& point, const DSphere<TType>& sphere)
 }
 
 template <typename TType>
+TReal GetSDFValueOf(const DVector3<TType>& point, const DBox<TType>& box)
+{
+  // If box is not symmetrical, realign box into aligend box that has same axis length,
+  // and GetSDFValueOf function once more.
+  if (box.IsSymmetrical() == false)
+  {
+    const auto& origin = box.GetOrigin();
+    const auto  offset = DVector3<TType>{
+      (box.GetLengthOf(EBoxDir::Right) - box.GetLengthOf(EBoxDir::Left)) / 2, 
+      (box.GetLengthOf(EBoxDir::Up) - box.GetLengthOf(EBoxDir::Down)) / 2, 
+      (box.GetLengthOf(EBoxDir::Front) - box.GetLengthOf(EBoxDir::Back)) / 2};
+    const auto  length = DVector3<TType>{
+      (box.GetLengthOf(EBoxDir::Right) + box.GetLengthOf(EBoxDir::Left)) / 2, 
+      (box.GetLengthOf(EBoxDir::Up) + box.GetLengthOf(EBoxDir::Down)) / 2, 
+      (box.GetLengthOf(EBoxDir::Front) + box.GetLengthOf(EBoxDir::Back)) / 2};
+
+    return GetSDFValueOf(point, DBox<TType>{origin + offset, length});
+  }
+
+  // If box is symmetrical, just get SDF value.
+  const auto relativePos = point - box.GetOrigin();
+  const auto distance = 
+      math::Abs(relativePos) 
+    - DVector3<TType>{box.GetLengthOf(EBoxDir::Right), box.GetLengthOf(EBoxDir::Up), box.GetLengthOf(EBoxDir::Front)};
+
+  return 
+      ExtractMax(distance, DVector3<TType>{0}).GetLength()
+    + std::min(std::max(distance.X, std::max(distance.Y, distance.Z)), TType(0));
+}
+
+template <typename TType>
+TReal GetSDFValueOf(const DVector3<TType>& point, const DBox<TType>& box, const DMatrix3<TType>& rot)
+{
+  // We regards box is symmetrical and origin is located on origin of box space.
+  // We need to convert ray of world-space into box-space.
+  const auto invRotMat = rot.Transpose();
+  const auto localSpacePos = invRotMat * (point - box.GetOrigin());
+  
+  return GetSDFValueOf(localSpacePos, DBox<TType>{DVector3<TType>{0}, box.GetLengthList()});
+}
+
+template <typename TType>
+TReal GetSDFValueOf(const DVector3<TType>& point, const DBox<TType>& box, const DQuaternion<TType>& rot)
+{
+  return GetSDFValueOf(point, box, rot.ToMatrix3());
+}
+
+template <typename TType>
 TReal GetSDFValueOf(const DVector3<TType>& point, const DPlane<TType>& plane)
 {
   return (Dot(point, plane.GetNormal()) + plane.GetD()) / plane.GetNormal().GetLength();
 }
+
+//!
+//! GetTValuesOf
+//! 
 
 template <typename TType>
 std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DSphere<TType>& sphere)
@@ -154,19 +184,111 @@ std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DPlane<TType>& pla
   return {std::abs(GetSDFValueOf(ray.GetOrigin(), plane)) / cos}; 
 }
 
+template <typename TType>
+std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DBox<TType>& box)
+{
+  // Use 3-dimensional slab method [Kay and Kajyia].
+  TType tMin = kMinValueOf<TType>;
+  TType tMax = kMaxValueOf<TType>;
+
+  const auto& ro = ray.GetOrigin();
+  const auto& rd = ray.GetDirection();
+  const auto min = box.GetMinPos();
+  const auto max = box.GetMaxPos();
+
+  if (rd.X != TType(0))
+  {
+    TType tx1 = (min.X - ro.X) / rd.X;
+    TType tx2 = (max.X - ro.X) / rd.X;
+    tMin = std::max(tMin, std::min(tx1, tx2));
+    tMax = std::min(tMax, std::max(tx1, tx2));
+  }
+
+  if (rd.Y != TType(0))
+  {
+    TType ty1 = (min.Y - ro.Y) / rd.Y;
+    TType ty2 = (max.Y - ro.Y) / rd.Y;
+    tMin = std::max(tMin, std::min(ty1, ty2));
+    tMax = std::min(tMax, std::max(ty1, ty2));
+  }
+
+  if (rd.Z != TType(0))
+  {
+    TType tz1 = (min.Z - ro.Z) / rd.Z;
+    TType tz2 = (max.Z - ro.Z) / rd.Z;
+    tMin = std::max(tMin, std::min(tz1, tz2));
+    tMax = std::min(tMax, std::max(tz1, tz2));
+  }
+
+  std::vector<TReal> result;
+  if (tMax >= tMin && tMax >= 0)
+  {
+    if (tMin >= 0)    { result.emplace_back(tMin); }
+    if (tMax > tMin)  { result.emplace_back(tMax); }
+  }
+
+  return result;
+}
+
+template <typename TType>
+std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DBox<TType>& box, const DMatrix3<TType>& rot)
+{
+  // We regards box is symmetrical and origin is located on origin of box space.
+  // We need to convert ray of world-space into box-space.
+  const auto invRotMat      = rot.Transpose();
+  const auto localSpacePos  = invRotMat * (ray.GetOrigin() - box.GetOrigin());
+  const auto localSpaceDir  = invRotMat * ray.GetDirection();
+  
+  return GetTValuesOf(DRay<TType>{localSpacePos, localSpaceDir}, DBox<TType>{DVector3<TType>{0}, box.GetLengthList()});
+}
+
+template <typename TType>
+std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DBox<TType>& box, const DQuaternion<TType>& rot)
+{
+  return GetTValuesOf(ray, box, rot.ToMatrix3());
+}
+
+//!
+//! GetClosestTValueOf
+//!
+
 /// @brief Get positive `t` to the closest point of given sphere from given ray.
 /// If not found, just return nullopt value.
 template <typename TType>
 std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DSphere<TType>& sphere)
 {
   const auto tValueList = GetTValuesOf(ray, sphere);
-  if (tValueList.empty() == true) 
-  { 
-    return std::nullopt; 
-  }
+  if (tValueList.empty() == true) { return std::nullopt; }
 
   return tValueList.front();
 } 
+
+template <typename TType>
+std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DBox<TType>& box)
+{
+  const auto tValueList = GetTValuesOf(ray, box);
+  if (tValueList.empty() == true) { return std::nullopt; }
+
+  return tValueList.front();
+}
+
+template <typename TType>
+std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DBox<TType>& box, const DMatrix3<TType>& rot)
+{
+  const auto tValueList = GetTValuesOf(ray, box, rot);
+  if (tValueList.empty() == true) { return std::nullopt; }
+
+  return tValueList.front();
+}
+
+template <typename TType>
+std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DBox<TType>& box, const DQuaternion<TType>& rot)
+{
+  const auto tValueList = GetTValuesOf(ray, box, rot);
+  if (tValueList.empty() == true) { return std::nullopt; }
+
+  return tValueList.front();
+}
 
 template <typename TType>
 std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DPlane<TType>& plane)
@@ -177,6 +299,10 @@ std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DPlane<TTy
   return tValueList.front();
 }
 
+//!
+//! GetNormalOf
+//!
+
 /// @brief Try to get normal vector of sphere, when ray is intersected.
 template <typename TType>
 std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DSphere<TType>& sphere)
@@ -185,10 +311,7 @@ std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DSphere
   if (IsRayIntersected(ray, sphere) == false) { return std::nullopt; }
 
   auto optT = GetClosestTValueOf(ray, sphere);
-  if (optT.has_value() == false) 
-  { 
-    return std::nullopt; 
-  }
+  if (optT.has_value() == false) { return std::nullopt; }
 
   DRay<TReal> resultRay = {ray.GetPointAtParam(*optT), ray.GetDirection(), false};
 
@@ -200,6 +323,51 @@ std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DSphere
 
   DVector3<TType> result = DVector3<TType>{x, y, z};
   return result.Normalize();
+}
+
+template <typename TType>
+std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DBox<TType>& box)
+{
+  // Check
+  if (IsRayIntersected(ray, box) == false) { return std::nullopt; }
+
+  auto optT = GetClosestTValueOf(ray, box);
+  if (optT.has_value() == false) { return std::nullopt; }
+
+  DRay<TReal> resultRay = {ray.GetPointAtParam(*optT), ray.GetDirection(), false};
+
+  const TType offset = TType(0.001);
+  const auto origin = resultRay.GetOrigin();
+  const auto x = GetSDFValueOf<TType>(origin + DVector3<TType>{offset, 0, 0}, box) - GetSDFValueOf(origin, box);
+  const auto y = GetSDFValueOf<TType>(origin + DVector3<TType>{0, offset, 0}, box) - GetSDFValueOf(origin, box);
+  const auto z = GetSDFValueOf<TType>(origin + DVector3<TType>{0, 0, offset}, box) - GetSDFValueOf(origin, box);
+
+  DVector3<TType> result = DVector3<TType>{x, y, z};
+  return result.Normalize();
+}
+
+template <typename TType>
+std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DBox<TType>& box, const DMatrix3<TType>& rot)
+{
+  // We regards box is symmetrical and origin is located on origin of box space.
+  // We need to convert ray of world-space into box-space.
+  const auto invRotMat      = rot.Transpose();
+  const auto localSpacePos  = invRotMat * (ray.GetOrigin() - box.GetOrigin());
+  const auto localSpaceDir  = invRotMat * ray.GetDirection();
+  
+  const auto normal = GetNormalOf(
+    DRay<TType>{localSpacePos, localSpaceDir}, 
+    DBox<TType>{DVector3<TType>{0}, box.GetLengthList()}
+  );
+  if (normal.has_value() == false) { return std::nullopt; }
+
+  return rot * (*normal);
+}
+
+template <typename TType>
+std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DBox<TType>& box, const DQuaternion<TType>& rot)
+{
+  return GetNormalOf(ray, box, rot.ToMatrix3());
 }
 
 /// @brief Try to get normal vector of plane, when ray is intersected.

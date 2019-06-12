@@ -168,6 +168,13 @@ template <typename TType>
 
 /// @brief Check that Ray is intersected into DBox.
 /// @param ray Ray instance in world-space.
+/// @param box Box instance.
+/// @param rot Quaternion that has rotation information of DBox.
+template <typename TType>
+[[nodiscard]] bool IsRayIntersected(const DRay<TType>& ray, const DBox<TType>& box, const DQuaternion<TType>& rot);
+
+/// @brief Check that Ray is intersected into DBox.
+/// @param ray Ray instance in world-space.
 /// @param plane Plane instance in world-space.
 template <typename TType>
 [[nodiscard]] bool IsRayIntersected(const DRay<TType>& ray, const DPlane<TType>& plane);
@@ -176,6 +183,18 @@ template <typename TType>
 template <typename TType>
 TReal GetSDFValueOf(const DVector3<TType>& point, const DSphere<TType>& sphere);
 
+/// @brief Get signed distance value of box model from point.
+template <typename TType>
+TReal GetSDFValueOf(const DVector3<TType>& point, const DBox<TType>& box);
+
+/// @brief Get signed distance value of box model from point.
+template <typename TType>
+TReal GetSDFValueOf(const DVector3<TType>& point, const DBox<TType>& box, const DMatrix3<TType>& rot);
+
+/// @brief Get signed distance value of box model from point.
+template <typename TType>
+TReal GetSDFValueOf(const DVector3<TType>& point, const DBox<TType>& box, const DQuaternion<TType>& rot);
+
 /// @brief Get signed distance value of plane model from point.
 template <typename TType>
 TReal GetSDFValueOf(const DVector3<TType>& point, const DPlane<TType>& plane);
@@ -183,6 +202,18 @@ TReal GetSDFValueOf(const DVector3<TType>& point, const DPlane<TType>& plane);
 /// @brief Get positive 't' list to the point of given sphere from given ray.
 template <typename TType>
 std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DSphere<TType>& sphere);
+
+/// @brief Get positive 't' list to the point of given box from given ray.
+template <typename TType>
+std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DBox<TType>& box);
+
+/// @brief Get positive 't' list to the point of given box from given ray.
+template <typename TType>
+std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DBox<TType>& box, const DMatrix3<TType>& rot);
+
+/// @brief Get positive 't' list to the point of given box from given ray.
+template <typename TType>
+std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DBox<TType>& box, const DQuaternion<TType>& rot);
 
 /// @brief Get positive 't' list to the point of given DPlane from given ray.
 template <typename TType>
@@ -193,6 +224,21 @@ std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DPlane<TType>& pla
 template <typename TType>
 std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DSphere<TType>& sphere);
 
+/// @brief Get positive `t` to the closest point of given box from given ray.
+/// If not found, just return nullopt value.
+template <typename TType>
+std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DBox<TType>& box);
+
+/// @brief Get positive `t` to the closest point of given box from given ray.
+/// If not found, just return nullopt value.
+template <typename TType>
+std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DBox<TType>& box, const DMatrix3<TType>& rot);
+
+/// @brief Get positive `t` to the closest point of given box from given ray.
+/// If not found, just return nullopt value.
+template <typename TType>
+std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DBox<TType>& box, const DQuaternion<TType>& rot);
+
 /// @brief Get positive `t` to the closest point of given plane from given ray.
 /// If not found, just return nullopt value.
 template <typename TType>
@@ -201,6 +247,18 @@ std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DPlane<TTy
 /// @brief Try to get normal vector of sphere, when ray is intersected.
 template <typename TType>
 std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DSphere<TType>& sphere);
+
+/// @brief Try to get normal vector of box, when ray is intersected.
+template <typename TType>
+std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DBox<TType>& box);
+
+/// @brief Try to get normal vector of box, when ray is intersected.
+template <typename TType>
+std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DBox<TType>& box, const DMatrix3<TType>& rot);
+
+/// @brief Try to get normal vector of box, when ray is intersected.
+template <typename TType>
+std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DBox<TType>& box, const DQuaternion<TType>& rot);
 
 /// @brief Try to get normal vector of plane, when ray is intersected.
 template <typename TType>
