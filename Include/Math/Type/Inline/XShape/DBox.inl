@@ -27,7 +27,9 @@ inline DBox<TType>::DBox(const DVector3<TValueType>& origin,
   : mOrigin{ origin },
     mLength{ right, left, up, down, front, back }
 {
+#if !defined(NDEBUG)
   for (const auto& item : this->mLength) { assert(item > 0.0f); }
+#endif
 }
 
 template<typename TType>
@@ -50,7 +52,9 @@ inline DBox<TType>::DBox(const DVector3<TValueType>& origin, const std::array<TV
   : mOrigin{ origin },
     mLength{ lengthList }
 {
+#if !defined(NDEBUG)
   for (const auto& item : this->mLength) { assert(item > 0.0f); }
+#endif
 }
 
 template<typename TType>

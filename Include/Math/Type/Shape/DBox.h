@@ -44,6 +44,7 @@ public:
     "Failed to make DBox, DBox only supports Real type.");
   using TValueType = TType;
 
+  DBox() = default;
   DBox(const DVector3<TValueType>& origin, 
     TValueType right, TValueType left, TValueType up, 
     TValueType down, TValueType front, TValueType back);
@@ -85,8 +86,8 @@ public:
   bool HasOnlyNormal() const noexcept;
 
 protected:
-  DVector3<TValueType> mOrigin;
-  std::array<TValueType, 6> mLength;
+  DVector3<TValueType> mOrigin = {};
+  std::array<TValueType, 6> mLength = {};
 };
 
 } /// ::dy::math namespace
