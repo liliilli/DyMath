@@ -37,13 +37,21 @@ inline DBox<TType>::DBox(const DVector3<TValueType>& origin, const DVector3<TVal
 
 template<typename TType>
 inline DBox<TType>::DBox(const DVector3<TValueType>& origin, TValueType right, TValueType up, TValueType down)
-  : DBox{ origin, {right, up, down} }
+  : DBox{ origin, DVector3<TValueType>{right, up, down} }
 { }
 
 template<typename TType>
 inline DBox<TType>::DBox(const DVector3<TValueType>& origin, TValueType length)
   : DBox{ origin, length, length, length }
 { }
+
+template<typename TType>
+inline DBox<TType>::DBox(const DVector3<TValueType>& origin, const std::array<TValueType, 6>& lengthList)
+  : mOrigin{ origin },
+    mLength{ lengthList }
+{
+  for (const auto& item : this->mLength) { assert(item > 0.0f); }
+}
 
 template<typename TType>
 inline typename DBox<TType>::TValueType 
@@ -75,6 +83,13 @@ DBox<TType>::GetMaxPos() const noexcept
   return 
       this->GetOrigin() 
     + DVector3<TValueType>{this->GetLengthOf(EBoxDir::Right), this->GetLengthOf(EBoxDir::Up), this->GetLengthOf(EBoxDir::Front)};
+}
+
+template <typename TType>
+std::array<typename DBox<TType>::TValueType, 6> 
+DBox<TType>::GetLengthList() const noexcept
+{
+  return this->mLength;
 }
 
 template<typename TType>

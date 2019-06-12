@@ -47,6 +47,7 @@ public:
   DBox(const DVector3<TValueType>& origin, 
     TValueType right, TValueType left, TValueType up, 
     TValueType down, TValueType front, TValueType back);
+  DBox(const DVector3<TValueType>& origin, const std::array<TValueType, 6>& lengthList);
   DBox(const DVector3<TValueType>& origin, const DVector3<TValueType>& length);
   DBox(const DVector3<TValueType>& origin, TValueType right, TValueType up, TValueType down);
   DBox(const DVector3<TValueType>& origin, TValueType length);
@@ -62,6 +63,9 @@ public:
 
   /// @brief Get max pos of box in local space.
   DVector3<TValueType> GetMaxPos() const noexcept;
+
+  /// @brief Get length list of box.
+  std::array<TValueType, 6> GetLengthList() const noexcept;
 
   /// @brief Check this box is symmetrical, 
   /// so right and left are same, up and down are same, and front and back are same length to each other.
