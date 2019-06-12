@@ -59,6 +59,24 @@ DBox<TType>::GetOrigin() const noexcept
   return this->mOrigin;
 }
 
+template <typename TType>
+inline DVector3<typename DBox<TType>::TValueType>
+DBox<TType>::GetMinPos() const noexcept
+{
+  return 
+      this->GetOrigin() 
+    - DVector3<TValueType>{this->GetLengthOf(EBoxDir::Left), this->GetLengthOf(EBoxDir::Down), this->GetLengthOf(EBoxDir::Back)};
+}
+
+template <typename TType>
+inline DVector3<typename DBox<TType>::TValueType>
+DBox<TType>::GetMaxPos() const noexcept
+{
+  return 
+      this->GetOrigin() 
+    + DVector3<TValueType>{this->GetLengthOf(EBoxDir::Right), this->GetLengthOf(EBoxDir::Up), this->GetLengthOf(EBoxDir::Front)};
+}
+
 template<typename TType>
 inline bool DBox<TType>::IsSymmetrical() const noexcept
 {

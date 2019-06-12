@@ -57,6 +57,12 @@ public:
   /// @brief Get ray's origin position.
   const DVector3<TValueType>& GetOrigin() const noexcept;
 
+  /// @brief Get min pos of box in local space.
+  DVector3<TValueType> GetMinPos() const noexcept;
+
+  /// @brief Get max pos of box in local space.
+  DVector3<TValueType> GetMaxPos() const noexcept;
+
   /// @brief Check this box is symmetrical, 
   /// so right and left are same, up and down are same, and front and back are same length to each other.
   bool IsSymmetrical() const noexcept;
