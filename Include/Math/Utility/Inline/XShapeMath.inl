@@ -44,14 +44,18 @@ bool IsRayIntersected(const DRay<TType>& ray, const DBox<TType>& box)
 }
 
 template <typename TType>
-bool IsRayIntersected(const DRay<TType>& ray, const DBox<TType>& box, const DMatrix3<TType>& rotMatrix)
+bool IsRayIntersected(const DRay<TType>& ray, const DBox<TType>& box, const DMatrix3<TType>& rot)
 {
   // We regards box is symmetrical and origin is located on origin of box space.
   // We need to convert ray of world-space into box-space.
-  const auto invRotMat = rotMatrix.Transpose();
+  const auto invRotMat = rot.Transpose();
+  const auto localSpaceRayPos = invRotMat * (ray.GetOrigin() - box.GetOrigin());
   const auto localSpaceRayDir = invRotMat * ray.GetDirection();
 
-  return IsRayIntersected(DRay<TType>{ray.GetOrigin(), localSpaceRayDir}, box);
+  return IsRayIntersected(
+    DRay<TType>{localSpaceRayPos, localSpaceRayDir}, 
+    DBox<TType>{DVector3<TType>{0}, box.GetLengthList()}
+  );
 }
 
 template <typename TType>
