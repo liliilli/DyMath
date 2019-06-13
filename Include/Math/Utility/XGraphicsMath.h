@@ -22,6 +22,7 @@
 #include <Math/Type/Shape/DSphere.h>
 #include <Math/Type/Shape/DBox.h>
 #include <Math/Type/Shape/DPlane.h>
+#include <Math/Type/Shape/DTorus.h>
 
 namespace dy::math
 {
@@ -148,6 +149,10 @@ TReal Schlick(
 //! Shapes
 //!
 
+//!
+//! IsRayIntersected
+//!
+
 /// @brief Check that Ray is intersected into Sphere.
 template <typename TType>
 [[nodiscard]] bool IsRayIntersected(const DRay<TType>& ray, const DSphere<TType>& sphere);
@@ -179,6 +184,30 @@ template <typename TType>
 template <typename TType>
 [[nodiscard]] bool IsRayIntersected(const DRay<TType>& ray, const DPlane<TType>& plane);
 
+/// @brief Check that Ray is intersected into DTorus.
+/// @param ray Ray instance in world-space.
+/// @param torus Torus instance in world-space.
+template <typename TType>
+[[nodiscard]] bool IsRayIntersected(const DRay<TType>& ray, const DTorus<TType>& torus);
+
+/// @brief Check that Ray is intersected into DTorus.
+/// @param ray Ray instance in world-space.
+/// @param torus Torus instance.
+/// @param rot World-rotation matrix of torus instance.
+template <typename TType>
+[[nodiscard]] bool IsRayIntersected(const DRay<TType>& ray, const DTorus<TType>& torus, const DMatrix3<TType>& rot);
+
+/// @brief Check that Ray is intersected into DTorus.
+/// @param ray Ray instance in world-space.
+/// @param torus Torus instance.
+/// @param rot Quaternion that has rotation information of DTorus.
+template <typename TType>
+[[nodiscard]] bool IsRayIntersected(const DRay<TType>& ray, const DTorus<TType>& torus, const DQuaternion<TType>& rot);
+
+//!
+//! GetSDFValueOf
+//!
+
 /// @brief Get signed distance value of sphere model from point.
 template <typename TType>
 TReal GetSDFValueOf(const DVector3<TType>& point, const DSphere<TType>& sphere);
@@ -199,6 +228,10 @@ TReal GetSDFValueOf(const DVector3<TType>& point, const DBox<TType>& box, const 
 template <typename TType>
 TReal GetSDFValueOf(const DVector3<TType>& point, const DPlane<TType>& plane);
 
+//!
+//! GetTValuesOf
+//!
+
 /// @brief Get positive 't' list to the point of given sphere from given ray.
 template <typename TType>
 std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DSphere<TType>& sphere);
@@ -218,6 +251,30 @@ std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DBox<TType>& box, 
 /// @brief Get positive 't' list to the point of given DPlane from given ray.
 template <typename TType>
 std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DPlane<TType>& plane);
+
+/// @brief Get positive 't' list to the point of given DTorus from given ray.
+/// @param ray Ray instance in world-space.
+/// @param torus Torus instance.
+template <typename TType>
+std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DTorus<TType>& torus);
+
+/// @brief Get positive 't' list to the point of given torus from given ray.
+/// @param ray Ray instance in world-space.
+/// @param torus Torus instance.
+/// @param rot World-rotation matrix of torus instance.
+template <typename TType>
+std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DTorus<TType>& torus, const DMatrix3<TType>& rot);
+
+/// @brief Get positive 't' list to the point of given torus from given ray.
+/// @param ray Ray instance in world-space.
+/// @param torus Torus instance.
+/// @param rot Quaternion that has rotation information of DTorus.
+template <typename TType>
+std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DTorus<TType>& torus, const DQuaternion<TType>& rot);
+
+//!
+//! GetClosestTValueOf
+//!
 
 /// @brief Get positive `t` to the closest point of given sphere from given ray.
 /// If not found, just return nullopt value.
@@ -244,6 +301,31 @@ std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DBox<TType
 template <typename TType>
 std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DPlane<TType>& plane);
 
+/// @brief Get positive `t` to the closest point of given plane from given ray.
+/// If not found, just return nullopt value.
+/// @param ray Ray instance in world-space.
+/// @param torus Torus instance.
+template <typename TType>
+std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DTorus<TType>& torus);
+
+/// @brief Get positive 't' list to the point of given torus from given ray.
+/// @param ray Ray instance in world-space.
+/// @param torus Torus instance.
+/// @param rot World-rotation matrix of torus instance.
+template <typename TType>
+std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DTorus<TType>& torus, const DMatrix3<TType>& rot);
+
+/// @brief Get positive 't' list to the point of given torus from given ray.
+/// @param ray Ray instance in world-space.
+/// @param torus Torus instance.
+/// @param rot Quaternion that has rotation information of DTorus.
+template <typename TType>
+std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DTorus<TType>& torus, const DQuaternion<TType>& rot);
+
+//!
+//! GetNormalOf
+//!
+
 /// @brief Try to get normal vector of sphere, when ray is intersected.
 template <typename TType>
 std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DSphere<TType>& sphere);
@@ -263,6 +345,27 @@ std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DBox<TT
 /// @brief Try to get normal vector of plane, when ray is intersected.
 template <typename TType>
 std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DPlane<TType>& plane);
+
+/// @brief Try to get normal vector of torus, when ray is intersected.
+/// If not found, just return nullopt value.
+/// @param ray Ray instance in world-space.
+/// @param torus Torus instance.
+template <typename TType>
+std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DTorus<TType>& torus);
+
+/// @brief Try to get normal vector of torus, when ray is intersected.
+/// @param ray Ray instance in world-space.
+/// @param torus Torus instance.
+/// @param rot World-rotation matrix of torus instance.
+template <typename TType>
+std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DTorus<TType>& torus, const DMatrix3<TType>& rot);
+
+/// @brief Try to get normal vector of torus, when ray is intersected.
+/// @param ray Ray instance in world-space.
+/// @param torus Torus instance.
+/// @param rot Quaternion that has rotation information of DTorus.
+template <typename TType>
+std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DTorus<TType>& torus, const DQuaternion<TType>& rot);
 
 } /// ::dy::math namespace
 #include <Math/Utility/Inline/XGraphicsMath.inl>

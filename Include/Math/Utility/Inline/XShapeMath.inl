@@ -27,13 +27,13 @@ bool IsRayIntersected(const DRay<TType>& ray, const DSphere<TType>& sphere)
   const auto alp = ray.GetOrigin() - sphere.GetOrigin();
   const auto dir = ray.GetDirection();
 
-  const auto b = Dot(alp, dir);
+  const auto b = 2 * Dot(alp, dir);
   const auto c = Dot(alp, alp) - (sphere.GetRadius() * sphere.GetRadius());
-  const auto sqrtE = std::sqrt((b * b) - c);
 
-  const auto result1 = -b + sqrtE;
-  const auto result2 = -b - sqrtE;
-  return result1 >= 0 || result2 >= 0;
+  const auto result = SolveQuadric(TReal(1), TReal(b), TReal(c));
+  if (result.empty() == true) { return false; }
+
+  return std::any_of(result.cbegin(), result.cend(), [](const auto& value) { return value >= 0; });
 }
 
 template <typename TType>
@@ -76,6 +76,34 @@ bool IsRayIntersected(const DRay<TType>& ray, const DPlane<TType>& plane)
   // so need to invert normal when SDF is positive.
   const auto normal = plane.GetNormal() * (sdfValue > TType(0) ? TType(-1) : TType(1));
   return Dot(ray.GetDirection(), normal) > 0.0f;
+}
+
+template <typename TType>
+bool IsRayIntersected(const DRay<TType>& ray, const DTorus<TType>& torus)
+{
+  const auto tResult = GetTValuesOf(ray, torus);
+  return tResult.empty() == false;
+}
+
+template <typename TType>
+bool IsRayIntersected(const DRay<TType>& ray, const DTorus<TType>& torus, const DMatrix3<TType>& rot)
+{
+  // We regards box is symmetrical and origin is located on origin of box space.
+  // We need to convert ray of world-space into box-space.
+  const auto invRotMat = rot.Transpose();
+  const auto localSpaceRayPos = invRotMat * (ray.GetOrigin() - torus.GetOrigin());
+  const auto localSpaceRayDir = invRotMat * ray.GetDirection();
+
+  return IsRayIntersected(
+    DRay<TType>{localSpaceRayPos, localSpaceRayDir}, 
+    DTorus<TType>{DVector3<TType>{0}, torus.GetDistance(), torus.GetOrigin()}
+  );
+}
+
+template <typename TType>
+bool IsRayIntersected(const DRay<TType>& ray, const DTorus<TType>& torus, const DQuaternion<TType>& rot)
+{
+  return IsRayIntersected(ray, torus, rot.ToMatrix3());
 }
 
 //!
@@ -155,19 +183,16 @@ std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DSphere<TType>& sp
   const auto alp = ray.GetOrigin() - sphere.GetOrigin();
   const auto dir = ray.GetDirection();
 
-  const auto b = Dot(alp, dir);
+  const auto b = 2 * Dot(alp, dir);
   const auto c = Dot(alp, alp) - (sphere.GetRadius() * sphere.GetRadius());
   const auto sqrtE = std::sqrt((b * b) - c);
 
-  const auto result1 = -b + sqrtE;
-  const auto result2 = -b - sqrtE;
+  auto result = SolveQuadric(TReal(1), TReal(b), TReal(c));
 
-  // Insert values into result list.
-  std::vector<TReal> result = {result1, result2};
   result.erase(
     std::remove_if(result.begin(), result.end(), [](const auto& value) { return value < 0.0f; }),
     result.end());
-  std::sort(result.begin(), result.end(), [](const auto& lhs, const auto& rhs) { return lhs < rhs; });
+  std::sort(result.begin(), result.end());
 
   return result;
 }
@@ -250,6 +275,63 @@ template <typename TType>
 std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DBox<TType>& box, const DQuaternion<TType>& rot)
 {
   return GetTValuesOf(ray, box, rot.ToMatrix3());
+}
+
+template <typename TType>
+std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DTorus<TType>& torus)
+{
+  // reference https://marcin-chwedczuk.github.io/ray-tracing-torus
+  // reference https://en.wikipedia.org/wiki/Quartic_function#Ferrari's_solution
+
+  const auto ro = ray.GetOrigin() - torus.GetOrigin();
+  const auto o2_minus_torus2 = 
+      std::pow(ro.GetLength(), 2) 
+    - (std::pow(torus.GetDistance(), 2) + std::pow(torus.GetRadius(), 2));
+  const auto od = Dot(ro, ray.GetDirection());
+  const auto d2 = TType(1); // ray.GetDirection().GetLength() always 1. 1^2 = 1.
+
+  // c4t4 + c3t3 + c2t2 + c1t1 + c0 = 0;
+  const auto c4 = d2; // Always 1.
+  const auto c3 = 4 * d2 * od;
+  const auto c2 = 
+      2 * d2 * o2_minus_torus2 
+    + 4 * std::pow(od, 2)  
+    + 4 * std::pow(torus.GetRadius(), 2) * std::pow(ray.GetDirection().Y, 2);
+  const auto c1 = 
+      4 * o2_minus_torus2 * od
+    + 8 * std::pow(torus.GetRadius(), 2) * ro.Y * ray.GetDirection().Y;
+  const auto c0 = 
+      std::pow(o2_minus_torus2, 2)
+    - 4 * std::pow(torus.GetRadius(), 2) * (std::pow(torus.GetRadius(), 2) - std::pow(ro.Y, 2));
+
+  auto result = SolveQuartic(c4, c3, c2, c1, c0);
+  result.erase(
+    std::remove_if(result.begin(), result.end(), [](const auto& value) { return value < 0.0f; }),
+    result.end());
+  std::sort(result.begin(), result.end());
+
+  return result;
+}
+
+template <typename TType>
+std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DTorus<TType>& torus, const DMatrix3<TType>& rot)
+{
+  // We regards box is symmetrical and origin is located on origin of box space.
+  // We need to convert ray of world-space into box-space.
+  const auto invRotMat      = rot.Transpose();
+  const auto localSpacePos  = invRotMat * (ray.GetOrigin() - torus.GetOrigin());
+  const auto localSpaceDir  = invRotMat * ray.GetDirection();
+  
+  return GetTValuesOf(
+    DRay<TType>{localSpacePos, localSpaceDir}, 
+    DTorus<TType>{DVector3<TType>{0}, torus.GetDistance(), torus.GetRadius()}
+  );
+}
+
+template <typename TType>
+std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DTorus<TType>& torus, const DQuaternion<TType>& rot)
+{
+  return GetTValuesOf(ray, torus, rot.ToMatrix3());
 }
 
 //!
