@@ -13,6 +13,8 @@
 ///
 
 #include <algorithm>
+#include <utility>
+#include <vector>
 #include <Math/Common/TGlobalTypes.h>
 #include <Math/Type/Math/DVector2.h>
 #include <Math/Type/Math/DVector3.h>
@@ -202,6 +204,33 @@ DVector3<TType> Abs(const DVector3<TType>& vector) noexcept;
 /// @return Absolutized vector value.
 template <typename TType>
 DVector4<TType> Abs(const DVector4<TType>& vector) noexcept;
+
+/// @brief Solve quadric (highest order term is 2) equation and get only real values.
+/// c2x2 + c1x + c0 = 0.
+/// @param c2 coefficient of second-order term.
+/// @param c1 coefficient of first-order term.
+/// @param c0 constant value.
+/// @return Sorted root values.
+std::vector<TReal> SolveQuadric(TReal c2, TReal c1, TReal c0);
+
+/// @brief Solve cubic (highest order term is 3) equation and get only real values.
+/// c3x3 + c2x2 + c1x + c0 = 0.
+/// @param c3 coefficient of third-order term.
+/// @param c2 coefficient of second-order term.
+/// @param c1 coefficient of first-order term.
+/// @param c0 constant value.
+/// @return Sorted root values.
+std::vector<TReal> SolveCubic(TReal c3, TReal c2, TReal c1, TReal c0);
+
+/// @brief Solve quartic (highest order term is 4) equation and get only real values.
+/// c4x4 + c3x3 + c2x2 + c1x + c0 = 0.
+/// @param c4 coefficient of fourth-order term.
+/// @param c3 coefficient of third-order term.
+/// @param c2 coefficient of second-order term.
+/// @param c1 coefficient of first-order term.
+/// @param c0 constant value.
+/// @return Sorted root values.
+std::vector<TReal> SolveQuartic(TReal c4, TReal c3, TReal c2, TReal c1, TReal c0);
 
 } /// ::dy::math namespace
 #include <Math/Utility/Inline/XMath/MapValue.inl>
