@@ -171,6 +171,36 @@ TReal GetSDFValueOf(const DVector3<TType>& point, const DPlane<TType>& plane)
   return (Dot(point, plane.GetNormal()) + plane.GetD()) / plane.GetNormal().GetLength();
 }
 
+template <typename TType>
+TReal GetSDFValueOf(const DVector3<TType>& point, const DTorus<TType>& torus)
+{
+  const auto ro = point - torus.GetOrigin();
+  const auto q  = std::sqrt(ro.X * ro.X + ro.Z * ro.Z) - torus.GetDistance();
+  const auto length = std::sqrt(q * q + ro.Y * ro.Y);
+
+  return length - torus.GetRadius();
+}
+
+template <typename TType>
+TReal GetSDFValueOf(const DVector3<TType>& point, const DTorus<TType>& torus, const DMatrix3<TType>& rot)
+{
+  // We regards box is symmetrical and origin is located on origin of box space.
+  // We need to convert ray of world-space into box-space.
+  const auto invRotMat = rot.Transpose();
+  const auto localSpacePos = invRotMat * (point - torus.GetOrigin());
+  
+  return GetSDFValueOf(
+    localSpacePos, 
+    DTorus<TType>{DVector3<TType>{0}, torus.GetDistance(), torus.GetRadius()}
+  );
+}
+
+template <typename TType>
+TReal GetSDFValueOf(const DVector3<TType>& point, const DTorus<TType>& torus, const DQuaternion<TType>& rot)
+{
+  return GetSDFValueOf(point, torus, rot.ToMatrix3());
+}
+
 //!
 //! GetTValuesOf
 //! 
@@ -385,6 +415,33 @@ std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DPlane<TTy
   return tValueList.front();
 }
 
+template <typename TType>
+std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DTorus<TType>& torus)
+{
+  const auto tValueList = GetTValuesOf(ray, torus);
+  if (tValueList.empty() == true) { return std::nullopt; }
+
+  return tValueList.front(); 
+}
+
+template <typename TType>
+std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DTorus<TType>& torus, const DMatrix3<TType>& rot)
+{
+  const auto tValueList = GetTValuesOf(ray, torus, rot);
+  if (tValueList.empty() == true) { return std::nullopt; }
+
+  return tValueList.front();
+}
+
+template <typename TType>
+std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DTorus<TType>& torus, const DQuaternion<TType>& rot)
+{
+  const auto tValueList = GetTValuesOf(ray, torus, rot);
+  if (tValueList.empty() == true) { return std::nullopt; }
+
+  return tValueList.front();
+}
+
 //!
 //! GetNormalOf
 //!
@@ -465,6 +522,51 @@ std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DPlane<
 
   const auto sdfValue = GetSDFValueOf(ray.GetOrigin(), plane);
   return plane.GetNormal() * (sdfValue > TType(0) ? TType(1) : TType(-1));
+}
+
+template <typename TType>
+std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DTorus<TType>& torus)
+{
+  // Check
+  if (IsRayIntersected(ray, torus) == false) { return std::nullopt; }
+
+  auto optT = GetClosestTValueOf(ray, torus);
+  if (optT.has_value() == false) { return std::nullopt; }
+
+  DRay<TReal> resultRay = {ray.GetPointAtParam(*optT), ray.GetDirection(), false};
+
+  const TType offset = TType(0.001);
+  const auto origin = resultRay.GetOrigin();
+  const auto x = GetSDFValueOf<TType>(origin + DVector3<TType>{offset, 0, 0}, torus) - GetSDFValueOf(origin, torus);
+  const auto y = GetSDFValueOf<TType>(origin + DVector3<TType>{0, offset, 0}, torus) - GetSDFValueOf(origin, torus);
+  const auto z = GetSDFValueOf<TType>(origin + DVector3<TType>{0, 0, offset}, torus) - GetSDFValueOf(origin, torus);
+
+  DVector3<TType> result = DVector3<TType>{x, y, z};
+  return result.Normalize();
+}
+
+template <typename TType>
+std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DTorus<TType>& torus, const DMatrix3<TType>& rot)
+{
+  // We regards box is symmetrical and origin is located on origin of box space.
+  // We need to convert ray of world-space into box-space.
+  const auto invRotMat      = rot.Transpose();
+  const auto localSpacePos  = invRotMat * (ray.GetOrigin() - torus.GetOrigin());
+  const auto localSpaceDir  = invRotMat * ray.GetDirection();
+  
+  const auto normal = GetNormalOf(
+    DRay<TType>{localSpacePos, localSpaceDir}, 
+    DTorus<TType>{DVector3<TType>{0}, torus.GetDistance(), torus.GetRadius()}
+  );
+  if (normal.has_value() == false) { return std::nullopt; }
+
+  return rot * (*normal);
+}
+
+template <typename TType>
+std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DTorus<TType>& torus, const DQuaternion<TType>& rot)
+{
+  return GetNormalOf(ray, torus, rot.ToMatrix3());
 }
 
 } /// ::dy::math namespace

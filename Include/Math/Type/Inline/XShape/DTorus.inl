@@ -13,6 +13,8 @@
 /// SOFTWARE.
 ///
 
+#include <cassert>
+
 namespace dy::math
 {
 

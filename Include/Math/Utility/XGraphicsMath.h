@@ -228,6 +228,18 @@ TReal GetSDFValueOf(const DVector3<TType>& point, const DBox<TType>& box, const 
 template <typename TType>
 TReal GetSDFValueOf(const DVector3<TType>& point, const DPlane<TType>& plane);
 
+/// @brief Get signed distance value of torus model from point.
+template <typename TType>
+TReal GetSDFValueOf(const DVector3<TType>& point, const DTorus<TType>& torus);
+
+/// @brief Get signed distance value of torus model from point.
+template <typename TType>
+TReal GetSDFValueOf(const DVector3<TType>& point, const DTorus<TType>& torus, const DMatrix3<TType>& rot);
+
+/// @brief Get signed distance value of torus model from point.
+template <typename TType>
+TReal GetSDFValueOf(const DVector3<TType>& point, const DTorus<TType>& torus, const DQuaternion<TType>& rot);
+
 //!
 //! GetTValuesOf
 //!
