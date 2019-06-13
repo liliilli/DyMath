@@ -7,6 +7,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_VERBOSE_MAKEFILE true)
 
 OPTION(MATH_BUILD_LIB "Build as library" OFF)
+OPTION(MATH_BUILD_WITH_EXPR "Build as DyExpression" OFF)
 OPTION(MATH_BUILD_WITH_BOOST "Build with boost" OFF)
 if (${UTIL_BUILD_WITH_MT} STREQUAL "ON")
 	OPTION(MATH_BUILD_WITH_MT "Build as MTd or MT" ON)
@@ -62,9 +63,12 @@ if (MATH_BUILD_LIB)
 		set(SOURCE
 			Source/Math/Type/Micellanous/DUuid.cc
 			Source/Utility/XBoost.cc
+			Source/Utility/XMath.cc
 		)
 	else()
-		message(FATAL_ERROR "MATH_BUILD_WITH_BOOST flag must be enabled.")
+		set(SOURCE
+			Source/Utility/XMath.cc
+		)		
 	endif()
 endif()
 
@@ -94,18 +98,23 @@ endif()
 
 # Add library with include files.
 if (${MATH_BUILD_LIB} STREQUAL "ON")
-	if (MATH_BUILD_WITH_BOOST)
-		add_library(DyMath STATIC ${SOURCE})
+	add_library(DyMath STATIC ${SOURCE})
+	target_include_directories(DyMath
+	PRIVATE
+		${CMAKE_CURRENT_SOURCE_DIR}/Include
+	)
+
+	if (${MATH_BUILD_WITH_EXPR} STREQUAL "ON")
 		target_include_directories(DyMath
 		PRIVATE
-			${CMAKE_CURRENT_SOURCE_DIR}/Include
-			${Boost_INCLUDE_DIRS}
+			${CMAKE_CURRENT_SOURCE_DIR}/../DyExpression/Include
 		)
-	else()
-		add_library(DyMath STATIC)
+	endif()
+
+	if (${MATH_BUILD_WITH_BOOST} STREQUAL "ON")
 		target_include_directories(DyMath
 		PRIVATE
-			${CMAKE_CURRENT_SOURCE_DIR}/Include
+			${Boost_INCLUDE_DIRS}
 		)
 	endif()
 
