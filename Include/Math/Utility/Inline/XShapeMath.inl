@@ -96,7 +96,7 @@ bool IsRayIntersected(const DRay<TType>& ray, const DTorus<TType>& torus, const 
 
   return IsRayIntersected(
     DRay<TType>{localSpaceRayPos, localSpaceRayDir}, 
-    DTorus<TType>{DVector3<TType>{0}, torus.GetDistance(), torus.GetOrigin()}
+    DTorus<TType>{DVector3<TType>{0}, torus.GetDistance(), torus.GetRadius()}
   );
 }
 
