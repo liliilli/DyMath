@@ -493,7 +493,7 @@ std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DCone<TType>& cone
   // We regards box is symmetrical and origin is located on origin of box space.
   // We need to convert ray of world-space into box-space.
   const auto invRotMat      = rot.Transpose();
-  const auto localSpacePos  = invRotMat * (ray.GetOrigin() - torus.GetOrigin());
+  const auto localSpacePos  = invRotMat * (ray.GetOrigin() - cone.GetOrigin());
   const auto localSpaceDir  = invRotMat * ray.GetDirection();
   
   return GetTValuesOf(
@@ -772,7 +772,7 @@ std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DCone<T
   
   const auto normal = GetNormalOf(
     DRay<TType>{localSpacePos, localSpaceDir}, 
-    DCone<TType>{DVector3<TType>{0}, cone.GetDistance(), cone.GetRadius()}
+    DCone<TType>{DVector3<TType>{0}, cone.GetHeight(), cone.GetRadius()}
   );
   if (normal.has_value() == false) { return std::nullopt; }
 

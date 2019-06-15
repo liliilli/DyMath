@@ -52,7 +52,7 @@ public:
   /// @brief Check values are normal value, neither NaN nor Inf.
   bool HasOnlyNormal() const noexcept;
 
-private:
+protected:
   DVector3<TValueType> mOrigin;
   TValueType mHeight; 
   TValueType mRadius; 
