@@ -106,6 +106,34 @@ bool IsRayIntersected(const DRay<TType>& ray, const DTorus<TType>& torus, const 
   return IsRayIntersected(ray, torus, rot.ToMatrix3());
 }
 
+template <typename TType>
+bool IsRayIntersected(const DRay<TType>& ray, const DCone<TType>& cone)
+{
+  const auto tResult = GetTValuesOf(ray, cone);
+  return tResult.empty() == false;
+}
+
+template <typename TType>
+bool IsRayIntersected(const DRay<TType>& ray, const DCone<TType>& cone, const DMatrix3<TType>& rot)
+{
+  // We regards box is symmetrical and origin is located on origin of box space.
+  // We need to convert ray of world-space into box-space.
+  const auto invRotMat = rot.Transpose();
+  const auto localSpaceRayPos = invRotMat * (ray.GetOrigin() - cone.GetOrigin());
+  const auto localSpaceRayDir = invRotMat * ray.GetDirection();
+
+  return IsRayIntersected(
+    DRay<TType>{localSpaceRayPos, localSpaceRayDir}, 
+    DCone<TType>{DVector3<TType>{0}, cone.GetHeight(), cone.GetRadius()}
+  );
+}
+
+template <typename TType>
+bool IsRayIntersected(const DRay<TType>& ray, const DCone<TType>& cone, const DQuaternion<TType>& rot)
+{
+  return IsRayIntersected(ray, cone, rot.ToMatrix3());
+}
+
 //!
 //! GetSDFValueOf
 //!
@@ -199,6 +227,44 @@ template <typename TType>
 TReal GetSDFValueOf(const DVector3<TType>& point, const DTorus<TType>& torus, const DQuaternion<TType>& rot)
 {
   return GetSDFValueOf(point, torus, rot.ToMatrix3());
+}
+
+template <typename TType>
+TReal GetSDFValueOf(const DVector3<TType>& point, const DCone<TType>& cone)
+{
+  // c must be normalized (normal)
+  // https://computergraphics.stackexchange.com/questions/7485/glsl-shapes-signed-distance-field-implementation-explanation
+  const DVector3<TReal> ro = point - (cone.GetOrigin() + DVector3<TType>{0, cone.GetHeight(), 0});
+  const DVector3<TReal> co = Cross(DVector3<TType>{-cone.GetRadius(), cone.GetHeight(), 0}, DVector3<TType>::UnitZ());
+
+  const TReal q = DVector2<TReal>{ro.X, ro.Z}.GetLength();
+  const TReal sdf = Dot(DVector2<TReal>{co.X, co.Y}.Normalize(), DVector2<TReal>(q, ro.Y));
+  if (sdf < 0)
+  {
+    const TReal planeSdf = GetSDFValueOf(point - cone.GetOrigin(), DPlane<TType>{DVector3<TType>::UnitY() * -1, 0});
+    return std::max(planeSdf, sdf);
+  }
+  else { return sdf; }
+}
+
+template <typename TType>
+TReal GetSDFValueOf(const DVector3<TType>& point, const DCone<TType>& cone, const DMatrix3<TType>& rot)
+{
+  // We regards box is symmetrical and origin is located on origin of box space.
+  // We need to convert ray of world-space into box-space.
+  const auto invRotMat = rot.Transpose();
+  const auto localSpacePos = invRotMat * (point - cone.GetOrigin());
+  
+  return GetSDFValueOf(
+    localSpacePos, 
+    DCone<TType>{DVector3<TType>{0}, cone.GetHeight(), cone.GetRadius()}
+  );
+}
+
+template <typename TType>
+TReal GetSDFValueOf(const DVector3<TType>& point, const DCone<TType>& cone, const DQuaternion<TType>& rot)
+{
+  return GetSDFValueOf(point, cone, rot.ToMatrix3());
 }
 
 //!
@@ -364,6 +430,84 @@ std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DTorus<TType>& tor
   return GetTValuesOf(ray, torus, rot.ToMatrix3());
 }
 
+template <typename TType>
+std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DCone<TType>& cone)
+{
+  // http://lousodrome.net/blog/light/2017/01/03/intersection-of-a-ray-and-a-cone/
+  // We need to get point C, vector V, and cos\theta.
+  // We set given cone is on x-y-z axis aligned space.
+  const DVector3<TReal> ro  = ray.GetOrigin() - cone.GetOrigin();
+  const DVector3<TReal>& d  = ray.GetDirection();
+  const DVector3<TReal> v   = DVector3<TReal>::UnitY() * -1;
+  const DVector3<TReal> c   = v * -1 * cone.GetHeight();
+  const DVector3<TReal> r   = {cone.GetRadius(), 0, 0};
+  const TReal cTheta2       = std::pow(Dot((r - c).Normalize(), v), 2);
+  const DVector3<TReal> co  = ro - c;
+  
+  const TReal qa = std::pow(Dot(d, v), TReal(2)) - cTheta2;
+  const TReal qb = 2 * (Dot(d, v) * Dot(co, v) - Dot(d, co) * cTheta2);
+  const TReal qc = std::pow(Dot(co, v), TReal(2)) - Dot(co, co) * cTheta2;
+
+  std::vector<TReal> tempResult = SolveQuadric(qa, qb, qc);
+  tempResult.erase(
+    std::remove_if(tempResult.begin(), tempResult.end(), [](const auto& value) { return value < 0.0f; }),
+    tempResult.end());
+  std::sort(tempResult.begin(), tempResult.end());
+
+  // Check height, disk and out of range.
+  std::vector<TReal> result = {};
+  for (auto& t : tempResult)
+  {
+    const DVector3<TReal> rp = (ro + t * d) - c;
+    const auto h = Dot(rp, v);
+    // If h is pointing shadow cone, just throw away.
+    // If t exceeds hypotenuse, recalculate t as disk, that has normal {0, 1, 0}.
+    if (h < 0 || h > cone.GetHeight()) { continue; }
+
+    result.emplace_back(t);
+  }
+
+  if (IsRayIntersected(DRay<TType>{ro, d}, DPlane<TType>{}) == true)
+  {
+    // Do another tvalue of plane that has normal unitY and d 0.
+    const auto planeTValues = GetTValuesOf(DRay<TType>{ro, d}, DPlane<TType>{});
+    if (planeTValues.empty() == false)
+    {
+      // If newT of potential disk exceeds range of disk radius, just throw away.
+      const auto pLength = (ro + (planeTValues.front() * d)).GetLength();
+      if (pLength <= cone.GetRadius())
+      {
+        // Otherwise, insert into result list.
+        result.emplace_back(planeTValues.front());
+      }
+    }
+  }
+  std::sort(result.begin(), result.end());
+
+  return result;
+}
+
+template <typename TType>
+std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DCone<TType>& cone, const DMatrix3<TType>& rot)
+{
+  // We regards box is symmetrical and origin is located on origin of box space.
+  // We need to convert ray of world-space into box-space.
+  const auto invRotMat      = rot.Transpose();
+  const auto localSpacePos  = invRotMat * (ray.GetOrigin() - torus.GetOrigin());
+  const auto localSpaceDir  = invRotMat * ray.GetDirection();
+  
+  return GetTValuesOf(
+    DRay<TType>{localSpacePos, localSpaceDir}, 
+    DCone<TType>{DVector3<TType>{0}, cone.GetHeight(), cone.GetRadius()}
+  );  
+}
+
+template <typename TType>
+std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DCone<TType>& cone, const DQuaternion<TType>& rot)
+{
+  return GetTValuesOf(ray, cone, rot.ToMatrix3());
+}
+
 //!
 //! GetClosestTValueOf
 //!
@@ -437,6 +581,33 @@ template <typename TType>
 std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DTorus<TType>& torus, const DQuaternion<TType>& rot)
 {
   const auto tValueList = GetTValuesOf(ray, torus, rot);
+  if (tValueList.empty() == true) { return std::nullopt; }
+
+  return tValueList.front();
+}
+
+template <typename TType>
+std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DCone<TType>& cone)
+{
+  const auto tValueList = GetTValuesOf(ray, cone);
+  if (tValueList.empty() == true) { return std::nullopt; }
+
+  return tValueList.front(); 
+}
+
+template <typename TType>
+std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DCone<TType>& cone, const DMatrix3<TType>& rot)
+{
+  const auto tValueList = GetTValuesOf(ray, cone, rot);
+  if (tValueList.empty() == true) { return std::nullopt; }
+
+  return tValueList.front();
+}
+
+template <typename TType>
+std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DCone<TType>& cone, const DQuaternion<TType>& rot)
+{
+  const auto tValueList = GetTValuesOf(ray, cone, rot);
   if (tValueList.empty() == true) { return std::nullopt; }
 
   return tValueList.front();
@@ -567,6 +738,51 @@ template <typename TType>
 std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DTorus<TType>& torus, const DQuaternion<TType>& rot)
 {
   return GetNormalOf(ray, torus, rot.ToMatrix3());
+}
+
+template <typename TType>
+std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DCone<TType>& cone)
+{
+  // Check
+  if (IsRayIntersected(ray, cone) == false) { return std::nullopt; }
+
+  auto optT = GetClosestTValueOf(ray, cone);
+  if (optT.has_value() == false) { return std::nullopt; }
+
+  DRay<TReal> resultRay = {ray.GetPointAtParam(*optT), ray.GetDirection(), false};
+
+  const TType offset = TType(0.001);
+  const auto origin = resultRay.GetOrigin();
+  const auto x = GetSDFValueOf<TType>(origin + DVector3<TType>{offset, 0, 0}, cone) - GetSDFValueOf(origin, cone);
+  const auto y = GetSDFValueOf<TType>(origin + DVector3<TType>{0, offset, 0}, cone) - GetSDFValueOf(origin, cone);
+  const auto z = GetSDFValueOf<TType>(origin + DVector3<TType>{0, 0, offset}, cone) - GetSDFValueOf(origin, cone);
+
+  DVector3<TType> result = DVector3<TType>{x, y, z};
+  return result.Normalize();
+}
+
+template <typename TType>
+std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DCone<TType>& cone, const DMatrix3<TType>& rot)
+{
+  // We regards box is symmetrical and origin is located on origin of box space.
+  // We need to convert ray of world-space into box-space.
+  const auto invRotMat      = rot.Transpose();
+  const auto localSpacePos  = invRotMat * (ray.GetOrigin() - cone.GetOrigin());
+  const auto localSpaceDir  = invRotMat * ray.GetDirection();
+  
+  const auto normal = GetNormalOf(
+    DRay<TType>{localSpacePos, localSpaceDir}, 
+    DCone<TType>{DVector3<TType>{0}, cone.GetDistance(), cone.GetRadius()}
+  );
+  if (normal.has_value() == false) { return std::nullopt; }
+
+  return rot * (*normal);
+}
+
+template <typename TType>
+std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DCone<TType>& cone, const DQuaternion<TType>& rot)
+{
+  return GetNormalOf(ray, cone, rot.ToMatrix3());
 }
 
 } /// ::dy::math namespace
