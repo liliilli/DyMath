@@ -28,7 +28,6 @@ inline DCone<TType>::DCone(const DVector3<TValueType>& origin, TValueType height
   assert(this->mRadius > 0);
   assert(this->HasInfinity() == false);
   assert(this->HasNaN() == false);
-  assert(this->HasOnlyNormal() == true);
 #endif
 }
 
