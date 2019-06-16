@@ -24,6 +24,7 @@
 #include <Math/Type/Shape/DPlane.h>
 #include <Math/Type/Shape/DTorus.h>
 #include <Math/Type/Shape/DCone.h>
+#include <Math/Type/Shape/DCapsule.h>
 
 namespace dy::math
 {
@@ -135,8 +136,7 @@ std::optional<DVector3<TType>> Refract(
   TScalar incidentIor, TScalar transmitIor, 
   const DVector3<TType>& incident, const DVector3<TType>& normal);
 
-/// @brief Do schlick's approximation to get approximated Fresnel factor in specular reflection,
-/// between two media.
+/// @brief Do schlick's approximation to get approximated Fresnel factor in specular reflection, between two media.
 /// @param incidentIor IOR of incident vector side of surface.
 /// @param transmitIor IOR of refraction vector side of surface.
 /// @param incident Incident vector to surface. Incident vector must be forward to outside.
@@ -207,23 +207,43 @@ template <typename TType>
 
 /// @brief Check that Ray is intersected into DCone.
 /// @param ray Ray instance in world-space.
-/// @param cone Torus instance in world-space.
+/// @param cone Cone instance in world-space.
 template <typename TType>
 [[nodiscard]] bool IsRayIntersected(const DRay<TType>& ray, const DCone<TType>& cone);
 
 /// @brief Check that Ray is intersected into DCone.
 /// @param ray Ray instance in world-space.
-/// @param cone Torus instance.
+/// @param cone Cone instance.
 /// @param rot World-rotation matrix of cone instance.
 template <typename TType>
 [[nodiscard]] bool IsRayIntersected(const DRay<TType>& ray, const DCone<TType>& cone, const DMatrix3<TType>& rot);
 
 /// @brief Check that Ray is intersected into DCone.
 /// @param ray Ray instance in world-space.
-/// @param cone Torus instance.
+/// @param cone Cone instance.
 /// @param rot Quaternion that has rotation information of DCone.
 template <typename TType>
 [[nodiscard]] bool IsRayIntersected(const DRay<TType>& ray, const DCone<TType>& cone, const DQuaternion<TType>& rot);
+
+/// @brief Check that Ray is intersected into DCapsule.
+/// @param ray Ray instance in world-space.
+/// @param capsule Capsule instance in world-space.
+template <typename TType>
+[[nodiscard]] bool IsRayIntersected(const DRay<TType>& ray, const DCapsule<TType>& capsule);
+
+/// @brief Check that Ray is intersected into DCapsule.
+/// @param ray Ray instance in world-space.
+/// @param capsule Capsule instance.
+/// @param rot World-rotation matrix of capsule instance.
+template <typename TType>
+[[nodiscard]] bool IsRayIntersected(const DRay<TType>& ray, const DCapsule<TType>& capsule, const DMatrix3<TType>& rot);
+
+/// @brief Check that Ray is intersected into DCapsule.
+/// @param ray Ray instance in world-space.
+/// @param capsule Capsule instance.
+/// @param rot Quaternion that has rotation information of DCapsule.
+template <typename TType>
+[[nodiscard]] bool IsRayIntersected(const DRay<TType>& ray, const DCapsule<TType>& capsule, const DQuaternion<TType>& rot);
 
 //!
 //! GetSDFValueOf
@@ -273,6 +293,18 @@ TReal GetSDFValueOf(const DVector3<TType>& point, const DCone<TType>& cone, cons
 template <typename TType>
 TReal GetSDFValueOf(const DVector3<TType>& point, const DCone<TType>& cone, const DQuaternion<TType>& rot);
 
+/// @brief Get signed distance value of capsule model from point.
+template <typename TType>
+TReal GetSDFValueOf(const DVector3<TType>& point, const DCapsule<TType>& capsule);
+
+/// @brief Get signed distance value of capsule model from point.
+template <typename TType>
+TReal GetSDFValueOf(const DVector3<TType>& point, const DCapsule<TType>& capsule, const DMatrix3<TType>& rot);
+
+/// @brief Get signed distance value of capsule model from point.
+template <typename TType>
+TReal GetSDFValueOf(const DVector3<TType>& point, const DCapsule<TType>& capsule, const DQuaternion<TType>& rot);
+
 //!
 //! GetTValuesOf
 //!
@@ -319,23 +351,43 @@ std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DTorus<TType>& tor
 
 /// @brief Get positive 't' list to the point of given DCone from given ray.
 /// @param ray Ray instance in world-space.
-/// @param cone Torus instance.
+/// @param cone Cone instance.
 template <typename TType>
 std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DCone<TType>& cone);
 
 /// @brief Get positive 't' list to the point of given cone from given ray.
 /// @param ray Ray instance in world-space.
-/// @param cone Torus instance.
+/// @param cone Cone instance.
 /// @param rot World-rotation matrix of cone instance.
 template <typename TType>
 std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DCone<TType>& cone, const DMatrix3<TType>& rot);
 
 /// @brief Get positive 't' list to the point of given cone from given ray.
 /// @param ray Ray instance in world-space.
-/// @param cone Torus instance.
+/// @param cone Cone instance.
 /// @param rot Quaternion that has rotation information of DCone.
 template <typename TType>
 std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DCone<TType>& cone, const DQuaternion<TType>& rot);
+
+/// @brief Get positive 't' list to the point of given DCapsule from given ray.
+/// @param ray Ray instance in world-space.
+/// @param capsule Capsule instance.
+template <typename TType>
+std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DCapsule<TType>& capsule);
+
+/// @brief Get positive 't' list to the point of given capsule from given ray.
+/// @param ray Ray instance in world-space.
+/// @param capsule Capsule instance.
+/// @param rot World-rotation matrix of capsule instance.
+template <typename TType>
+std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DCapsule<TType>& capsule, const DMatrix3<TType>& rot);
+
+/// @brief Get positive 't' list to the point of given capsule from given ray.
+/// @param ray Ray instance in world-space.
+/// @param capsule Capsule instance.
+/// @param rot Quaternion that has rotation information of DCapsule.
+template <typename TType>
+std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DCapsule<TType>& capsule, const DQuaternion<TType>& rot);
 
 //!
 //! GetClosestTValueOf
@@ -390,23 +442,44 @@ std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DTorus<TTy
 /// @brief Get positive `t` to the closest point of given plane from given ray.
 /// If not found, just return nullopt value.
 /// @param ray Ray instance in world-space.
-/// @param cone Torus instance.
+/// @param cone Cone instance.
 template <typename TType>
 std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DCone<TType>& cone);
 
 /// @brief Get positive 't' list to the point of given cone from given ray.
 /// @param ray Ray instance in world-space.
-/// @param cone Torus instance.
+/// @param cone Cone instance.
 /// @param rot World-rotation matrix of cone instance.
 template <typename TType>
 std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DCone<TType>& cone, const DMatrix3<TType>& rot);
 
 /// @brief Get positive 't' list to the point of given cone from given ray.
 /// @param ray Ray instance in world-space.
-/// @param cone Torus instance.
+/// @param cone Cone instance.
 /// @param rot Quaternion that has rotation information of DCone.
 template <typename TType>
 std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DCone<TType>& cone, const DQuaternion<TType>& rot);
+
+/// @brief Get positive `t` to the closest point of given plane from given ray.
+/// If not found, just return nullopt value.
+/// @param ray Ray instance in world-space.
+/// @param capsule Cone instance.
+template <typename TType>
+std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DCapsule<TType>& capsule);
+
+/// @brief Get positive 't' list to the point of given capsule from given ray.
+/// @param ray Ray instance in world-space.
+/// @param capsule Cone instance.
+/// @param rot World-rotation matrix of capsule instance.
+template <typename TType>
+std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DCapsule<TType>& capsule, const DMatrix3<TType>& rot);
+
+/// @brief Get positive 't' list to the point of given capsule from given ray.
+/// @param ray Ray instance in world-space.
+/// @param capsule Cone instance.
+/// @param rot Quaternion that has rotation information of DCapsule.
+template <typename TType>
+std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DCapsule<TType>& capsule, const DQuaternion<TType>& rot);
 
 //!
 //! GetNormalOf
@@ -456,23 +529,44 @@ std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DTorus<
 /// @brief Try to get normal vector of cone, when ray is intersected.
 /// If not found, just return nullopt value.
 /// @param ray Ray instance in world-space.
-/// @param cone Torus instance.
+/// @param cone Cone instance.
 template <typename TType>
 std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DCone<TType>& cone);
 
 /// @brief Try to get normal vector of cone, when ray is intersected.
 /// @param ray Ray instance in world-space.
-/// @param cone Torus instance.
+/// @param cone Cone instance.
 /// @param rot World-rotation matrix of cone instance.
 template <typename TType>
 std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DCone<TType>& cone, const DMatrix3<TType>& rot);
 
 /// @brief Try to get normal vector of cone, when ray is intersected.
 /// @param ray Ray instance in world-space.
-/// @param cone Torus instance.
+/// @param cone Cone instance.
 /// @param rot Quaternion that has rotation information of DCone.
 template <typename TType>
 std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DCone<TType>& cone, const DQuaternion<TType>& rot);
+
+/// @brief Try to get normal vector of capsule, when ray is intersected.
+/// If not found, just return nullopt value.
+/// @param ray Ray instance in world-space.
+/// @param capsule Cone instance.
+template <typename TType>
+std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DCapsule<TType>& capsule);
+
+/// @brief Try to get normal vector of capsule, when ray is intersected.
+/// @param ray Ray instance in world-space.
+/// @param capsule Cone instance.
+/// @param rot World-rotation matrix of capsule instance.
+template <typename TType>
+std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DCapsule<TType>& capsule, const DMatrix3<TType>& rot);
+
+/// @brief Try to get normal vector of capsule, when ray is intersected.
+/// @param ray Ray instance in world-space.
+/// @param capsule Cone instance.
+/// @param rot Quaternion that has rotation information of DCapsule.
+template <typename TType>
+std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DCapsule<TType>& capsule, const DQuaternion<TType>& rot);
 
 } /// ::dy::math namespace
 #include <Math/Utility/Inline/XGraphicsMath.inl>

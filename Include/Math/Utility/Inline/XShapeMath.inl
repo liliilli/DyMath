@@ -134,6 +134,34 @@ bool IsRayIntersected(const DRay<TType>& ray, const DCone<TType>& cone, const DQ
   return IsRayIntersected(ray, cone, rot.ToMatrix3());
 }
 
+template <typename TType>
+bool IsRayIntersected(const DRay<TType>& ray, const DCapsule<TType>& capsule)
+{
+  const auto tResult = GetTValuesOf(ray, capsule);
+  return tResult.empty() == false;
+}
+
+template <typename TType>
+bool IsRayIntersected(const DRay<TType>& ray, const DCapsule<TType>& capsule, const DMatrix3<TType>& rot)
+{
+  // We regards box is symmetrical and origin is located on origin of box space.
+  // We need to convert ray of world-space into box-space.
+  const auto invRotMat = rot.Transpose();
+  const auto localSpaceRayPos = invRotMat * (ray.GetOrigin() - capsule.GetOrigin());
+  const auto localSpaceRayDir = invRotMat * ray.GetDirection();
+
+  return IsRayIntersected(
+    DRay<TType>{localSpaceRayPos, localSpaceRayDir}, 
+    DCapsule<TType>{DVector3<TType>{0}, capsule.GetHeight(), capsule.GetRadius()}
+  );
+}
+
+template <typename TType>
+bool IsRayIntersected(const DRay<TType>& ray, const DCapsule<TType>& capsule, const DQuaternion<TType>& rot)
+{
+  return IsRayIntersected(ray, capsule, rot.ToMatrix3());
+}
+
 //!
 //! GetSDFValueOf
 //!
@@ -265,6 +293,36 @@ template <typename TType>
 TReal GetSDFValueOf(const DVector3<TType>& point, const DCone<TType>& cone, const DQuaternion<TType>& rot)
 {
   return GetSDFValueOf(point, cone, rot.ToMatrix3());
+}
+
+template <typename TType>
+TReal GetSDFValueOf(const DVector3<TType>& point, const DCapsule<TType>& capsule)
+{
+  const DVector3<TType> p = point - capsule.GetOrigin();
+  const DVector3<TType> relocatedPoint = 
+      p
+    - DVector3<TType>{0, std::clamp(p.Y, TType(0), capsule.GetHeight()), 0};
+  return relocatedPoint.GetLength() - capsule.GetRadius();
+}
+
+template <typename TType>
+TReal GetSDFValueOf(const DVector3<TType>& point, const DCapsule<TType>& capsule, const DMatrix3<TType>& rot)
+{
+  // We regards box is symmetrical and origin is located on origin of box space.
+  // We need to convert ray of world-space into box-space.
+  const auto invRotMat = rot.Transpose();
+  const auto localSpacePos = invRotMat * (point - capsule.GetOrigin());
+  
+  return GetSDFValueOf(
+    localSpacePos, 
+    DCapsule<TType>{DVector3<TType>{0}, capsule.GetHeight(), capsule.GetRadius()}
+  );
+}
+
+template <typename TType>
+TReal GetSDFValueOf(const DVector3<TType>& point, const DCapsule<TType>& capsule, const DQuaternion<TType>& rot)
+{
+  return GetSDFValueOf(point, capsule, rot.ToMatrix3());
 }
 
 //!
@@ -508,6 +566,80 @@ std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DCone<TType>& cone
   return GetTValuesOf(ray, cone, rot.ToMatrix3());
 }
 
+template <typename TType>
+std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DCapsule<TType>& capsule)
+{
+  const DVector3<TType> ro  = ray.GetOrigin() - capsule.GetOrigin();
+  const DVector3<TType>& d  = ray.GetDirection();
+  const DVector3<TType> col = DVector3<TType>{};
+  const DVector3<TType> coh = DVector3<TType>::UnitY() * capsule.GetHeight();
+  std::vector<TReal> result; 
+
+  // First, get `t` list of y-axis infinite cylinder when d is parallel to UnitY().
+  if (Dot(DVector3<TType>::UnitY(), d) != 1)
+  {
+    const DVector3<TType> dxz = DVector3<TType>{d.X, 0, d.Z}.Normalize();
+    const TType a = std::pow(dxz.X, 2) + std::pow(dxz.Z, 2);
+    const TType b = 2 * (ro.X * dxz.X + ro.Z * dxz.Z);
+    const TType c = std::pow(ro.X, 2) + std::pow(ro.Z, 2) - std::pow(capsule.GetRadius(), 2);
+
+    std::vector<TReal> tList = SolveQuadric(a, b, c);
+    const TReal cosValue = Dot(d, dxz);
+    assert(cosValue > 0);
+    // Remove if p = ro + t`d, p.y is < 0 or > capsule.GetHeight().
+    for (auto& t : tList) 
+    { 
+      t /= cosValue; 
+      const auto p = ro + t * d;
+      if (p.Y >= 0 && p.Y <= capsule.GetHeight()) { result.emplace_back(t); }
+    }
+  }
+
+  // If got `t` list size is zero or one, try get another `t` from hemisphere.
+  if (result.size() < 2)
+  {
+    const auto upTList = GetTValuesOf(
+      ray, 
+      DSphere<TType>{DVector3<TType>::UnitY() * capsule.GetHeight(), capsule.GetRadius()}
+    );
+    for (const auto& t : upTList)
+    {
+      if ((ro + t * d).Y > capsule.GetHeight()) { result.emplace_back(t); }
+    }
+
+    const auto downTList = GetTValuesOf(ray, DSphere<TType>{capsule.GetOrigin(), capsule.GetRadius()});
+    for (const auto& t : downTList)
+    {
+      if ((ro + t * d).Y < 0) { result.emplace_back(t); }
+    }
+  }
+
+  // Sort it and return.
+  std::sort(result.begin(), result.end());
+  return result;
+}
+
+template <typename TType>
+std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DCapsule<TType>& capsule, const DMatrix3<TType>& rot)
+{
+  // We regards box is symmetrical and origin is located on origin of box space.
+  // We need to convert ray of world-space into box-space.
+  const auto invRotMat      = rot.Transpose();
+  const auto localSpacePos  = invRotMat * (ray.GetOrigin() - capsule.GetOrigin());
+  const auto localSpaceDir  = invRotMat * ray.GetDirection();
+  
+  return GetTValuesOf(
+    DRay<TType>{localSpacePos, localSpaceDir}, 
+    DCapsule<TType>{DVector3<TType>{0}, capsule.GetHeight(), capsule.GetRadius()}
+  );  
+}
+
+template <typename TType>
+std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DCapsule<TType>& capsule, const DQuaternion<TType>& rot)
+{
+  return GetTValuesOf(ray, capsule, rot.ToMatrix3());
+}
+
 //!
 //! GetClosestTValueOf
 //!
@@ -608,6 +740,33 @@ template <typename TType>
 std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DCone<TType>& cone, const DQuaternion<TType>& rot)
 {
   const auto tValueList = GetTValuesOf(ray, cone, rot);
+  if (tValueList.empty() == true) { return std::nullopt; }
+
+  return tValueList.front();
+}
+
+template <typename TType>
+std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DCapsule<TType>& capsule)
+{
+  const auto tValueList = GetTValuesOf(ray, capsule);
+  if (tValueList.empty() == true) { return std::nullopt; }
+
+  return tValueList.front(); 
+}
+
+template <typename TType>
+std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DCapsule<TType>& capsule, const DMatrix3<TType>& rot)
+{
+  const auto tValueList = GetTValuesOf(ray, capsule, rot);
+  if (tValueList.empty() == true) { return std::nullopt; }
+
+  return tValueList.front();
+}
+
+template <typename TType>
+std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DCapsule<TType>& capsule, const DQuaternion<TType>& rot)
+{
+  const auto tValueList = GetTValuesOf(ray, capsule, rot);
   if (tValueList.empty() == true) { return std::nullopt; }
 
   return tValueList.front();
@@ -783,6 +942,51 @@ template <typename TType>
 std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DCone<TType>& cone, const DQuaternion<TType>& rot)
 {
   return GetNormalOf(ray, cone, rot.ToMatrix3());
+}
+
+template <typename TType>
+std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DCapsule<TType>& capsule)
+{
+  // Check
+  if (IsRayIntersected(ray, capsule) == false) { return std::nullopt; }
+
+  auto optT = GetClosestTValueOf(ray, capsule);
+  if (optT.has_value() == false) { return std::nullopt; }
+
+  DRay<TReal> resultRay = {ray.GetPointAtParam(*optT), ray.GetDirection(), false};
+
+  const TType offset = TType(0.001);
+  const auto origin = resultRay.GetOrigin();
+  const auto x = GetSDFValueOf<TType>(origin + DVector3<TType>{offset, 0, 0}, capsule) - GetSDFValueOf(origin, capsule);
+  const auto y = GetSDFValueOf<TType>(origin + DVector3<TType>{0, offset, 0}, capsule) - GetSDFValueOf(origin, capsule);
+  const auto z = GetSDFValueOf<TType>(origin + DVector3<TType>{0, 0, offset}, capsule) - GetSDFValueOf(origin, capsule);
+
+  DVector3<TType> result = DVector3<TType>{x, y, z};
+  return result.Normalize();
+}
+
+template <typename TType>
+std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DCapsule<TType>& capsule, const DMatrix3<TType>& rot)
+{
+  // We regards box is symmetrical and origin is located on origin of box space.
+  // We need to convert ray of world-space into box-space.
+  const auto invRotMat      = rot.Transpose();
+  const auto localSpacePos  = invRotMat * (ray.GetOrigin() - capsule.GetOrigin());
+  const auto localSpaceDir  = invRotMat * ray.GetDirection();
+  
+  const auto normal = GetNormalOf(
+    DRay<TType>{localSpacePos, localSpaceDir}, 
+    DCapsule<TType>{DVector3<TType>{0}, capsule.GetHeight(), capsule.GetRadius()}
+  );
+  if (normal.has_value() == false) { return std::nullopt; }
+
+  return rot * (*normal);
+}
+
+template <typename TType>
+std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DCapsule<TType>& capsule, const DQuaternion<TType>& rot)
+{
+  return GetNormalOf(ray, capsule, rot.ToMatrix3());
 }
 
 } /// ::dy::math namespace
