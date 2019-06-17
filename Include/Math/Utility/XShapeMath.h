@@ -28,6 +28,24 @@ namespace dy::math
 {
 
 //!
+//! Special DBounds3D functions
+//!
+
+/// @brief Get unioned Bounds3D (AABB) instance.
+/// @param lhs Left handed side Bounds3D instance.
+/// @param rhs Right handed side Bounds3D instance.
+/// @return Unioned DBounds3D instance.
+template <typename TType>
+DBounds3D<TType> GetUnionOf(const DBounds3D<TType>& lhs, const DBounds3D<TType>& rhs);
+
+/// @brief Get intersected DBounds3D box region (AABB) from given lhs and rhs if exist.
+/// @param lhs Left handed side Bounds3D instance.
+/// @param rhs Right handed side Bounds3D instance.
+/// @return Unioned DBounds3D instance if intersection is exist. Otherwise value is null.
+template <typename TType>
+std::optional<DBounds3D<TType>> GetIntersectionOf(const DBounds3D<TType>& lhs, const DBounds3D<TType>& rhs); 
+
+//!
 //! IsRayIntersected
 //!
 
@@ -464,3 +482,4 @@ std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DCapsul
 
 } /// ::dy::math namespace
 #include <Math/Utility/Inline/XShapeMath.inl>
+#include <Math/Utility/Inline/XBounds3DMath.inl>
