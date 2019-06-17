@@ -45,6 +45,26 @@ DBounds3D<TType> GetUnionOf(const DBounds3D<TType>& lhs, const DBounds3D<TType>&
 template <typename TType>
 std::optional<DBounds3D<TType>> GetIntersectionOf(const DBounds3D<TType>& lhs, const DBounds3D<TType>& rhs); 
 
+/// @brief Check whether given lhs and rhs DBounds3D is overlapped (Edge overlap is regarded as being overlapped)
+/// @param lhs Left handed side Bounds3D instance.
+/// @param rhs Right handed side Bounds3D instance.
+/// @return If overlapped, return true.
+template <typename TType>
+[[nodiscard]] bool IsOverlapped(const DBounds3D<TType>& lhs, const DBounds3D<TType>& rhs); 
+
+/// @brief Get bounding sphere of given DBounds3D instance.
+/// @param bounds Bounds3D instance.
+/// @return 3D Sphere instance.
+template <typename TType>
+DSphere<TType> GetBoundingSphereOf(const DBounds3D<TType>& bounds);
+
+/// @brief Get expanded DBounds3D instance from givne bounds with value length on each one side.
+/// @param bounds Bounds3D instance.
+/// @param value Extended length on each one side.
+/// @return Expaneded DBounds3D instance.
+template <typename TType>
+DBounds3D<TType> GetExpandOf(const DBounds3D<TType>& bounds, TType value);
+
 //!
 //! IsRayIntersected
 //!

@@ -44,4 +44,29 @@ std::optional<DBounds3D<TType>> GetIntersectionOf(const DBounds3D<TType>& lhs, c
   return DBounds3D<TType>{min, max};
 }
 
+template <typename TType>
+bool IsOverlapped(const DBounds3D<TType>& lhs, const DBounds3D<TType>& rhs)
+{
+  return GetIntersectionOf(lhs, rhs).has_value();
+}
+
+template <typename TType>
+DSphere<TType> GetBoundingSphereOf(const DBounds3D<TType>& bounds)
+{
+  const auto& min = bounds.GetMin();
+  const auto& max = bounds.GetMax();
+  const auto origin = (min + max) / TType(2);
+  const auto length = bounds.GetLength() / TType(2);
+
+  return DSphere<TType>{origin, std::max({length[0], length[1], length[2]})};
+}
+
+template <typename TType>
+DBounds3D<TType> GetExpandOf(const DBounds3D<TType>& bounds, TType value)
+{
+  const auto& min = bounds.GetMin();
+  const auto& max = bounds.GetMax();
+  return {min - DVector3<TType>{value}, max + DVector3<TType>{value}};
+}
+
 } /// ::dy::math namespace
