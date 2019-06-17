@@ -19,7 +19,13 @@
 namespace dy::math
 {
 
-/// @brief Check that Ray is intersected into Sphere.
+template <typename TType>
+bool IsRayIntersected(const DRay<TType>& ray, const DBounds3D<TType>& bounds)
+{
+  const auto tResult = GetTValuesOf(ray, bounds);
+  return tResult.empty() == false;
+}
+
 template <typename TType>
 bool IsRayIntersected(const DRay<TType>& ray, const DSphere<TType>& sphere)
 {
@@ -330,6 +336,14 @@ TReal GetSDFValueOf(const DVector3<TType>& point, const DCapsule<TType>& capsule
 //! 
 
 template <typename TType>
+std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DBounds3D<TType>& bounds)
+{
+  const DVector3<TType> centerPoint = (bounds.GetMin() + bounds.GetMax()) / 2;
+  const DVector3<TType> halfLength  = bounds.GetLength() / 2;
+  return GetTValuesOf(ray, DBox<TType>{centerPoint, halfLength});
+}
+
+template <typename TType>
 std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DSphere<TType>& sphere)
 {
   if (IsRayIntersected(ray, sphere) == false) { return {}; }
@@ -404,10 +418,23 @@ std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DBox<TType>& box)
   }
 
   std::vector<TReal> result;
+  constexpr TType epsilon = TType(1e-5);
   if (tMax >= tMin && tMax >= 0)
   {
-    if (tMin >= 0)    { result.emplace_back(tMin); }
-    if (tMax > tMin)  { result.emplace_back(tMax); }
+    const DVector3<TType> epVec = {epsilon};
+    const DVector3<TType> elpMin = min - epVec;
+    if (tMin >= 0) 
+    { 
+      const DVector3<TType> offset = (ro + tMin * rd);
+      if (offset.X >= elpMin.X && offset.Y >= elpMin.Y && offset.Z >= elpMin.Z) { result.emplace_back(tMin); }
+    }
+    if (tMax > tMin)  
+    { 
+      const DVector3<TType> elpMax = max + epVec;
+      const DVector3<TType> offset = (ro + tMax * rd);
+      if (offset.X <= elpMax.X && offset.Y <= elpMax.Y && offset.Z <= elpMax.Z && 
+          offset.X >= elpMin.X && offset.Y >= elpMin.Y && offset.Z >= elpMin.Z) { result.emplace_back(tMax); }
+    }
   }
 
   return result;
@@ -644,8 +671,15 @@ std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DCapsule<TType>& c
 //! GetClosestTValueOf
 //!
 
-/// @brief Get positive `t` to the closest point of given sphere from given ray.
-/// If not found, just return nullopt value.
+template <typename TType>
+std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DBounds3D<TType>& bounds)
+{
+  const auto tValueList = GetTValuesOf(ray, bounds);
+  if (tValueList.empty() == true) { return std::nullopt; }
+
+  return tValueList.front();
+}
+
 template <typename TType>
 std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DSphere<TType>& sphere)
 {

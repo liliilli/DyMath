@@ -22,6 +22,7 @@
 #include <Math/Type/Shape/DTorus.h>
 #include <Math/Type/Shape/DCone.h>
 #include <Math/Type/Shape/DCapsule.h>
+#include <Math/Type/Micellanous/DBounds3D.h>
 
 namespace dy::math
 {
@@ -29,6 +30,12 @@ namespace dy::math
 //!
 //! IsRayIntersected
 //!
+
+/// @brief Check that DRay is intersected with DBounds3D(3D AABB).
+/// @param ray Ray instance in world-space.
+/// @param box Bounds3D instance in world-space.
+template <typename TType>
+[[nodiscard]] bool IsRayIntersected(const DRay<TType>& ray, const DBounds3D<TType>& bounds);
 
 /// @brief Check that Ray is intersected into Sphere.
 template <typename TType>
@@ -185,6 +192,10 @@ TReal GetSDFValueOf(const DVector3<TType>& point, const DCapsule<TType>& capsule
 //! GetTValuesOf
 //!
 
+/// @brief Get positive 't' list to the point of given 3d bounds from given ray.
+template <typename TType>
+std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DBounds3D<TType>& bounds);
+
 /// @brief Get positive 't' list to the point of given sphere from given ray.
 template <typename TType>
 std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DSphere<TType>& sphere);
@@ -269,7 +280,14 @@ std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DCapsule<TType>& c
 //! GetClosestTValueOf
 //!
 
-/// @brief Get positive `t` to the closest point of given sphere from given ray.
+/// @brief Get positive `t` to the closest point of given 3d bounds from given ray.
+/// If not found, just return nullopt value.
+/// @param ray Ray instance in world-space.
+/// @param bounds 3D-bounds in world-space.
+template <typename TType>
+std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DBounds3D<TType>& bounds);
+
+/// @brief Get positive `t` to the closest point of given 3d bounds from given ray.
 /// If not found, just return nullopt value.
 template <typename TType>
 std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DSphere<TType>& sphere);
