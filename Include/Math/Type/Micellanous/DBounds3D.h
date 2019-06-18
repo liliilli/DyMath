@@ -75,6 +75,8 @@ public:
   const DVector3<TValueType>& GetMax() const noexcept;
   /// @brief Get given EBounds3D's point from instance.
   DVector3<TValueType> GetPointOf(EBounds3D type) const noexcept;
+  /// @brief Get 8 point list of this instance.
+  std::vector<DVector3<TValueType>> GetPointList() const;
   
   /// @brief Check value has NaN.
   bool HasNaN() const noexcept;

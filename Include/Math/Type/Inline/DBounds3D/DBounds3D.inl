@@ -14,10 +14,47 @@
 
 #include <Math/Utility/XMath.h>
 #include <Math/Utility/XLinearMath.h>
+#include <Math/Type/Math/DMatrix3.h>
+#include <Math/Type/Math/DQuat.h>
 
 namespace dy::math
 {
-  
+
+template <typename TLeft, typename TRight> 
+DBounds3D<GetBiggerType<TLeft, TRight>>
+operator*(const DMatrix3<TLeft>& lhs, const DBounds3D<TRight>& rhs) noexcept
+{
+  // Get Point list of rhs AABB.
+  using TBiggerType = GetBiggerType<TLeft, TRight>;
+  std::vector<DVector3<typename DBounds3D<TRight>::TValueType>> pointList = rhs.GetPointList();
+  for (auto& item : pointList)
+  {
+    item = lhs * item;
+  }
+
+  // If TBiggerType and TRigth is not matched, create new point list and convert them.
+  if constexpr (std::is_same_v<TBiggerType, TRight> == true)
+  {
+    return {pointList};
+  }
+  else
+  {
+    const std::vector<DVector3<TBiggerType>> result;
+    for (const auto& item : pointList)
+    {
+      result.emplace_back(static_cast<DVector3<TBiggerType>>(item));
+    }
+    return {result};
+  }
+}
+ 
+template <typename TLeft, typename TRight> 
+DBounds3D<GetBiggerType<TLeft, TRight>>
+operator*(const DQuaternion<TLeft>& lhs, const DBounds3D<TRight>& rhs) noexcept
+{
+  return lhs.ToMatrix3() * rhs;
+}
+   
 template <typename TLeft, typename TRight>
 DBounds3D<GetBiggerType<TLeft, TRight>> 
 operator+(const DBounds3D<TLeft>& lhs, const DBounds3D<TRight>& rhs) noexcept 
@@ -144,6 +181,19 @@ DVector3<typename DBounds3D<TType>::TValueType> DBounds3D<TType>::GetPointOf(EBo
     (v & 0b10) >> 1 ? this->mMax.Y : this->mMin.Y,
     (v & 0b1) ? this->mMax.Z : this->mMin.Z
   };
+}
+
+template <typename TType>
+std::vector<DVector3<typename DBounds3D<TType>::TValueType>> DBounds3D<TType>::GetPointList() const
+{
+  std::vector<DVector3<TValueType>> result;
+  result.reserve(8);
+  for (TIndex i = 0; i < 8; ++i)
+  {
+    result.emplace_back(this->GetPointOf(static_cast<EBounds3D>(i)));
+  }
+
+  return result;
 }
 
 template<typename TType>
