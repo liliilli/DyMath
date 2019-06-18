@@ -106,11 +106,13 @@ template <typename TType>
 DBounds3D<TType> GetDBounds3DOf(const DBox<TType>& shape, const DMatrix3<TType>& rot)
 {
   const auto& origin = shape.GetOrigin();
-  const auto tempBound = GetDBounds3DOf(shape);
-  const auto p1 = rot * (tempBound.GetMin() - origin) + origin;
-  const auto p2 = rot * (tempBound.GetMax() - origin) + origin;
-
-  return {p1, p2};
+  return  
+    GetMovedOf(
+      rot * GetMovedOf( // Rotation // Move to origin {0}.
+          GetDBounds3DOf(shape) 
+        , origin * -1)
+      , origin // Move to original position. {origin}
+    );
 }
 
 template <typename TType>
@@ -134,11 +136,13 @@ template <typename TType>
 DBounds3D<TType> GetDBounds3DOf(const DTorus<TType>& shape, const DMatrix3<TType>& rot)
 {
   const auto& origin = shape.GetOrigin();
-  const auto tempBound = GetDBounds3DOf(shape);
-  const auto p1 = rot * (tempBound.GetMin() - origin) + origin;
-  const auto p2 = rot * (tempBound.GetMax() - origin) + origin;
-
-  return {p1, p2};
+  return  
+    GetMovedOf(
+      rot * GetMovedOf( // Rotation // Move to origin {0}.
+          GetDBounds3DOf(shape) 
+        , origin * -1)
+      , origin // Move to original position. {origin}
+    );
 }
 
 template <typename TType>
@@ -161,11 +165,13 @@ template <typename TType>
 DBounds3D<TType> GetDBounds3DOf(const DCone<TType>& shape, const DMatrix3<TType>& rot)
 {
   const auto& origin = shape.GetOrigin();
-  const auto tempBound = GetDBounds3DOf(shape);
-  const auto p1 = rot * (tempBound.GetMin() - origin) + origin;
-  const auto p2 = rot * (tempBound.GetMax() - origin) + origin;
-
-  return {p1, p2};
+  return  
+    GetMovedOf(
+      rot * GetMovedOf( // Rotation // Move to origin {0}.
+          GetDBounds3DOf(shape) 
+        , origin * -1)
+      , origin // Move to original position. {origin}
+    );
 }
 
 template <typename TType>
@@ -188,11 +194,13 @@ template <typename TType>
 DBounds3D<TType> GetDBounds3DOf(const DCapsule<TType>& shape, const DMatrix3<TType>& rot)
 {
   const auto& origin = shape.GetOrigin();
-  const auto tempBound = GetDBounds3DOf(shape);
-  const auto p1 = rot * (tempBound.GetMin() - origin) + origin;
-  const auto p2 = rot * (tempBound.GetMax() - origin) + origin;
-
-  return {p1, p2};
+  return  
+    GetMovedOf(
+      rot * GetMovedOf( // Rotation // Move to origin {0}.
+          GetDBounds3DOf(shape) 
+        , origin * -1)
+      , origin // Move to original position. {origin}
+    );
 }
 
 template <typename TType>
