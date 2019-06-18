@@ -59,12 +59,20 @@ template <typename TType>
 template <typename TType>
 DSphere<TType> GetBoundingSphereOf(const DBounds3D<TType>& bounds);
 
-/// @brief Get expanded DBounds3D instance from givne bounds with value length on each one side.
+/// @brief Get expanded DBounds3D instance from given bounds with value length on each one side.
 /// @param bounds Bounds3D instance.
 /// @param value Extended length on each one side.
 /// @return Expaneded DBounds3D instance.
 template <typename TType>
 DBounds3D<TType> GetExpandOf(const DBounds3D<TType>& bounds, TType value);
+
+/// @brief Get moved (by offset) DBounds3D instance from given bounds.
+/// If bounds is infinity, do nothing but return inputted bounds.
+/// @param bounds Bounds3D instance.
+/// @param offset Offset to move bounds.
+/// @return Moved DBounds3D.
+template <typename TType>
+DBounds3D<TType> GetMovedOf(const DBounds3D<TType>& bounds, const DVector3<TType>& offset);
 
 //!
 //! GetDBounds3DOf functions

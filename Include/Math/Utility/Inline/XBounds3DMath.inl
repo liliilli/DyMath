@@ -69,6 +69,13 @@ DBounds3D<TType> GetExpandOf(const DBounds3D<TType>& bounds, TType value)
   return {min - DVector3<TType>{value}, max + DVector3<TType>{value}};
 }
 
+template <typename TType>
+DBounds3D<TType> GetMovedOf(const DBounds3D<TType>& bounds, const DVector3<TType>& offset)
+{
+  if (bounds.IsInfiniteBound() == true) { return bounds; }
+  return {bounds.GetMin() + offset, bounds.GetMax() + offset};
+}
+
 //!
 //! GetDBounds3DOf
 //!
