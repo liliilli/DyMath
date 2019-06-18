@@ -147,6 +147,14 @@ DVector3<typename DBounds3D<TType>::TValueType> DBounds3D<TType>::GetPointOf(EBo
 }
 
 template<typename TType>
+bool DBounds3D<TType>::IsInfiniteBound() const noexcept
+{
+  return 
+      this->mMin == DVector3<TValueType>{kMinValueOf<TValueType>}
+  &&  this->mMax == DVector3<TValueType>{kMaxValueOf<TValueType>};
+}
+
+template<typename TType>
 bool DBounds3D<TType>::HasNaN() const noexcept
 {
   return 

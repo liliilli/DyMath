@@ -22,6 +22,8 @@ namespace dy::math
 template <typename TType>
 bool IsRayIntersected(const DRay<TType>& ray, const DBounds3D<TType>& bounds)
 {
+  if (bounds.IsInfiniteBound() == true) { return true; }
+
   const auto tResult = GetTValuesOf(ray, bounds);
   return tResult.empty() == false;
 }
@@ -338,6 +340,8 @@ TReal GetSDFValueOf(const DVector3<TType>& point, const DCapsule<TType>& capsule
 template <typename TType>
 std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DBounds3D<TType>& bounds)
 {
+  if (bounds.IsInfiniteBound() == true) { return {}; }
+
   const DVector3<TType> centerPoint = (bounds.GetMin() + bounds.GetMax()) / 2;
   const DVector3<TType> halfLength  = bounds.GetLength() / 2;
   return GetTValuesOf(ray, DBox<TType>{centerPoint, halfLength});
@@ -418,19 +422,20 @@ std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DBox<TType>& box)
   }
 
   std::vector<TReal> result;
-  constexpr TType epsilon = TType(1e-5);
+  static const DVector3<TType> epVec = {TType(1e-5)};
   if (tMax >= tMin && tMax >= 0)
   {
-    const DVector3<TType> epVec = {epsilon};
     const DVector3<TType> elpMin = min - epVec;
+    const DVector3<TType> elpMax = max + epVec;
+
     if (tMin >= 0) 
     { 
       const DVector3<TType> offset = (ro + tMin * rd);
-      if (offset.X >= elpMin.X && offset.Y >= elpMin.Y && offset.Z >= elpMin.Z) { result.emplace_back(tMin); }
+      if (offset.X <= elpMax.X && offset.Y <= elpMax.Y && offset.Z <= elpMax.Z && 
+          offset.X >= elpMin.X && offset.Y >= elpMin.Y && offset.Z >= elpMin.Z) { result.emplace_back(tMin); }
     }
     if (tMax > tMin)  
     { 
-      const DVector3<TType> elpMax = max + epVec;
       const DVector3<TType> offset = (ro + tMax * rd);
       if (offset.X <= elpMax.X && offset.Y <= elpMax.Y && offset.Z <= elpMax.Z && 
           offset.X >= elpMin.X && offset.Y >= elpMin.Y && offset.Z >= elpMin.Z) { result.emplace_back(tMax); }
@@ -674,6 +679,8 @@ std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DCapsule<TType>& c
 template <typename TType>
 std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DBounds3D<TType>& bounds)
 {
+  if (bounds.IsInfiniteBound() == true) { return std::nullopt; }
+
   const auto tValueList = GetTValuesOf(ray, bounds);
   if (tValueList.empty() == true) { return std::nullopt; }
 

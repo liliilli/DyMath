@@ -82,6 +82,8 @@ public:
   bool HasInfinity() const noexcept;
   /// @brief Check values are normal value, neither NaN nor Inf.
   bool HasOnlyNormal() const noexcept;
+  /// @brief Check bounds has infinite bound region.
+  bool IsInfiniteBound() const noexcept;
 
 protected:
   DVector3<TValueType> mMin = kMinValueOf<TValueType>;
