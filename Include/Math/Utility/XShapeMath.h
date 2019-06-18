@@ -15,6 +15,7 @@
 #include <optional>
 #include <Math/Common/TGlobalTypes.h>
 #include <Math/Type/Math/DVector3.h>
+#include <Math/Type/Math/DQuat.h>
 #include <Math/Type/Shape/DRay.h>
 #include <Math/Type/Shape/DSphere.h>
 #include <Math/Type/Shape/DBox.h>
@@ -64,6 +65,102 @@ DSphere<TType> GetBoundingSphereOf(const DBounds3D<TType>& bounds);
 /// @return Expaneded DBounds3D instance.
 template <typename TType>
 DBounds3D<TType> GetExpandOf(const DBounds3D<TType>& bounds, TType value);
+
+//!
+//! GetDBounds3DOf functions
+//!
+
+/// @brief Get DBounds3D instance of world-space that covers given shape.
+/// @param shape Sphere shape.
+/// @return DBounds3D instance that covers given shape.
+template <typename TType>
+DBounds3D<TType> GetDBounds3DOf(const DSphere<TType>& shape);
+
+/// @brief Get DBounds3D instance of world-space that covers given shape.
+/// @param shape Plane shape.
+/// @return DBounds3D instance that covers given shape.
+template <typename TType>
+DBounds3D<TType> GetDBounds3DOf(const DPlane<TType>& shape);
+
+/// @brief Get DBounds3D instance of world-space that covers given shape.
+/// @param shape Box shape.
+/// @return DBounds3D instance that covers given shape.
+template <typename TType>
+DBounds3D<TType> GetDBounds3DOf(const DBox<TType>& shape);
+
+/// @brief Get DBounds3D instance of world-space that covers given shape.
+/// @param shape Box shape.
+/// @param rotMatrix World-rotation matrix of box instance.
+/// @return DBounds3D instance that covers given shape.
+template <typename TType>
+DBounds3D<TType> GetDBounds3DOf(const DBox<TType>& shape, const DMatrix3<TType>& rot);
+
+/// @brief Get DBounds3D instance of world-space that covers given shape.
+/// @param shape Box shape.
+/// @param rot Quaternion that has rotation information of DBox.
+/// @return DBounds3D instance that covers given shape.
+template <typename TType>
+DBounds3D<TType> GetDBounds3DOf(const DBox<TType>& shape, const DQuaternion<TType>& rot);
+
+/// @brief Get DBounds3D instance of world-space that covers given shape.
+/// @param shape Torus shape.
+/// @return DBounds3D instance that covers given shape.
+template <typename TType>
+DBounds3D<TType> GetDBounds3DOf(const DTorus<TType>& shape);
+
+/// @brief Get DBounds3D instance of world-space that covers given shape.
+/// @param shape Torus shape.
+/// @param rotMatrix World-rotation matrix of box instance.
+/// @return DBounds3D instance that covers given shape.
+template <typename TType>
+DBounds3D<TType> GetDBounds3DOf(const DTorus<TType>& shape, const DMatrix3<TType>& rot);
+
+/// @brief Get DBounds3D instance of world-space that covers given shape.
+/// @param shape Torus shape.
+/// @param rot Quaternion that has rotation information of DTorus.
+/// @return DBounds3D instance that covers given shape.
+template <typename TType>
+DBounds3D<TType> GetDBounds3DOf(const DTorus<TType>& shape, const DQuaternion<TType>& rot);
+
+/// @brief Get DBounds3D instance of world-space that covers given shape.
+/// @param shape Cone shape.
+/// @return DBounds3D instance that covers given shape.
+template <typename TType>
+DBounds3D<TType> GetDBounds3DOf(const DCone<TType>& shape);
+
+/// @brief Get DBounds3D instance of world-space that covers given shape.
+/// @param shape Cone shape.
+/// @param rotMatrix World-rotation matrix of box instance.
+/// @return DBounds3D instance that covers given shape.
+template <typename TType>
+DBounds3D<TType> GetDBounds3DOf(const DCone<TType>& shape, const DMatrix3<TType>& rot);
+
+/// @brief Get DBounds3D instance of world-space that covers given shape.
+/// @param shape Cone shape.
+/// @param rot Quaternion that has rotation information of DCone.
+/// @return DBounds3D instance that covers given shape.
+template <typename TType>
+DBounds3D<TType> GetDBounds3DOf(const DCone<TType>& shape, const DQuaternion<TType>& rot);
+
+/// @brief Get DBounds3D instance of world-space that covers given shape.
+/// @param shape Capsule shape.
+/// @return DBounds3D instance that covers given shape.
+template <typename TType>
+DBounds3D<TType> GetDBounds3DOf(const DCapsule<TType>& shape);
+
+/// @brief Get DBounds3D instance of world-space that covers given shape.
+/// @param shape Capsule shape.
+/// @param rotMatrix World-rotation matrix of box instance.
+/// @return DBounds3D instance that covers given shape.
+template <typename TType>
+DBounds3D<TType> GetDBounds3DOf(const DCapsule<TType>& shape, const DMatrix3<TType>& rot);
+
+/// @brief Get DBounds3D instance of world-space that covers given shape.
+/// @param shape Capsule shape.
+/// @param rot Quaternion that has rotation information of DCapsule.
+/// @return DBounds3D instance that covers given shape.
+template <typename TType>
+DBounds3D<TType> GetDBounds3DOf(const DCapsule<TType>& shape, const DQuaternion<TType>& rot);
 
 //!
 //! IsRayIntersected

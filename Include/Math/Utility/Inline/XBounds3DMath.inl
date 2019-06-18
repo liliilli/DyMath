@@ -69,4 +69,129 @@ DBounds3D<TType> GetExpandOf(const DBounds3D<TType>& bounds, TType value)
   return {min - DVector3<TType>{value}, max + DVector3<TType>{value}};
 }
 
+//!
+//! GetDBounds3DOf
+//!
+
+template <typename TType>
+DBounds3D<TType> GetDBounds3DOf(const DSphere<TType>& shape)
+{
+  const auto& origin  = shape.GetOrigin();
+  const auto offset   = DVector3<TType>{shape.GetRadius()};
+
+  return { origin - offset, origin + offset };
+}
+
+template <typename TType>
+DBounds3D<TType> GetDBounds3DOf(const DPlane<TType>&)
+{
+  // Always return infinite bounds3d.
+  return {};
+}
+
+template <typename TType>
+DBounds3D<TType> GetDBounds3DOf(const DBox<TType>& shape)
+{
+  return {shape.GetMinPos(), shape.GetMaxPos()};
+}
+
+template <typename TType>
+DBounds3D<TType> GetDBounds3DOf(const DBox<TType>& shape, const DMatrix3<TType>& rot)
+{
+  const auto& origin = shape.GetOrigin();
+  const auto tempBound = GetDBounds3DOf(shape);
+  const auto p1 = rot * (tempBound.GetMin() - origin) + origin;
+  const auto p2 = rot * (tempBound.GetMax() - origin) + origin;
+
+  return {p1, p2};
+}
+
+template <typename TType>
+DBounds3D<TType> GetDBounds3DOf(const DBox<TType>& shape, const DQuaternion<TType>& rot)
+{
+  return GetDBounds3DOf(shape, rot.ToMatrix3());
+}
+
+template <typename TType>
+DBounds3D<TType> GetDBounds3DOf(const DTorus<TType>& shape)
+{
+  const auto dR = shape.GetDistance();
+  const auto r  = shape.GetRadius();
+  const auto& origin = shape.GetOrigin();
+  const auto offset = shape.GetOrigin() + DVector3<TType>{dR + r, dR + r, r};
+
+  return {origin + offset, origin - offset};
+}
+
+template <typename TType>
+DBounds3D<TType> GetDBounds3DOf(const DTorus<TType>& shape, const DMatrix3<TType>& rot)
+{
+  const auto& origin = shape.GetOrigin();
+  const auto tempBound = GetDBounds3DOf(shape);
+  const auto p1 = rot * (tempBound.GetMin() - origin) + origin;
+  const auto p2 = rot * (tempBound.GetMax() - origin) + origin;
+
+  return {p1, p2};
+}
+
+template <typename TType>
+DBounds3D<TType> GetDBounds3DOf(const DTorus<TType>& shape, const DQuaternion<TType>& rot)
+{
+  return GetDBounds3DOf(shape, rot.ToMatrix3());
+}
+
+template <typename TType>
+DBounds3D<TType> GetDBounds3DOf(const DCone<TType>& shape)
+{
+  const auto& origin = shape.GetOrigin();
+  const auto y = shape.GetHeight();
+  const auto xz = shape.GetRadius();
+  
+  return {origin + DVector3<TType>{xz, y, xz}, offset - DVector3<TType>{xz, 0, xz}};
+}
+
+template <typename TType>
+DBounds3D<TType> GetDBounds3DOf(const DCone<TType>& shape, const DMatrix3<TType>& rot)
+{
+  const auto& origin = shape.GetOrigin();
+  const auto tempBound = GetDBounds3DOf(shape);
+  const auto p1 = rot * (tempBound.GetMin() - origin) + origin;
+  const auto p2 = rot * (tempBound.GetMax() - origin) + origin;
+
+  return {p1, p2};
+}
+
+template <typename TType>
+DBounds3D<TType> GetDBounds3DOf(const DCone<TType>& shape, const DQuaternion<TType>& rot)
+{
+  return GetDBounds3DOf(shape, rot.ToMatrix3());
+}
+
+template <typename TType>
+DBounds3D<TType> GetDBounds3DOf(const DCapsule<TType>& shape)
+{
+  const auto& origin = shape.GetOrigin();
+  const auto h = shape.GetHeight();
+  const auto r = shape.GetRadius();
+
+  return {origin + DVector3<TType>{r, h + r, r}, origin - DVector3<TType>{r}};
+}
+
+template <typename TType>
+DBounds3D<TType> GetDBounds3DOf(const DCapsule<TType>& shape, const DMatrix3<TType>& rot)
+{
+  const auto& origin = shape.GetOrigin();
+  const auto tempBound = GetDBounds3DOf(shape);
+  const auto p1 = rot * (tempBound.GetMin() - origin) + origin;
+  const auto p2 = rot * (tempBound.GetMax() - origin) + origin;
+
+  return {p1, p2};
+}
+
+template <typename TType>
+DBounds3D<TType> GetDBounds3DOf(const DCapsule<TType>& shape, const DQuaternion<TType>& rot)
+{
+  return GetDBounds3DOf(shape, rot.ToMatrix3());
+}
+
 } /// ::dy::math namespace
