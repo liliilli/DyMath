@@ -158,7 +158,7 @@ DBounds3D<TType> GetDBounds3DOf(const DCone<TType>& shape)
   const auto y = shape.GetHeight();
   const auto xz = shape.GetRadius();
   
-  return {origin + DVector3<TType>{xz, y, xz}, offset - DVector3<TType>{xz, 0, xz}};
+  return {origin + DVector3<TType>{xz, y, xz}, origin - DVector3<TType>{xz, 0, xz}};
 }
 
 template <typename TType>
