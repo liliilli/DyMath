@@ -141,22 +141,30 @@ DVector3<TType> DQuaternion<TType>::ToDegrees() const noexcept
 template<typename TType>
 DVector3<TType> DQuaternion<TType>::ToRadians() const noexcept
 {
-  // pitch (x-axis rotation)
-  TType sinCosp = TType(2.0) * (this->mW * this->mX + this->mY * this->mZ);
-  TType cosCosp = this->mW * this->mW + this->mZ * this->mZ * (this->mX * this->mX + this->mY * this->mY);
-  TType pitchRad = std::atan2(sinCosp, cosCosp);
+  // https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
+  // Roll (x-axis rotation)
+  TType sinCosp = TType(2) * (this->mW * this->mX + this->mY * this->mZ);
+  TType cosCosp = TType(1) - TType(2) * (this->mX * this->mX + this->mY * this->mY);
+  TType rollRad = std::atan2(sinCosp, cosCosp);
 
-  // yaw (y-axis)
-  // Why -2 instead of 2?
-  TType yawRad = std::asin(TType(-2) * (this->mX * this->mZ - this->mY * this->mW));
+  // Pitch (y-axis)
+  TType sinp = TType(2) * (this->mW * this->mY - this->mZ * this->mX);
+  TType pitch = 0;
+  if (std::abs(sinp) >= 1)
+  {
+    pitch = std::copysign(math::kPi<TType> / 2, sinp);
+  }
+  else
+  {
+    pitch = std::asin(sinp);
+  }
 
-  // roll (z-axis)
-  TType rollRad = 
-  std::atan2(
-    TType(2) * (this->mX * this->mY + this->mW * this->mZ), 
-    this->mW * this->mW + this->mX * this->mX - this->mY * this->mY - this->mZ * this->mZ);
+  // Yaw (z-axis)
+  TType sinyCosp = TType(2) * (this->mW * this->mZ + this->mX * this->mY);
+  TType cosyCosp = TType(1) - TType(2) * (this->mY * this->mY + this->mZ * this->mZ);
+  TType yaw = std::atan2(sinyCosp, cosyCosp);
 
-  return {pitchRad, yawRad, rollRad};
+  return {rollRad, pitch, yaw};
 }
 
 template<typename TType>
