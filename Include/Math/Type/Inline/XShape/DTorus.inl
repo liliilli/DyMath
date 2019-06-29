@@ -1,4 +1,3 @@
-#include "..\..\Shape\DTorus.h"
 #pragma once
 ///
 /// MIT License
