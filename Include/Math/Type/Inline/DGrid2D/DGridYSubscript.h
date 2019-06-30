@@ -26,12 +26,7 @@ public:
     : mPtr{ptr}, mGridX{xSize}
   { }
 
-  reference operator[](std::size_t b)
-  {
-    return *(mPtr + b);
-  }
-
-  const reference operator[](std::size_t b) const
+  reference operator[](std::size_t b) const
   {
     return *(mPtr + b);
   }

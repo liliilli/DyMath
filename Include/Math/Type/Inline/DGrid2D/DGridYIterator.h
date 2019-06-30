@@ -32,6 +32,7 @@ public:
   // The type std::iterator_traits<It>::reference must be exactly 
   // T& if It satisfies LegacyOutputIterator (It is mutable) [LegacyForwardIterator]
   using reference       = value_type&;
+  using const_reference = std::add_lvalue_reference_t <const std::remove_reference_t<reference>>;
   using pointer         = value_type*;
   using iterator_category = std::random_access_iterator_tag;
   
@@ -64,11 +65,11 @@ public:
   }
 
   // r is dereferenceable (see below) [LegacyIterator]
-  reference operator*() 
-  { 
-    return this->mRowIterators[this->mId]; 
+  reference operator*()
+  {
+      return this->mRowIterators[this->mId];
   }
-  const reference operator*() const 
+  const_reference operator*() const
   { 
     return this->mRowIterators[this->mId]; 
   }
@@ -135,11 +136,7 @@ public:
     return &this->mRowIterators[this->mId]; 
   }
 
-  reference operator[](std::size_t b)
-  {
-    return this->mRowIterators[this->mId + b];
-  }
-  const reference operator[](std::size_t b) const
+  reference operator[](std::size_t b) const
   {
     return this->mRowIterators[this->mId + b];
   }

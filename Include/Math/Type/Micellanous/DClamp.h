@@ -49,7 +49,7 @@ public:
   static constexpr TI64 kStart = TStart;
   static constexpr TI64 kEnd = TEnd;
 
-  constexpr DClamp() noexcept = default;
+  constexpr DClamp() = default;
   constexpr DClamp(TType value) noexcept;
   constexpr DClamp& operator=(TType value) noexcept;
 

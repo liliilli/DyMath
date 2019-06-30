@@ -211,6 +211,7 @@ DMatrix4<TType> ProjectionMatrix(
       return detail::OpenGlPersp<TType>(left, right, bottom, top, near, far);
     }
   } break;
+  default: break;
   }
   return {};
 }
@@ -233,6 +234,7 @@ DMatrix4<TType> ProjectionMatrix(
       return detail::OpenGlPersp<TType>(fovY, width, height, near, far);
     }
   } break;
+  default: break;
   }
   return {};
 }

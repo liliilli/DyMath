@@ -29,6 +29,7 @@ public:
   // The type std::iterator_traits<It>::reference must be exactly 
   // T& if It satisfies LegacyOutputIterator (It is mutable) [LegacyForwardIterator]
   using reference = value_type&;
+  using const_reference = std::add_lvalue_reference_t <const std::remove_reference_t<reference>>;
   using pointer = value_type*;
   using iterator_category = std::random_access_iterator_tag;
   
@@ -52,7 +53,7 @@ public:
 
   // r is dereferenceable (see below) [LegacyIterator]
   reference operator*() { return *this->mpItem; }
-  const reference operator*() const { return *this->mpItem; }
+  const_reference operator*() const { return this->mRowIterators[this->mId]; }
 
   // r is incrementable (the behavior of the expression ++r is defined) [LegacyIterator]
   DGridXIterator& operator++()
@@ -110,11 +111,7 @@ public:
   pointer operator->() { return this->mpItem; }
   const pointer operator->() const { return this->mpItem; }
 
-  reference operator[](std::size_t b)
-  {
-    return *(this->mpItem + b);
-  }
-  const reference operator[](std::size_t b) const
+  reference operator[](std::size_t b) const
   {
     return *(this->mpItem + b);
   }
@@ -126,9 +123,19 @@ public:
     return this->mpItem;
   }
 
+  const pointer begin() const noexcept
+  {
+    return this->mpItem;
+  }
+
   pointer end() noexcept
   {
     return this->mpItem + this->mCol;
+  }
+
+  const pointer end() const noexcept
+  {
+      return this->mpItem + this->mCol;
   }
 
 private:
