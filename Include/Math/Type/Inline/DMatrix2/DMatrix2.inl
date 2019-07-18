@@ -82,6 +82,13 @@ DMatrix2<TType, EMatMajor::Column> DMatrix2<TType, EMatMajor::Column>::Inverse()
   return result;
 }
 
+template<typename TType>
+DMatrix2<TType,EMatMajor::Row> DMatrix2<TType, EMatMajor::Column>::ConvertToRowMatrix() const
+{
+  const auto transposedMatrix = this->Transpose();
+  return {transposedMatrix[0], transposedMatrix[1]};
+}
+
 template <typename TType>
 bool DMatrix2<TType, EMatMajor::Column>::HasNaN() const noexcept
 {
@@ -127,10 +134,10 @@ const typename DMatrix2<TType, EMatMajor::Column>::TValueType* DMatrix2<TType, E
   return this->mValues.front().Data();
 }
 
-template<typename TType>
+template <typename TType>
 std::vector<DVector2<TType>> DMatrix2<TType, EMatMajor::Column>::ToVector() const noexcept
 {
-  return std::vector<DVector2<TType, EMatMajor::Column>>{this->operator[](0), this->operator[](1)};
+  return std::vector<DVector2<TType>>{this->operator[](0), this->operator[](1)};
 }
 
 template <typename TType>
@@ -140,13 +147,6 @@ DMatrix2<TType, EMatMajor::Column> DMatrix2<TType, EMatMajor::Column>::Identity(
   // 0 1
   static DMatrix2<TType, EMatMajor::Column> identity{1, 0, 0, 1};
   return identity;
-}
-
-template<typename TType>
-DMatrix2<TType,EMatMajor::Row> DMatrix2<TType, EMatMajor::Column>::ConvertToRowMatrix() const
-{
-  const auto transposedMatrix = this->Transpose();
-  return {transposedMatrix[0], transposedMatrix[1]};
 }
 
 } /// ::dy::math namespace
@@ -219,6 +219,12 @@ DMatrix2<TType, EMatMajor::Row> DMatrix2<TType, EMatMajor::Row>::Inverse() const
   return result;
 }
 
+template<typename TType>
+DMatrix2<TType, EMatMajor::Column> DMatrix2<TType, EMatMajor::Row>::ConvertToColumnMatrix() const
+{
+  return {this->operator[](0), this->operator[](1)};
+}
+
 template <typename TType>
 bool DMatrix2<TType, EMatMajor::Row>::HasNaN() const noexcept
 {
@@ -264,16 +270,10 @@ const typename DMatrix2<TType, EMatMajor::Row>::TValueType* DMatrix2<TType, EMat
   return this->mValues.front().Data();
 }
 
-template<typename TType>
+template <typename TType>
 std::vector<DVector2<TType>> DMatrix2<TType, EMatMajor::Row>::ToVector() const noexcept
 {
-  return std::vector<DVector2<TType, EMatMajor::Row>>{this->operator[](0), this->operator[](1)};
-}
-
-template<typename TType>
-DMatrix2<TType, EMatMajor::Column> DMatrix2<TType, EMatMajor::Row>::ConvertToColumnMatrix() const
-{
-  return {this->operator[](0), this->operator[](1)};
+  return std::vector<DVector2<TType>>{this->operator[](0), this->operator[](1)};
 }
 
 template <typename TType>
