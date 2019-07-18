@@ -20,7 +20,7 @@ namespace dy::math
 /// https://en.wikibooks.org/wiki/GLSL_Programming/Vector_and_Matrix_Operations
 template <typename TLeft, typename TRight>
 DVector2<GetBiggerType<TLeft, TRight>> 
-operator*(const DMatrix2<TLeft>& lhs, const DVector2<TRight>& rhs) noexcept 
+operator*(const DMatrix2<TLeft, EMatMajor::Column>& lhs, const DVector2<TRight>& rhs) noexcept 
 {
   return 
   {
@@ -31,7 +31,7 @@ operator*(const DMatrix2<TLeft>& lhs, const DVector2<TRight>& rhs) noexcept
 
 template <typename TLeft, typename TRight>
 DVector2<GetBiggerType<TLeft, TRight>> 
-operator*(const DVector2<TLeft>& lhs, const DMatrix2<TRight>& rhs) noexcept 
+operator*(const DVector2<TLeft>& lhs, const DMatrix2<TRight, EMatMajor::Column>& rhs) noexcept 
 {
   return 
   {
@@ -41,8 +41,8 @@ operator*(const DVector2<TLeft>& lhs, const DMatrix2<TRight>& rhs) noexcept
 }
 
 template <typename TLeft, typename TRight>
-DMatrix2<GetBiggerType<TLeft, TRight>> 
-operator*(const DMatrix2<TLeft>& lhs, const DMatrix2<TRight>& rhs) noexcept 
+DMatrix2<GetBiggerType<TLeft, TRight>, EMatMajor::Column> 
+operator*(const DMatrix2<TLeft, EMatMajor::Column>& lhs, const DMatrix2<TRight, EMatMajor::Column>& rhs) noexcept 
 {
   return 
   {
@@ -54,7 +54,8 @@ operator*(const DMatrix2<TLeft>& lhs, const DMatrix2<TRight>& rhs) noexcept
 }
 
 template <typename TLeft>
-DMatrix2<TLeft>& operator*=(DMatrix2<TLeft>& lhs, const DMatrix2<TLeft>& rhs) noexcept 
+DMatrix2<TLeft, EMatMajor::Column>& 
+operator*=(DMatrix2<TLeft, EMatMajor::Column>& lhs, const DMatrix2<TLeft, EMatMajor::Column>& rhs) noexcept 
 {
   const DVector2<TLeft> _0 = 
   {
@@ -73,7 +74,7 @@ DMatrix2<TLeft>& operator*=(DMatrix2<TLeft>& lhs, const DMatrix2<TLeft>& rhs) no
 }
 
 template <typename TLeft>
-DMatrix2<TLeft>& operator*=(const DMatrix2<TLeft>& lhs, TLeft rhs) noexcept 
+DMatrix2<TLeft, EMatMajor::Column>& operator*=(const DMatrix2<TLeft, EMatMajor::Column>& lhs, TLeft rhs) noexcept 
 {
   lhs[0] *= rhs;
   lhs[1] *= rhs;
@@ -81,8 +82,8 @@ DMatrix2<TLeft>& operator*=(const DMatrix2<TLeft>& lhs, TLeft rhs) noexcept
 }
 
 template <typename TLeft, typename TRight, typename = std::enable_if_t<std::is_arithmetic_v<TRight>>>
-DMatrix2<GetBiggerType<TLeft, TRight>> 
-operator*(const DMatrix2<TLeft>& lhs, TRight rhs) noexcept 
+DMatrix2<GetBiggerType<TLeft, TRight>, EMatMajor::Column> 
+operator*(const DMatrix2<TLeft, EMatMajor::Column>& lhs, TRight rhs) noexcept 
 {
   return 
   {
@@ -92,8 +93,8 @@ operator*(const DMatrix2<TLeft>& lhs, TRight rhs) noexcept
 }
 
 template <typename TLeft, typename TRight, typename = std::enable_if_t<std::is_arithmetic_v<TLeft>>>
-DMatrix2<GetBiggerType<TLeft, TRight>> 
-operator*(TLeft lhs, const DMatrix2<TRight>& rhs) noexcept 
+DMatrix2<GetBiggerType<TLeft, TRight>, EMatMajor::Column> 
+operator*(TLeft lhs, const DMatrix2<TRight, EMatMajor::Column>& rhs) noexcept 
 {
   return 
   {
@@ -104,8 +105,8 @@ operator*(TLeft lhs, const DMatrix2<TRight>& rhs) noexcept
 
 /// @brief Elementary addition.
 template <typename TLeft, typename TRight>
-DMatrix2<GetBiggerType<TLeft, TRight>> 
-operator+(const DMatrix2<TLeft>& lhs, const DMatrix2<TRight>& rhs) noexcept 
+DMatrix2<GetBiggerType<TLeft, TRight>, EMatMajor::Column> 
+operator+(const DMatrix2<TLeft, EMatMajor::Column>& lhs, const DMatrix2<TRight, EMatMajor::Column>& rhs) noexcept 
 {
   return 
   {
@@ -115,7 +116,8 @@ operator+(const DMatrix2<TLeft>& lhs, const DMatrix2<TRight>& rhs) noexcept
 }
 
 template <typename TLeft>
-DMatrix2<TLeft>& operator+=(DMatrix2<TLeft>& lhs, const DMatrix2<TLeft>& rhs) noexcept 
+DMatrix2<TLeft, EMatMajor::Column>& 
+operator+=(DMatrix2<TLeft, EMatMajor::Column>& lhs, const DMatrix2<TLeft, EMatMajor::Column>& rhs) noexcept 
 {
   lhs[0] += rhs[0]; 
   lhs[1] += rhs[1];
@@ -124,8 +126,8 @@ DMatrix2<TLeft>& operator+=(DMatrix2<TLeft>& lhs, const DMatrix2<TLeft>& rhs) no
 
 /// @brief Elementary subtraction.
 template <typename TLeft, typename TRight>
-DMatrix2<GetBiggerType<TLeft, TRight>> 
-operator-(const DMatrix2<TLeft>& lhs, const DMatrix2<TRight>& rhs) noexcept 
+DMatrix2<GetBiggerType<TLeft, TRight>, EMatMajor::Column> 
+operator-(const DMatrix2<TLeft, EMatMajor::Column>& lhs, const DMatrix2<TRight, EMatMajor::Column>& rhs) noexcept 
 {
   return 
   {
@@ -135,7 +137,8 @@ operator-(const DMatrix2<TLeft>& lhs, const DMatrix2<TRight>& rhs) noexcept
 }
 
 template <typename TLeft>
-DMatrix2<TLeft>& operator-=(DMatrix2<TLeft>& lhs, const DMatrix2<TLeft>& rhs) noexcept 
+DMatrix2<TLeft, EMatMajor::Column>& 
+operator-=(DMatrix2<TLeft, EMatMajor::Column>& lhs, const DMatrix2<TLeft, EMatMajor::Column>& rhs) noexcept 
 {
   lhs[0] -= rhs[0]; 
   lhs[1] -= rhs[1];
@@ -144,8 +147,8 @@ DMatrix2<TLeft>& operator-=(DMatrix2<TLeft>& lhs, const DMatrix2<TLeft>& rhs) no
 
 /// @brief Elementary multiplication.
 template <typename TLeft, typename TRight>
-DMatrix2<GetBiggerType<TLeft, TRight>> 
-operator/(const DMatrix2<TLeft>& lhs, const DMatrix2<TRight>& rhs) noexcept 
+DMatrix2<GetBiggerType<TLeft, TRight>, EMatMajor::Column> 
+operator/(const DMatrix2<TLeft, EMatMajor::Column>& lhs, const DMatrix2<TRight, EMatMajor::Column>& rhs) noexcept 
 {
   return 
   {
@@ -155,7 +158,8 @@ operator/(const DMatrix2<TLeft>& lhs, const DMatrix2<TRight>& rhs) noexcept
 }
 
 template <typename TLeft>
-DMatrix2<TLeft>& operator/=(DMatrix2<TLeft>& lhs, const DMatrix2<TLeft>& rhs) noexcept 
+DMatrix2<TLeft, EMatMajor::Column>& 
+operator/=(DMatrix2<TLeft, EMatMajor::Column>& lhs, const DMatrix2<TLeft, EMatMajor::Column>& rhs) noexcept 
 {
   lhs[0] /= rhs[0]; 
   lhs[1] /= rhs[1];
@@ -163,7 +167,7 @@ DMatrix2<TLeft>& operator/=(DMatrix2<TLeft>& lhs, const DMatrix2<TLeft>& rhs) no
 }
 
 template <typename TLeft>
-DMatrix2<TLeft>& operator/=(DMatrix2<TLeft>& lhs, TLeft rhs) noexcept 
+DMatrix2<TLeft, EMatMajor::Column>& operator/=(DMatrix2<TLeft, EMatMajor::Column>& lhs, TLeft rhs) noexcept 
 {
   lhs[0] /= rhs;
   lhs[1] /= rhs;
@@ -172,8 +176,8 @@ DMatrix2<TLeft>& operator/=(DMatrix2<TLeft>& lhs, TLeft rhs) noexcept
 }
 
 template <typename TLeft, typename TRight, typename = std::enable_if_t<std::is_arithmetic_v<TRight>>>
-DMatrix2<GetBiggerType<TLeft, TRight>> 
-operator/(const DMatrix2<TLeft>& lhs, TRight rhs) noexcept 
+DMatrix2<GetBiggerType<TLeft, TRight>, EMatMajor::Column> 
+operator/(const DMatrix2<TLeft, EMatMajor::Column>& lhs, TRight rhs) noexcept 
 {
   return 
   {
@@ -183,8 +187,8 @@ operator/(const DMatrix2<TLeft>& lhs, TRight rhs) noexcept
 }
 
 template <typename TLeft, typename TRight, typename = std::enable_if_t<std::is_arithmetic_v<TLeft>>>
-DMatrix2<GetBiggerType<TLeft, TRight>> 
-operator/(TLeft lhs, const DMatrix2<TRight>& rhs) noexcept 
+DMatrix2<GetBiggerType<TLeft, TRight>, EMatMajor::Column> 
+operator/(TLeft lhs, const DMatrix2<TRight, EMatMajor::Column>& rhs) noexcept 
 {
   return 
   {
@@ -193,14 +197,14 @@ operator/(TLeft lhs, const DMatrix2<TRight>& rhs) noexcept
   };
 }
 
-template <typename TType>
-bool operator==(const DMatrix2<TType>& lhs, const DMatrix2<TType>& rhs) noexcept 
+template <typename TType, EMatMajor TMajor>
+bool operator==(const DMatrix2<TType, TMajor>& lhs, const DMatrix2<TType, TMajor>& rhs) noexcept 
 {
   return lhs[0] == rhs[0] && lhs[1] == rhs[1];
 }
 
-template <typename TType>
-bool operator!=(const DMatrix2<TType>& lhs, const DMatrix2<TType>& rhs) noexcept 
+template <typename TType, EMatMajor TMajor>
+bool operator!=(const DMatrix2<TType, TMajor>& lhs, const DMatrix2<TType, TMajor>& rhs) noexcept 
 {
   return !(lhs == rhs);
 }

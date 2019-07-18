@@ -14,35 +14,37 @@
 
 #include <Math/Type/Math/DMatrix2.h>
 
+// Column Major
+
 namespace dy::math
 {
 
 template <typename TType>
-DMatrix2<TType>::DMatrix2(TValueType _00, TValueType _01, TValueType _10, TValueType _11)
+DMatrix2<TType, EMatMajor::Column>::DMatrix2(TValueType _00, TValueType _01, TValueType _10, TValueType _11)
   : mValues{DVector2<TValueType>{_00, _10}, DVector2<TValueType>{_01, _11}} 
 { }
 
 template<typename TType>
-DMatrix2<TType>::DMatrix2(const DVector2<TValueType>& _0, const DVector2<TValueType>& _1)
+DMatrix2<TType, EMatMajor::Column>::DMatrix2(const DVector2<TValueType>& _0, const DVector2<TValueType>& _1)
   : mValues{_0, _1}
 { }
 
 template <typename TType>
-DVector2<typename DMatrix2<TType>::TValueType>& 
-DMatrix2<TType>::operator[](TIndex index) noexcept
+DVector2<typename DMatrix2<TType, EMatMajor::Column>::TValueType>& 
+DMatrix2<TType, EMatMajor::Column>::operator[](TIndex index) noexcept
 {
   return this->mValues[index];
 }
 
 template <typename TType>
-const DVector2<typename DMatrix2<TType>::TValueType>& 
-DMatrix2<TType>::operator[](TIndex index) const noexcept
+const DVector2<typename DMatrix2<TType, EMatMajor::Column>::TValueType>& 
+DMatrix2<TType, EMatMajor::Column>::operator[](TIndex index) const noexcept
 {
   return this->mValues[index];
 }
 
 template <typename TType>
-DMatrix2<TType> DMatrix2<TType>::Transpose() const noexcept
+DMatrix2<TType, EMatMajor::Column> DMatrix2<TType, EMatMajor::Column>::Transpose() const noexcept
 {
   return DMatrix2
   {
@@ -54,23 +56,23 @@ DMatrix2<TType> DMatrix2<TType>::Transpose() const noexcept
 }
 
 template <typename TType>
-bool DMatrix2<TType>::IsInvertible() const noexcept
+bool DMatrix2<TType, EMatMajor::Column>::IsInvertible() const noexcept
 {
   return this->GetDeterminant() != TType(0.0);
 }
 
 template <typename TType>
-TType DMatrix2<TType>::GetDeterminant() const noexcept
+TType DMatrix2<TType, EMatMajor::Column>::GetDeterminant() const noexcept
 {
   return (*this)[0][0] * (*this)[1][1] - (*this)[1][0] * (*this)[0][1];
 }
 
 template <typename TType>
-DMatrix2<TType> DMatrix2<TType>::Inverse() const
+DMatrix2<TType, EMatMajor::Column> DMatrix2<TType, EMatMajor::Column>::Inverse() const
 {
   const auto det = this->GetDeterminant();
 
-  DMatrix2<TType> result;
+  DMatrix2<TType, EMatMajor::Column> result;
   result[0][0] =  (*this)[1][1];
   result[1][1] =  (*this)[0][0];
   result[1][0] = -(*this)[1][0];
@@ -81,7 +83,7 @@ DMatrix2<TType> DMatrix2<TType>::Inverse() const
 }
 
 template <typename TType>
-bool DMatrix2<TType>::HasNaN() const noexcept
+bool DMatrix2<TType, EMatMajor::Column>::HasNaN() const noexcept
 {
   for (const auto& value : this->mValues)
   {
@@ -92,7 +94,7 @@ bool DMatrix2<TType>::HasNaN() const noexcept
 }
 
 template <typename TType>
-bool DMatrix2<TType>::HasInfinity() const noexcept
+bool DMatrix2<TType, EMatMajor::Column>::HasInfinity() const noexcept
 {
   for (const auto& value : this->mValues)
   {
@@ -103,7 +105,7 @@ bool DMatrix2<TType>::HasInfinity() const noexcept
 }
 
 template <typename TType>
-bool DMatrix2<TType>::HasOnlyNormal() const noexcept
+bool DMatrix2<TType, EMatMajor::Column>::HasOnlyNormal() const noexcept
 {
   for (const auto& value : this->mValues)
   {
@@ -114,29 +116,29 @@ bool DMatrix2<TType>::HasOnlyNormal() const noexcept
 }
 
 template <typename TType>
-typename DMatrix2<TType>::TValueType* DMatrix2<TType>::Data() noexcept
+typename DMatrix2<TType, EMatMajor::Column>::TValueType* DMatrix2<TType, EMatMajor::Column>::Data() noexcept
 {
   return this->mValues.front().Data();
 }
 
 template <typename TType>
-const typename DMatrix2<TType>::TValueType* DMatrix2<TType>::Data() const noexcept
+const typename DMatrix2<TType, EMatMajor::Column>::TValueType* DMatrix2<TType, EMatMajor::Column>::Data() const noexcept
 {
   return this->mValues.front().Data();
 }
 
 template<typename TType>
-std::vector<DVector2<TType>> DMatrix2<TType>::ToVector() const noexcept
+std::vector<DVector2<TType>> DMatrix2<TType, EMatMajor::Column>::ToVector() const noexcept
 {
-  return std::vector<DVector2<TType>>{this->operator[](0), this->operator[](1)};
+  return std::vector<DVector2<TType, EMatMajor::Column>>{this->operator[](0), this->operator[](1)};
 }
 
 template <typename TType>
-DMatrix2<TType> DMatrix2<TType>::Identity() noexcept
+DMatrix2<TType, EMatMajor::Column> DMatrix2<TType, EMatMajor::Column>::Identity() noexcept
 {
   // 1 0
   // 0 1
-  static DMatrix2<TType> identity{1, 0, 0, 1};
+  static DMatrix2<TType, EMatMajor::Column> identity{1, 0, 0, 1};
   return identity;
 }
 
