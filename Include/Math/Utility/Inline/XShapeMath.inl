@@ -51,8 +51,8 @@ bool IsRayIntersected(const DRay<TType>& ray, const DBox<TType>& box)
   return tResult.empty() == false;
 }
 
-template <typename TType>
-bool IsRayIntersected(const DRay<TType>& ray, const DBox<TType>& box, const DMatrix3<TType>& rot)
+template <typename TType, EMatMajor TMajor>
+bool IsRayIntersected(const DRay<TType>& ray, const DBox<TType>& box, const DMatrix3<TType, TMajor>& rot)
 {
   // We regards box is symmetrical and origin is located on origin of box space.
   // We need to convert ray of world-space into box-space.
@@ -69,7 +69,7 @@ bool IsRayIntersected(const DRay<TType>& ray, const DBox<TType>& box, const DMat
 template <typename TType>
 bool IsRayIntersected(const DRay<TType>& ray, const DBox<TType>& box, const DQuaternion<TType>& rot)
 {
-  return IsRayIntersected(ray, box, rot.ToMatrix3());
+  return IsRayIntersected(ray, box, rot.ToMatrix3<EMatMajor::Column>());
 }
 
 template <typename TType>
@@ -93,8 +93,8 @@ bool IsRayIntersected(const DRay<TType>& ray, const DTorus<TType>& torus)
   return tResult.empty() == false;
 }
 
-template <typename TType>
-bool IsRayIntersected(const DRay<TType>& ray, const DTorus<TType>& torus, const DMatrix3<TType>& rot)
+template <typename TType, EMatMajor TMajor>
+bool IsRayIntersected(const DRay<TType>& ray, const DTorus<TType>& torus, const DMatrix3<TType, TMajor>& rot)
 {
   // We regards box is symmetrical and origin is located on origin of box space.
   // We need to convert ray of world-space into box-space.
@@ -111,7 +111,7 @@ bool IsRayIntersected(const DRay<TType>& ray, const DTorus<TType>& torus, const 
 template <typename TType>
 bool IsRayIntersected(const DRay<TType>& ray, const DTorus<TType>& torus, const DQuaternion<TType>& rot)
 {
-  return IsRayIntersected(ray, torus, rot.ToMatrix3());
+  return IsRayIntersected(ray, torus, rot.ToMatrix3<EMatMajor::Column>());
 }
 
 template <typename TType>
@@ -121,8 +121,8 @@ bool IsRayIntersected(const DRay<TType>& ray, const DCone<TType>& cone)
   return tResult.empty() == false;
 }
 
-template <typename TType>
-bool IsRayIntersected(const DRay<TType>& ray, const DCone<TType>& cone, const DMatrix3<TType>& rot)
+template <typename TType, EMatMajor TMajor>
+bool IsRayIntersected(const DRay<TType>& ray, const DCone<TType>& cone, const DMatrix3<TType, TMajor>& rot)
 {
   // We regards box is symmetrical and origin is located on origin of box space.
   // We need to convert ray of world-space into box-space.
@@ -139,7 +139,7 @@ bool IsRayIntersected(const DRay<TType>& ray, const DCone<TType>& cone, const DM
 template <typename TType>
 bool IsRayIntersected(const DRay<TType>& ray, const DCone<TType>& cone, const DQuaternion<TType>& rot)
 {
-  return IsRayIntersected(ray, cone, rot.ToMatrix3());
+  return IsRayIntersected(ray, cone, rot.ToMatrix3<EMatMajor::Column>());
 }
 
 template <typename TType>
@@ -149,8 +149,8 @@ bool IsRayIntersected(const DRay<TType>& ray, const DCapsule<TType>& capsule)
   return tResult.empty() == false;
 }
 
-template <typename TType>
-bool IsRayIntersected(const DRay<TType>& ray, const DCapsule<TType>& capsule, const DMatrix3<TType>& rot)
+template <typename TType, EMatMajor TMajor>
+bool IsRayIntersected(const DRay<TType>& ray, const DCapsule<TType>& capsule, const DMatrix3<TType, TMajor>& rot)
 {
   // We regards box is symmetrical and origin is located on origin of box space.
   // We need to convert ray of world-space into box-space.
@@ -167,7 +167,7 @@ bool IsRayIntersected(const DRay<TType>& ray, const DCapsule<TType>& capsule, co
 template <typename TType>
 bool IsRayIntersected(const DRay<TType>& ray, const DCapsule<TType>& capsule, const DQuaternion<TType>& rot)
 {
-  return IsRayIntersected(ray, capsule, rot.ToMatrix3());
+  return IsRayIntersected(ray, capsule, rot.ToMatrix3<EMatMajor::Column>());
 }
 
 //!
@@ -212,8 +212,8 @@ TReal GetSDFValueOf(const DVector3<TType>& point, const DBox<TType>& box)
     + std::min(std::max(distance.X, std::max(distance.Y, distance.Z)), TType(0));
 }
 
-template <typename TType>
-TReal GetSDFValueOf(const DVector3<TType>& point, const DBox<TType>& box, const DMatrix3<TType>& rot)
+template <typename TType, EMatMajor TMajor>
+TReal GetSDFValueOf(const DVector3<TType>& point, const DBox<TType>& box, const DMatrix3<TType, TMajor>& rot)
 {
   // We regards box is symmetrical and origin is located on origin of box space.
   // We need to convert ray of world-space into box-space.
@@ -245,8 +245,8 @@ TReal GetSDFValueOf(const DVector3<TType>& point, const DTorus<TType>& torus)
   return length - torus.GetRadius();
 }
 
-template <typename TType>
-TReal GetSDFValueOf(const DVector3<TType>& point, const DTorus<TType>& torus, const DMatrix3<TType>& rot)
+template <typename TType, EMatMajor TMajor>
+TReal GetSDFValueOf(const DVector3<TType>& point, const DTorus<TType>& torus, const DMatrix3<TType, TMajor>& rot)
 {
   // We regards box is symmetrical and origin is located on origin of box space.
   // We need to convert ray of world-space into box-space.
@@ -283,8 +283,8 @@ TReal GetSDFValueOf(const DVector3<TType>& point, const DCone<TType>& cone)
   else { return sdf; }
 }
 
-template <typename TType>
-TReal GetSDFValueOf(const DVector3<TType>& point, const DCone<TType>& cone, const DMatrix3<TType>& rot)
+template <typename TType, EMatMajor TMajor>
+TReal GetSDFValueOf(const DVector3<TType>& point, const DCone<TType>& cone, const DMatrix3<TType, TMajor>& rot)
 {
   // We regards box is symmetrical and origin is located on origin of box space.
   // We need to convert ray of world-space into box-space.
@@ -313,8 +313,8 @@ TReal GetSDFValueOf(const DVector3<TType>& point, const DCapsule<TType>& capsule
   return relocatedPoint.GetLength() - capsule.GetRadius();
 }
 
-template <typename TType>
-TReal GetSDFValueOf(const DVector3<TType>& point, const DCapsule<TType>& capsule, const DMatrix3<TType>& rot)
+template <typename TType, EMatMajor TMajor>
+TReal GetSDFValueOf(const DVector3<TType>& point, const DCapsule<TType>& capsule, const DMatrix3<TType, TMajor>& rot)
 {
   // We regards box is symmetrical and origin is located on origin of box space.
   // We need to convert ray of world-space into box-space.
@@ -445,8 +445,8 @@ std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DBox<TType>& box)
   return result;
 }
 
-template <typename TType>
-std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DBox<TType>& box, const DMatrix3<TType>& rot)
+template <typename TType, EMatMajor TMajor>
+std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DBox<TType>& box, const DMatrix3<TType, TMajor>& rot)
 {
   // We regards box is symmetrical and origin is located on origin of box space.
   // We need to convert ray of world-space into box-space.
@@ -460,7 +460,7 @@ std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DBox<TType>& box, 
 template <typename TType>
 std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DBox<TType>& box, const DQuaternion<TType>& rot)
 {
-  return GetTValuesOf(ray, box, rot.ToMatrix3());
+  return GetTValuesOf(ray, box, rot.ToMatrix3<EMatMajor::Column>());
 }
 
 template <typename TType>
@@ -499,8 +499,8 @@ std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DTorus<TType>& tor
   return result;
 }
 
-template <typename TType>
-std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DTorus<TType>& torus, const DMatrix3<TType>& rot)
+template <typename TType, EMatMajor TMajor>
+std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DTorus<TType>& torus, const DMatrix3<TType, TMajor>& rot)
 {
   // We regards box is symmetrical and origin is located on origin of box space.
   // We need to convert ray of world-space into box-space.
@@ -517,7 +517,7 @@ std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DTorus<TType>& tor
 template <typename TType>
 std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DTorus<TType>& torus, const DQuaternion<TType>& rot)
 {
-  return GetTValuesOf(ray, torus, rot.ToMatrix3());
+  return GetTValuesOf(ray, torus, rot.ToMatrix3<EMatMajor::Column>());
 }
 
 template <typename TType>
@@ -577,8 +577,8 @@ std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DCone<TType>& cone
   return result;
 }
 
-template <typename TType>
-std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DCone<TType>& cone, const DMatrix3<TType>& rot)
+template <typename TType, EMatMajor TMajor>
+std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DCone<TType>& cone, const DMatrix3<TType, TMajor>& rot)
 {
   // We regards box is symmetrical and origin is located on origin of box space.
   // We need to convert ray of world-space into box-space.
@@ -595,7 +595,7 @@ std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DCone<TType>& cone
 template <typename TType>
 std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DCone<TType>& cone, const DQuaternion<TType>& rot)
 {
-  return GetTValuesOf(ray, cone, rot.ToMatrix3());
+  return GetTValuesOf(ray, cone, rot.ToMatrix3<EMatMajor::Column>());
 }
 
 template <typename TType>
@@ -651,8 +651,8 @@ std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DCapsule<TType>& c
   return result;
 }
 
-template <typename TType>
-std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DCapsule<TType>& capsule, const DMatrix3<TType>& rot)
+template <typename TType, EMatMajor TMajor>
+std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DCapsule<TType>& capsule, const DMatrix3<TType, TMajor>& rot)
 {
   // We regards box is symmetrical and origin is located on origin of box space.
   // We need to convert ray of world-space into box-space.
@@ -669,7 +669,7 @@ std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DCapsule<TType>& c
 template <typename TType>
 std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DCapsule<TType>& capsule, const DQuaternion<TType>& rot)
 {
-  return GetTValuesOf(ray, capsule, rot.ToMatrix3());
+  return GetTValuesOf(ray, capsule, rot.ToMatrix3<EMatMajor::Column>());
 }
 
 //!
@@ -705,8 +705,8 @@ std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DBox<TType
   return tValueList.front();
 }
 
-template <typename TType>
-std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DBox<TType>& box, const DMatrix3<TType>& rot)
+template <typename TType, EMatMajor TMajor>
+std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DBox<TType>& box, const DMatrix3<TType, TMajor>& rot)
 {
   const auto tValueList = GetTValuesOf(ray, box, rot);
   if (tValueList.empty() == true) { return std::nullopt; }
@@ -741,8 +741,8 @@ std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DTorus<TTy
   return tValueList.front(); 
 }
 
-template <typename TType>
-std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DTorus<TType>& torus, const DMatrix3<TType>& rot)
+template <typename TType, EMatMajor TMajor>
+std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DTorus<TType>& torus, const DMatrix3<TType, TMajor>& rot)
 {
   const auto tValueList = GetTValuesOf(ray, torus, rot);
   if (tValueList.empty() == true) { return std::nullopt; }
@@ -768,8 +768,8 @@ std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DCone<TTyp
   return tValueList.front(); 
 }
 
-template <typename TType>
-std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DCone<TType>& cone, const DMatrix3<TType>& rot)
+template <typename TType, EMatMajor TMajor>
+std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DCone<TType>& cone, const DMatrix3<TType, TMajor>& rot)
 {
   const auto tValueList = GetTValuesOf(ray, cone, rot);
   if (tValueList.empty() == true) { return std::nullopt; }
@@ -795,8 +795,8 @@ std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DCapsule<T
   return tValueList.front(); 
 }
 
-template <typename TType>
-std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DCapsule<TType>& capsule, const DMatrix3<TType>& rot)
+template <typename TType, EMatMajor TMajor>
+std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DCapsule<TType>& capsule, const DMatrix3<TType, TMajor>& rot)
 {
   const auto tValueList = GetTValuesOf(ray, capsule, rot);
   if (tValueList.empty() == true) { return std::nullopt; }
@@ -860,8 +860,9 @@ std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DBox<TT
   return result.Normalize();
 }
 
-template <typename TType>
-std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DBox<TType>& box, const DMatrix3<TType>& rot)
+template <typename TType, EMatMajor TMajor>
+std::optional<DVector3<TType>> 
+GetNormalOf(const DRay<TType>& ray, const DBox<TType>& box, const DMatrix3<TType, TMajor>& rot)
 {
   // We regards box is symmetrical and origin is located on origin of box space.
   // We need to convert ray of world-space into box-space.
@@ -881,7 +882,7 @@ std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DBox<TT
 template <typename TType>
 std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DBox<TType>& box, const DQuaternion<TType>& rot)
 {
-  return GetNormalOf(ray, box, rot.ToMatrix3());
+  return GetNormalOf(ray, box, rot.ToMatrix3<EMatMajor::Column>());
 }
 
 /// @brief Try to get normal vector of plane, when ray is intersected.
@@ -916,8 +917,9 @@ std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DTorus<
   return result.Normalize();
 }
 
-template <typename TType>
-std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DTorus<TType>& torus, const DMatrix3<TType>& rot)
+template <typename TType, EMatMajor TMajor>
+std::optional<DVector3<TType>> 
+GetNormalOf(const DRay<TType>& ray, const DTorus<TType>& torus, const DMatrix3<TType, TMajor>& rot)
 {
   // We regards box is symmetrical and origin is located on origin of box space.
   // We need to convert ray of world-space into box-space.
@@ -937,7 +939,7 @@ std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DTorus<
 template <typename TType>
 std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DTorus<TType>& torus, const DQuaternion<TType>& rot)
 {
-  return GetNormalOf(ray, torus, rot.ToMatrix3());
+  return GetNormalOf(ray, torus, rot.ToMatrix3<EMatMajor::Column>());
 }
 
 template <typename TType>
@@ -961,8 +963,9 @@ std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DCone<T
   return result.Normalize();
 }
 
-template <typename TType>
-std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DCone<TType>& cone, const DMatrix3<TType>& rot)
+template <typename TType, EMatMajor TMajor>
+std::optional<DVector3<TType>> 
+GetNormalOf(const DRay<TType>& ray, const DCone<TType>& cone, const DMatrix3<TType, TMajor>& rot)
 {
   // We regards box is symmetrical and origin is located on origin of box space.
   // We need to convert ray of world-space into box-space.
@@ -980,9 +983,10 @@ std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DCone<T
 }
 
 template <typename TType>
-std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DCone<TType>& cone, const DQuaternion<TType>& rot)
+std::optional<DVector3<TType>> 
+GetNormalOf(const DRay<TType>& ray, const DCone<TType>& cone, const DQuaternion<TType>& rot)
 {
-  return GetNormalOf(ray, cone, rot.ToMatrix3());
+  return GetNormalOf(ray, cone, rot.ToMatrix3<EMatMajor::Column>());
 }
 
 template <typename TType>
@@ -1006,8 +1010,9 @@ std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DCapsul
   return result.Normalize();
 }
 
-template <typename TType>
-std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DCapsule<TType>& capsule, const DMatrix3<TType>& rot)
+template <typename TType, EMatMajor TMajor>
+std::optional<DVector3<TType>> 
+GetNormalOf(const DRay<TType>& ray, const DCapsule<TType>& capsule, const DMatrix3<TType, TMajor>& rot)
 {
   // We regards box is symmetrical and origin is located on origin of box space.
   // We need to convert ray of world-space into box-space.
@@ -1025,9 +1030,10 @@ std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DCapsul
 }
 
 template <typename TType>
-std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DCapsule<TType>& capsule, const DQuaternion<TType>& rot)
+std::optional<DVector3<TType>> 
+GetNormalOf(const DRay<TType>& ray, const DCapsule<TType>& capsule, const DQuaternion<TType>& rot)
 {
-  return GetNormalOf(ray, capsule, rot.ToMatrix3());
+  return GetNormalOf(ray, capsule, rot.ToMatrix3<EMatMajor::Column>());
 }
 
 } /// ::dy::math namespace

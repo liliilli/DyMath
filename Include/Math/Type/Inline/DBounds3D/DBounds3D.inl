@@ -20,9 +20,9 @@
 namespace dy::math
 {
 
-template <typename TLeft, typename TRight> 
+template <typename TLeft, typename TRight, EMatMajor TMajor> 
 DBounds3D<GetBiggerType<TLeft, TRight>>
-operator*(const DMatrix3<TLeft>& lhs, const DBounds3D<TRight>& rhs) noexcept
+operator*(const DMatrix3<TLeft, TMajor>& lhs, const DBounds3D<TRight>& rhs) noexcept
 {
   // Get Point list of rhs AABB.
   using TBiggerType = GetBiggerType<TLeft, TRight>;
@@ -52,7 +52,7 @@ template <typename TLeft, typename TRight>
 DBounds3D<GetBiggerType<TLeft, TRight>>
 operator*(const DQuaternion<TLeft>& lhs, const DBounds3D<TRight>& rhs) noexcept
 {
-  return lhs.ToMatrix3() * rhs;
+  return lhs.ToMatrix3<EMatMajor::Column>() * rhs;
 }
    
 template <typename TLeft, typename TRight>

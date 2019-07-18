@@ -100,8 +100,8 @@ DBounds3D<TType> GetDBounds3DOf(const DBox<TType>& shape);
 /// @param shape Box shape.
 /// @param rotMatrix World-rotation matrix of box instance.
 /// @return DBounds3D instance that covers given shape.
-template <typename TType>
-DBounds3D<TType> GetDBounds3DOf(const DBox<TType>& shape, const DMatrix3<TType>& rot);
+template <typename TType, EMatMajor TMajor>
+DBounds3D<TType> GetDBounds3DOf(const DBox<TType>& shape, const DMatrix3<TType, TMajor>& rot);
 
 /// @brief Get DBounds3D instance of world-space that covers given shape.
 /// @param shape Box shape.
@@ -120,8 +120,8 @@ DBounds3D<TType> GetDBounds3DOf(const DTorus<TType>& shape);
 /// @param shape Torus shape.
 /// @param rotMatrix World-rotation matrix of box instance.
 /// @return DBounds3D instance that covers given shape.
-template <typename TType>
-DBounds3D<TType> GetDBounds3DOf(const DTorus<TType>& shape, const DMatrix3<TType>& rot);
+template <typename TType, EMatMajor TMajor>
+DBounds3D<TType> GetDBounds3DOf(const DTorus<TType>& shape, const DMatrix3<TType, TMajor>& rot);
 
 /// @brief Get DBounds3D instance of world-space that covers given shape.
 /// @param shape Torus shape.
@@ -140,8 +140,8 @@ DBounds3D<TType> GetDBounds3DOf(const DCone<TType>& shape);
 /// @param shape Cone shape.
 /// @param rotMatrix World-rotation matrix of box instance.
 /// @return DBounds3D instance that covers given shape.
-template <typename TType>
-DBounds3D<TType> GetDBounds3DOf(const DCone<TType>& shape, const DMatrix3<TType>& rot);
+template <typename TType, EMatMajor TMajor>
+DBounds3D<TType> GetDBounds3DOf(const DCone<TType>& shape, const DMatrix3<TType, TMajor>& rot);
 
 /// @brief Get DBounds3D instance of world-space that covers given shape.
 /// @param shape Cone shape.
@@ -160,8 +160,8 @@ DBounds3D<TType> GetDBounds3DOf(const DCapsule<TType>& shape);
 /// @param shape Capsule shape.
 /// @param rotMatrix World-rotation matrix of box instance.
 /// @return DBounds3D instance that covers given shape.
-template <typename TType>
-DBounds3D<TType> GetDBounds3DOf(const DCapsule<TType>& shape, const DMatrix3<TType>& rot);
+template <typename TType, EMatMajor TMajor>
+DBounds3D<TType> GetDBounds3DOf(const DCapsule<TType>& shape, const DMatrix3<TType, TMajor>& rot);
 
 /// @brief Get DBounds3D instance of world-space that covers given shape.
 /// @param shape Capsule shape.
@@ -195,8 +195,8 @@ template <typename TType>
 /// @param ray Ray instance in world-space.
 /// @param box Box instance.
 /// @param rotMatrix World-rotation matrix of box instance.
-template <typename TType>
-[[nodiscard]] bool IsRayIntersected(const DRay<TType>& ray, const DBox<TType>& box, const DMatrix3<TType>& rot);
+template <typename TType, EMatMajor TMajor>
+[[nodiscard]] bool IsRayIntersected(const DRay<TType>& ray, const DBox<TType>& box, const DMatrix3<TType, TMajor>& rot);
 
 /// @brief Check that Ray is intersected into DBox.
 /// @param ray Ray instance in world-space.
@@ -221,8 +221,8 @@ template <typename TType>
 /// @param ray Ray instance in world-space.
 /// @param torus Torus instance.
 /// @param rot World-rotation matrix of torus instance.
-template <typename TType>
-[[nodiscard]] bool IsRayIntersected(const DRay<TType>& ray, const DTorus<TType>& torus, const DMatrix3<TType>& rot);
+template <typename TType, EMatMajor TMajor>
+[[nodiscard]] bool IsRayIntersected(const DRay<TType>& ray, const DTorus<TType>& torus, const DMatrix3<TType, TMajor>& rot);
 
 /// @brief Check that Ray is intersected into DTorus.
 /// @param ray Ray instance in world-space.
@@ -241,8 +241,8 @@ template <typename TType>
 /// @param ray Ray instance in world-space.
 /// @param cone Cone instance.
 /// @param rot World-rotation matrix of cone instance.
-template <typename TType>
-[[nodiscard]] bool IsRayIntersected(const DRay<TType>& ray, const DCone<TType>& cone, const DMatrix3<TType>& rot);
+template <typename TType, EMatMajor TMajor>
+[[nodiscard]] bool IsRayIntersected(const DRay<TType>& ray, const DCone<TType>& cone, const DMatrix3<TType, TMajor>& rot);
 
 /// @brief Check that Ray is intersected into DCone.
 /// @param ray Ray instance in world-space.
@@ -261,8 +261,8 @@ template <typename TType>
 /// @param ray Ray instance in world-space.
 /// @param capsule Capsule instance.
 /// @param rot World-rotation matrix of capsule instance.
-template <typename TType>
-[[nodiscard]] bool IsRayIntersected(const DRay<TType>& ray, const DCapsule<TType>& capsule, const DMatrix3<TType>& rot);
+template <typename TType, EMatMajor TMajor>
+[[nodiscard]] bool IsRayIntersected(const DRay<TType>& ray, const DCapsule<TType>& capsule, const DMatrix3<TType, TMajor>& rot);
 
 /// @brief Check that Ray is intersected into DCapsule.
 /// @param ray Ray instance in world-space.
@@ -284,8 +284,8 @@ template <typename TType>
 TReal GetSDFValueOf(const DVector3<TType>& point, const DBox<TType>& box);
 
 /// @brief Get signed distance value of box model from point.
-template <typename TType>
-TReal GetSDFValueOf(const DVector3<TType>& point, const DBox<TType>& box, const DMatrix3<TType>& rot);
+template <typename TType, EMatMajor TMajor>
+TReal GetSDFValueOf(const DVector3<TType>& point, const DBox<TType>& box, const DMatrix3<TType, TMajor>& rot);
 
 /// @brief Get signed distance value of box model from point.
 template <typename TType>
@@ -300,8 +300,8 @@ template <typename TType>
 TReal GetSDFValueOf(const DVector3<TType>& point, const DTorus<TType>& torus);
 
 /// @brief Get signed distance value of torus model from point.
-template <typename TType>
-TReal GetSDFValueOf(const DVector3<TType>& point, const DTorus<TType>& torus, const DMatrix3<TType>& rot);
+template <typename TType, EMatMajor TMajor>
+TReal GetSDFValueOf(const DVector3<TType>& point, const DTorus<TType>& torus, const DMatrix3<TType, TMajor>& rot);
 
 /// @brief Get signed distance value of torus model from point.
 template <typename TType>
@@ -312,8 +312,8 @@ template <typename TType>
 TReal GetSDFValueOf(const DVector3<TType>& point, const DCone<TType>& cone);
 
 /// @brief Get signed distance value of cone model from point.
-template <typename TType>
-TReal GetSDFValueOf(const DVector3<TType>& point, const DCone<TType>& cone, const DMatrix3<TType>& rot);
+template <typename TType, EMatMajor TMajor>
+TReal GetSDFValueOf(const DVector3<TType>& point, const DCone<TType>& cone, const DMatrix3<TType, TMajor>& rot);
 
 /// @brief Get signed distance value of cone model from point.
 template <typename TType>
@@ -324,8 +324,8 @@ template <typename TType>
 TReal GetSDFValueOf(const DVector3<TType>& point, const DCapsule<TType>& capsule);
 
 /// @brief Get signed distance value of capsule model from point.
-template <typename TType>
-TReal GetSDFValueOf(const DVector3<TType>& point, const DCapsule<TType>& capsule, const DMatrix3<TType>& rot);
+template <typename TType, EMatMajor TMajor>
+TReal GetSDFValueOf(const DVector3<TType>& point, const DCapsule<TType>& capsule, const DMatrix3<TType, TMajor>& rot);
 
 /// @brief Get signed distance value of capsule model from point.
 template <typename TType>
@@ -348,8 +348,8 @@ template <typename TType>
 std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DBox<TType>& box);
 
 /// @brief Get positive 't' list to the point of given box from given ray.
-template <typename TType>
-std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DBox<TType>& box, const DMatrix3<TType>& rot);
+template <typename TType, EMatMajor TMajor>
+std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DBox<TType>& box, const DMatrix3<TType, TMajor>& rot);
 
 /// @brief Get positive 't' list to the point of given box from given ray.
 template <typename TType>
@@ -369,8 +369,8 @@ std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DTorus<TType>& tor
 /// @param ray Ray instance in world-space.
 /// @param torus Torus instance.
 /// @param rot World-rotation matrix of torus instance.
-template <typename TType>
-std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DTorus<TType>& torus, const DMatrix3<TType>& rot);
+template <typename TType, EMatMajor TMajor>
+std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DTorus<TType>& torus, const DMatrix3<TType, TMajor>& rot);
 
 /// @brief Get positive 't' list to the point of given torus from given ray.
 /// @param ray Ray instance in world-space.
@@ -389,8 +389,8 @@ std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DCone<TType>& cone
 /// @param ray Ray instance in world-space.
 /// @param cone Cone instance.
 /// @param rot World-rotation matrix of cone instance.
-template <typename TType>
-std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DCone<TType>& cone, const DMatrix3<TType>& rot);
+template <typename TType, EMatMajor TMajor>
+std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DCone<TType>& cone, const DMatrix3<TType, TMajor>& rot);
 
 /// @brief Get positive 't' list to the point of given cone from given ray.
 /// @param ray Ray instance in world-space.
@@ -409,8 +409,8 @@ std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DCapsule<TType>& c
 /// @param ray Ray instance in world-space.
 /// @param capsule Capsule instance.
 /// @param rot World-rotation matrix of capsule instance.
-template <typename TType>
-std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DCapsule<TType>& capsule, const DMatrix3<TType>& rot);
+template <typename TType, EMatMajor TMajor>
+std::vector<TReal> GetTValuesOf(const DRay<TType>& ray, const DCapsule<TType>& capsule, const DMatrix3<TType, TMajor>& rot);
 
 /// @brief Get positive 't' list to the point of given capsule from given ray.
 /// @param ray Ray instance in world-space.
@@ -442,8 +442,8 @@ std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DBox<TType
 
 /// @brief Get positive `t` to the closest point of given box from given ray.
 /// If not found, just return nullopt value.
-template <typename TType>
-std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DBox<TType>& box, const DMatrix3<TType>& rot);
+template <typename TType, EMatMajor TMajor>
+std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DBox<TType>& box, const DMatrix3<TType, TMajor>& rot);
 
 /// @brief Get positive `t` to the closest point of given box from given ray.
 /// If not found, just return nullopt value.
@@ -466,8 +466,8 @@ std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DTorus<TTy
 /// @param ray Ray instance in world-space.
 /// @param torus Torus instance.
 /// @param rot World-rotation matrix of torus instance.
-template <typename TType>
-std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DTorus<TType>& torus, const DMatrix3<TType>& rot);
+template <typename TType, EMatMajor TMajor>
+std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DTorus<TType>& torus, const DMatrix3<TType, TMajor>& rot);
 
 /// @brief Get positive 't' list to the point of given torus from given ray.
 /// @param ray Ray instance in world-space.
@@ -487,8 +487,8 @@ std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DCone<TTyp
 /// @param ray Ray instance in world-space.
 /// @param cone Cone instance.
 /// @param rot World-rotation matrix of cone instance.
-template <typename TType>
-std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DCone<TType>& cone, const DMatrix3<TType>& rot);
+template <typename TType, EMatMajor TMajor>
+std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DCone<TType>& cone, const DMatrix3<TType, TMajor>& rot);
 
 /// @brief Get positive 't' list to the point of given cone from given ray.
 /// @param ray Ray instance in world-space.
@@ -508,8 +508,8 @@ std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DCapsule<T
 /// @param ray Ray instance in world-space.
 /// @param capsule Cone instance.
 /// @param rot World-rotation matrix of capsule instance.
-template <typename TType>
-std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DCapsule<TType>& capsule, const DMatrix3<TType>& rot);
+template <typename TType, EMatMajor TMajor>
+std::optional<TReal> GetClosestTValueOf(const DRay<TType>& ray, const DCapsule<TType>& capsule, const DMatrix3<TType, TMajor>& rot);
 
 /// @brief Get positive 't' list to the point of given capsule from given ray.
 /// @param ray Ray instance in world-space.
@@ -531,12 +531,14 @@ template <typename TType>
 std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DBox<TType>& box);
 
 /// @brief Try to get normal vector of box, when ray is intersected.
-template <typename TType>
-std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DBox<TType>& box, const DMatrix3<TType>& rot);
+template <typename TType, EMatMajor TMajor>
+std::optional<DVector3<TType>> 
+GetNormalOf(const DRay<TType>& ray, const DBox<TType>& box, const DMatrix3<TType, TMajor>& rot);
 
 /// @brief Try to get normal vector of box, when ray is intersected.
 template <typename TType>
-std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DBox<TType>& box, const DQuaternion<TType>& rot);
+std::optional<DVector3<TType>> 
+GetNormalOf(const DRay<TType>& ray, const DBox<TType>& box, const DQuaternion<TType>& rot);
 
 /// @brief Try to get normal vector of plane, when ray is intersected.
 template <typename TType>
@@ -553,15 +555,17 @@ std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DTorus<
 /// @param ray Ray instance in world-space.
 /// @param torus Torus instance.
 /// @param rot World-rotation matrix of torus instance.
-template <typename TType>
-std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DTorus<TType>& torus, const DMatrix3<TType>& rot);
+template <typename TType, EMatMajor TMajor>
+std::optional<DVector3<TType>> 
+GetNormalOf(const DRay<TType>& ray, const DTorus<TType>& torus, const DMatrix3<TType, TMajor>& rot);
 
 /// @brief Try to get normal vector of torus, when ray is intersected.
 /// @param ray Ray instance in world-space.
 /// @param torus Torus instance.
 /// @param rot Quaternion that has rotation information of DTorus.
 template <typename TType>
-std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DTorus<TType>& torus, const DQuaternion<TType>& rot);
+std::optional<DVector3<TType>> 
+GetNormalOf(const DRay<TType>& ray, const DTorus<TType>& torus, const DQuaternion<TType>& rot);
 
 /// @brief Try to get normal vector of cone, when ray is intersected.
 /// If not found, just return nullopt value.
@@ -574,15 +578,17 @@ std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DCone<T
 /// @param ray Ray instance in world-space.
 /// @param cone Cone instance.
 /// @param rot World-rotation matrix of cone instance.
-template <typename TType>
-std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DCone<TType>& cone, const DMatrix3<TType>& rot);
+template <typename TType, EMatMajor TMajor>
+std::optional<DVector3<TType>> 
+GetNormalOf(const DRay<TType>& ray, const DCone<TType>& cone, const DMatrix3<TType, TMajor>& rot);
 
 /// @brief Try to get normal vector of cone, when ray is intersected.
 /// @param ray Ray instance in world-space.
 /// @param cone Cone instance.
 /// @param rot Quaternion that has rotation information of DCone.
 template <typename TType>
-std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DCone<TType>& cone, const DQuaternion<TType>& rot);
+std::optional<DVector3<TType>> 
+GetNormalOf(const DRay<TType>& ray, const DCone<TType>& cone, const DQuaternion<TType>& rot);
 
 /// @brief Try to get normal vector of capsule, when ray is intersected.
 /// If not found, just return nullopt value.
@@ -595,15 +601,17 @@ std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DCapsul
 /// @param ray Ray instance in world-space.
 /// @param capsule Cone instance.
 /// @param rot World-rotation matrix of capsule instance.
-template <typename TType>
-std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DCapsule<TType>& capsule, const DMatrix3<TType>& rot);
+template <typename TType, EMatMajor TMajor>
+std::optional<DVector3<TType>> 
+GetNormalOf(const DRay<TType>& ray, const DCapsule<TType>& capsule, const DMatrix3<TType, TMajor>& rot);
 
 /// @brief Try to get normal vector of capsule, when ray is intersected.
 /// @param ray Ray instance in world-space.
 /// @param capsule Cone instance.
 /// @param rot Quaternion that has rotation information of DCapsule.
 template <typename TType>
-std::optional<DVector3<TType>> GetNormalOf(const DRay<TType>& ray, const DCapsule<TType>& capsule, const DQuaternion<TType>& rot);
+std::optional<DVector3<TType>> 
+GetNormalOf(const DRay<TType>& ray, const DCapsule<TType>& capsule, const DQuaternion<TType>& rot);
 
 } /// ::dy::math namespace
 #include <Math/Utility/Inline/XShapeMath.inl>

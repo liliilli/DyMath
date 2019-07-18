@@ -83,7 +83,7 @@ DMatrix3<TType, EMatMajor::Column> DMatrix3<TType, EMatMajor::Column>::Inverse()
 {
   const auto det = this->GetDeterminant();
 
-  DMatrix3<TType> result{};
+  DMatrix3<TType, EMatMajor::Column> result{};
   result[0][0] = + ((*this)[1][1] * (*this)[2][2] - (*this)[2][1] * (*this)[1][2]);
   result[1][0] = - ((*this)[1][0] * (*this)[2][2] - (*this)[2][0] * (*this)[1][2]);
   result[2][0] = + ((*this)[1][0] * (*this)[2][1] - (*this)[2][0] * (*this)[1][1]);
@@ -237,7 +237,7 @@ DMatrix3<TType, EMatMajor::Row> DMatrix3<TType, EMatMajor::Row>::Inverse() const
 {
   const auto det = this->GetDeterminant();
 
-  DMatrix3<TType> result{};
+  DMatrix3<TType, EMatMajor::Row> result{};
   result[0][0] = + ((*this)[1][1] * (*this)[2][2] - (*this)[2][1] * (*this)[1][2]);
   result[1][0] = - ((*this)[1][0] * (*this)[2][2] - (*this)[2][0] * (*this)[1][2]);
   result[2][0] = + ((*this)[1][0] * (*this)[2][1] - (*this)[2][0] * (*this)[1][1]);

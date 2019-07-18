@@ -43,7 +43,8 @@ public:
   const TValueType& operator[](TIndex index) const;
 
   /// @brief Get rotation matrix (3x3) from quaternion.
-  DMatrix3<TValueType> ToMatrix3() const noexcept;
+  template <EMatMajor TMajor>
+  DMatrix3<TValueType, TMajor> ToMatrix3() const noexcept;
   /// @brief Get rotation matrix (4x4) from quaternion.
   DMatrix4<TValueType> ToMatrix4() const noexcept;
   /// @brief Get inverse quaternion of this quaternion.

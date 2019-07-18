@@ -102,8 +102,8 @@ DBounds3D<TType> GetDBounds3DOf(const DBox<TType>& shape)
   return {shape.GetMinPos(), shape.GetMaxPos()};
 }
 
-template <typename TType>
-DBounds3D<TType> GetDBounds3DOf(const DBox<TType>& shape, const DMatrix3<TType>& rot)
+template <typename TType, EMatMajor TMajor>
+DBounds3D<TType> GetDBounds3DOf(const DBox<TType>& shape, const DMatrix3<TType, TMajor>& rot)
 {
   const auto& origin = shape.GetOrigin();
   return  
@@ -118,7 +118,7 @@ DBounds3D<TType> GetDBounds3DOf(const DBox<TType>& shape, const DMatrix3<TType>&
 template <typename TType>
 DBounds3D<TType> GetDBounds3DOf(const DBox<TType>& shape, const DQuaternion<TType>& rot)
 {
-  return GetDBounds3DOf(shape, rot.ToMatrix3());
+  return GetDBounds3DOf(shape, rot.ToMatrix3<EMatMajor::Column>());
 }
 
 template <typename TType>
@@ -132,8 +132,8 @@ DBounds3D<TType> GetDBounds3DOf(const DTorus<TType>& shape)
   return {origin + offset, origin - offset};
 }
 
-template <typename TType>
-DBounds3D<TType> GetDBounds3DOf(const DTorus<TType>& shape, const DMatrix3<TType>& rot)
+template <typename TType, EMatMajor TMajor>
+DBounds3D<TType> GetDBounds3DOf(const DTorus<TType>& shape, const DMatrix3<TType, TMajor>& rot)
 {
   const auto& origin = shape.GetOrigin();
   return  
@@ -148,7 +148,7 @@ DBounds3D<TType> GetDBounds3DOf(const DTorus<TType>& shape, const DMatrix3<TType
 template <typename TType>
 DBounds3D<TType> GetDBounds3DOf(const DTorus<TType>& shape, const DQuaternion<TType>& rot)
 {
-  return GetDBounds3DOf(shape, rot.ToMatrix3());
+  return GetDBounds3DOf(shape, rot.ToMatrix3<EMatMajor::Column>());
 }
 
 template <typename TType>
@@ -161,8 +161,8 @@ DBounds3D<TType> GetDBounds3DOf(const DCone<TType>& shape)
   return {origin + DVector3<TType>{xz, y, xz}, origin - DVector3<TType>{xz, 0, xz}};
 }
 
-template <typename TType>
-DBounds3D<TType> GetDBounds3DOf(const DCone<TType>& shape, const DMatrix3<TType>& rot)
+template <typename TType, EMatMajor TMajor>
+DBounds3D<TType> GetDBounds3DOf(const DCone<TType>& shape, const DMatrix3<TType, TMajor>& rot)
 {
   const auto& origin = shape.GetOrigin();
   return  
@@ -177,7 +177,7 @@ DBounds3D<TType> GetDBounds3DOf(const DCone<TType>& shape, const DMatrix3<TType>
 template <typename TType>
 DBounds3D<TType> GetDBounds3DOf(const DCone<TType>& shape, const DQuaternion<TType>& rot)
 {
-  return GetDBounds3DOf(shape, rot.ToMatrix3());
+  return GetDBounds3DOf(shape, rot.ToMatrix3<EMatMajor::Column>());
 }
 
 template <typename TType>
@@ -190,8 +190,8 @@ DBounds3D<TType> GetDBounds3DOf(const DCapsule<TType>& shape)
   return {origin + DVector3<TType>{r, h + r, r}, origin - DVector3<TType>{r}};
 }
 
-template <typename TType>
-DBounds3D<TType> GetDBounds3DOf(const DCapsule<TType>& shape, const DMatrix3<TType>& rot)
+template <typename TType, EMatMajor TMajor>
+DBounds3D<TType> GetDBounds3DOf(const DCapsule<TType>& shape, const DMatrix3<TType, TMajor>& rot)
 {
   const auto& origin = shape.GetOrigin();
   return  
@@ -206,7 +206,7 @@ DBounds3D<TType> GetDBounds3DOf(const DCapsule<TType>& shape, const DMatrix3<TTy
 template <typename TType>
 DBounds3D<TType> GetDBounds3DOf(const DCapsule<TType>& shape, const DQuaternion<TType>& rot)
 {
-  return GetDBounds3DOf(shape, rot.ToMatrix3());
+  return GetDBounds3DOf(shape, rot.ToMatrix3<EMatMajor::Column>());
 }
 
 } /// ::dy::math namespace

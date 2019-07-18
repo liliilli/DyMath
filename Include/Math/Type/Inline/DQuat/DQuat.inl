@@ -71,13 +71,10 @@ DQuaternion<TType>::operator[](TIndex index) const
 }
 
 template <typename TType>
-DMatrix3<typename DQuaternion<TType>::TValueType> 
+template <EMatMajor TMajor>
+DMatrix3<typename DQuaternion<TType>::TValueType, TMajor> 
 DQuaternion<TType>::ToMatrix3() const noexcept
 {
-  // 1-2y^2-2z^2 2xy+2wz      2xz-2wy
-  // 2xy-2wz     1-2x^2-2z^2  2yz+2wx
-  // 2xz+2wy     2yz-2wx      1-2x^2-2y^2 Transpose.
-  DMatrix3<TType> result{};
   auto qxx = this->mX * this->mX;
   auto qyy = this->mY * this->mY;
   auto qzz = this->mZ * this->mZ;
@@ -88,19 +85,23 @@ DQuaternion<TType>::ToMatrix3() const noexcept
   auto qwy = this->mW * this->mY;
   auto qwz = this->mW * this->mZ;
 
-  result[0][0] = TType(1) - TType(2) * (qyy +  qzz);
-  result[0][1] = TType(2) * (qxy + qwz);
-  result[0][2] = TType(2) * (qxz - qwy);
+  // 1-2y^2-2z^2 2xy+2wz      2xz-2wy
+  // 2xy-2wz     1-2x^2-2z^2  2yz+2wx
+  // 2xz+2wy     2yz-2wx      1-2x^2-2y^2 Transpose.
+  return 
+  {
+    TType(1) - TType(2) * (qyy +  qzz),
+    TType(2) * (qxy - qwz),
+    TType(2) * (qxz + qwy),
 
-  result[1][0] = TType(2) * (qxy - qwz);
-  result[1][1] = TType(1) - TType(2) * (qxx +  qzz);
-  result[1][2] = TType(2) * (qyz + qwx);
+    TType(2) * (qxy + qwz),
+    TType(1) - TType(2) * (qxx +  qzz),
+    TType(2) * (qyz - qwx),
 
-  result[2][0] = TType(2) * (qxz + qwy);
-  result[2][1] = TType(2) * (qyz - qwx);
-  result[2][2] = TType(1) - TType(2) * (qxx +  qyy);
-
-  return result;
+    TType(2) * (qxz - qwy),
+    TType(2) * (qyz + qwx),
+    TType(1) - TType(2) * (qxx +  qyy)
+  };
 }
 
 template <typename TType>
