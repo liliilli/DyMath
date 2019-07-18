@@ -63,21 +63,21 @@ public:
   /// @brief Can be convert DVector3 explicitly, but alpha information passed.
   explicit operator DVector3<TValueType>() const noexcept;
 
-  inline static const DColorRGB Aqua;
-  inline static const DColorRGB Black;
-  inline static const DColorRGB Blue;
-  inline static const DColorRGB DarkRed;
-  inline static const DColorRGB DarkGray;
-  inline static const DColorRGB DarkGreen;
-  inline static const DColorRGB Gold;
-  inline static const DColorRGB Gray = {0.5f};
-  inline static const DColorRGB Green;
-  inline static const DColorRGB Magenta;
-  inline static const DColorRGB Orange;
-  inline static const DColorRGB Purple;
-  inline static const DColorRGB Red;
-  inline static const DColorRGB White = {1.0f};
-  inline static const DColorRGB Yellow;
+  static const DColorRGB Aqua;
+  static const DColorRGB Black;
+  static const DColorRGB Blue;
+  static const DColorRGB DarkRed;
+  static const DColorRGB DarkGray;
+  static const DColorRGB DarkGreen;
+  static const DColorRGB Gold;
+  static const DColorRGB Gray;
+  static const DColorRGB Green;
+  static const DColorRGB Magenta;
+  static const DColorRGB Orange;
+  static const DColorRGB Purple;
+  static const DColorRGB Red;
+  static const DColorRGB White;
+  static const DColorRGB Yellow;
 };
 
 } /// ::dy::math namespace

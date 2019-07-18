@@ -18,6 +18,37 @@ namespace dy::math
 {
 
 template <typename TType>
+inline static const typename DColorRGB<TType>::DColorRGB Aqua = {0, 1, 1};
+template <typename TType>
+inline static const typename DColorRGB<TType>::DColorRGB Black = {0};
+template <typename TType>
+inline static const typename DColorRGB<TType>::DColorRGB Blue = {0, TType(0), TType(1)};
+template <typename TType>
+inline static const typename DColorRGB<TType>::DColorRGB DarkRed = {TType(0.5), 0, 0};
+template <typename TType>
+inline static const typename DColorRGB<TType>::DColorRGB DarkGray  = {0, TType(0.5), 0};
+template <typename TType>
+inline static const typename DColorRGB<TType>::DColorRGB DarkGreen = {0, 0, TType(0.5)};
+template <typename TType>
+inline static const typename DColorRGB<TType>::DColorRGB Gold      = {1, 0.843, 0};
+template <typename TType>
+inline static const typename DColorRGB<TType>::DColorRGB Gray      = {TType(0.5)};
+template <typename TType>
+inline static const typename DColorRGB<TType>::DColorRGB Green     = {0, 1, 0};
+template <typename TType>
+inline static const typename DColorRGB<TType>::DColorRGB Magenta   = {1, 0, 1};
+template <typename TType>
+inline static const typename DColorRGB<TType>::DColorRGB Orange    = {1, 0.549, 0};
+template <typename TType>
+inline static const typename DColorRGB<TType>::DColorRGB Purple    = {0.5, 0, 0.5};
+template <typename TType>
+inline static const typename DColorRGB<TType>::DColorRGB Red       = {1, 0, 0};
+template <typename TType>
+inline static const typename DColorRGB<TType>::DColorRGB White     = {1};
+template <typename TType>
+inline static const typename DColorRGB<TType>::DColorRGB Yellow    = {1, 1, 0};
+
+template <typename TType>
 DColorRGB<TType>::DColorRGB(TType gray) noexcept
   : R{gray}, G{gray}, B{gray}
 { }
