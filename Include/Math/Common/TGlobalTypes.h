@@ -58,5 +58,13 @@ constexpr auto kMaxValueOf = std::numeric_limits<TType>::max();
 template <typename TType>
 constexpr auto kMinValueOf = std::numeric_limits<TType>::lowest();
 
+/// @enum EMatMajor
+/// @brief Matrix major specification values.
+enum class EMatMajor
+{
+  Row,
+  Column
+};
+
 } /// ::dy::math namespace
 #include <Math/Common/Inline/TGlobalTypes.inl>
