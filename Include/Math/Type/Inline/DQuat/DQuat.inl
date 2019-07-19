@@ -105,17 +105,31 @@ DQuaternion<TType>::ToMatrix3() const noexcept
 }
 
 template <typename TType>
-DMatrix4<typename DQuaternion<TType>::TValueType> 
+template <EMatMajor TMajor>
+DMatrix4<typename DQuaternion<TType>::TValueType, TMajor> 
 DQuaternion<TType>::ToMatrix4() const noexcept
 {
-  const DMatrix3<TType> matrix3 = this->ToMatrix3();
-  return 
+  const auto matrix3 = this->ToMatrix3<TMajor>();
+  if constexpr (TMajor == EMatMajor::Column)
   {
-    DVector4<TType>{matrix3[0]}, 
-    {matrix3[1]}, 
-    {matrix3[2]}, 
-    {0, 0, 0, 1}
-  };
+    return 
+    {
+      DVector4<TType>{matrix3[0]}, 
+      {matrix3[1]}, 
+      {matrix3[2]}, 
+      {0, 0, 0, 1}
+    };
+  }
+  else
+  {
+    return
+    {
+      DVector4<TType>{matrix3[0], 0},
+      DVector4<TType>{matrix3[1], 0},
+      DVector4<TType>{matrix3[2], 0},
+      DVector4<TType>{matrix3[3], 1},
+    };
+  }
 }
 
 template <typename TType>

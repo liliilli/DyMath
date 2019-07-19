@@ -36,37 +36,26 @@ namespace dy::math
 /// @brief Create projection matrix following graphics and project value.
 /// Dy system use right-hand coorindate system, so each EGraphics value create matrix of each variant version.
 /// @tparam TType result type.
-template <typename TType>
-DMatrix4<TType> ProjectionMatrix(
+template <EMatMajor TMajor, typename TType>
+DMatrix4<TType, TMajor> ProjectionMatrix(
   EGraphics graphics, EProjection project,
   TReal left, TReal right, TReal botton, TReal top, TReal near, TReal far);
 
 /// @brief Create projection matrix following graphics and project value.
 /// Dy system use right-hand coorindate system, so each EGraphics value create matrix of each variant version.
 /// @tparam TType result type.
-template <typename TType>
-DMatrix4<TType> ProjectionMatrix(
+template <EMatMajor TMajor, typename TType>
+DMatrix4<TType, TMajor> ProjectionMatrix(
   EGraphics graphics, EProjection project,
   TReal fovY, TReal width, TReal height, TReal near, TReal far);
 
-/// @brief Create look-at matrix.
-/// This function does only support OpenGL look-at matrix.
-/// Recommend to use LookAt2 function.
-template <typename TType>
-[[deprecated("This function does not support variant API. Use LookAt2.")]] DMatrix4<TType> LookAt(
-  const DVector3<TType>& position, 
-  const DVector3<TType>& lookPosition,
-  const DVector3<TType>& unitY);
-
 /// @brief Create look-at matrix. 
 /// This function automatically normalize calculated right, up, front vector.
-/// @param graphics Graphics API value.
 /// @param position position.
 /// @param lookPosition destination position.
 /// @param unitY level's unit-Y position.
-template <typename TType>
-DMatrix4<TType> LookAt2(
-  EGraphics graphics,
+template <EMatMajor TMajor, typename TType>
+DMatrix4<TType, TMajor> LookAt2(
   const DVector3<TType>& position, 
   const DVector3<TType>& lookPosition,
   const DVector3<TType>& unitY);
@@ -75,20 +64,18 @@ DMatrix4<TType> LookAt2(
 /// To get properly calculated matrix, matrix's Graphics API alignment and graphics value should be same.
 /// This function does not check matrix's Graphics API alignment.
 /// Calculation will be held by EGraphcis::graphics value.
-template <typename TType>
-DMatrix4<TType> Translate(
-  EGraphics graphics,
-  const DMatrix4<TType>& matrix,
+template <EMatMajor TMajor, typename TType>
+DMatrix4<TType, TMajor> Translate(
+  const DMatrix4<TType, TMajor>& matrix,
   const DVector3<TType>& position);
 
 /// @brief Create angle rotated matrix.
 /// To get properly calculated matrix, matrix's Graphics API alignment and graphics value should be same.
 /// This function does not check matrix's Graphics API alignment.
 /// Calculation will be held by EGraphcis::graphics value.
-template <typename TType>
-DMatrix4<TType> Rotate(
-  EGraphics graphics,
-  const DMatrix4<TType>& matrix,
+template <EMatMajor TMajor, typename TType>
+DMatrix4<TType, TMajor> Rotate(
+  const DMatrix4<TType, TMajor>& matrix,
   const DVector3<TType>& eulerAngle,
   bool isDegree = true);
 
@@ -96,19 +83,17 @@ DMatrix4<TType> Rotate(
 /// To get properly calculated matrix, matrix's Graphics API alignment and graphics value should be same.
 /// This function does not check matrix's Graphics API alignment.
 /// Calculation will be held by EGraphcis::graphics value.
-template <typename TType>
-DMatrix4<TType> Scale(
-  EGraphics graphics,
-  const DMatrix4<TType>& matrix,
+template <EMatMajor TMajor, typename TType>
+DMatrix4<TType, TMajor> Scale(
+  const DMatrix4<TType, TMajor>& matrix,
   const DVector3<TType>& scale);
 
 /// @brief Create `Model` (TRSv) matrix.
 /// To get properly calculated matrix, matrix's Graphics API alignment and graphics value should be same.
 /// This function does not check matrix's Graphics API alignment.
 /// Calculation will be held by EGraphcis::graphics value.
-template <typename TType>
-DMatrix4<TType> CreateModelMatrix(
-  EGraphics graphics,
+template <EMatMajor TMajor, typename TType>
+DMatrix4<TType, TMajor> CreateModelMatrix(
   const DVector3<TType>& position,
   const DVector3<TType>& eulerAngle,
   const DVector3<TType>& scale,

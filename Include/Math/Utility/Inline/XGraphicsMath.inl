@@ -32,51 +32,47 @@ namespace dy::math::detail
 /// [   0     2/(t-b)    0    -(t+b)/(t-b) ] \n
 /// [   0        0   -2/(f-n) -(f+n)/(f-n) ] \n
 /// [   0        0       0          1      ]
-template <typename TType>
-DMatrix4<TType> OpenGlOrtho(TReal left, TReal right, TReal bottom, TReal top, TReal near, TReal far)
+template <::dy::math::EMatMajor TMajor, typename TType>
+DMatrix4<TType, TMajor> OpenGlOrtho(TReal left, TReal right, TReal bottom, TReal top, TReal near, TReal far)
 {
-  DMatrix4<TType> result{};
-
-  result[0][0] = static_cast<TType>(2) / (right - left);
-  result[1][1] = static_cast<TType>(2) / (top - bottom);
-  result[2][2] = - static_cast<TType>(2) / (far - near);
-  result[3][0] = - (right + left) / (right - left);
-  result[3][1] = - (top + bottom) / (top - bottom);
-  result[3][2] = - (far + near) / (far - near);
-  result[3][3] = 1;
-
-  return result;
+  return 
+  {
+    static_cast<TType>(2) / (right - left), 0, 0, -(right + left) / (right - left),
+    0, static_cast<TType>(2) / (top - bottom), 0, -(top + bottom) / (top - bottom);
+    0, 0, -static_cast<TType>(2) / (far - near), -(far + near) / (far - near),
+    0, 0, 0, 1
+  };
 }
 
-template <typename TType>
-DMatrix4<TType> OpenGlOrtho(TReal fovY, TReal width, TReal height, TReal near, TReal far)
+template <EMatMajor TMajor, typename TType>
+DMatrix4<TType, TMajor> OpenGlOrtho(TReal fovY, TReal width, TReal height, TReal near, TReal far)
 {
   return {};
 }
 
-template <typename TType>
-DMatrix4<TType> OpenGlPersp(TReal left, TReal right, TReal bottom, TReal top, TReal near, TReal far)
+template <EMatMajor TMajor, typename TType>
+DMatrix4<TType, TMajor> OpenGlPersp(TReal left, TReal right, TReal bottom, TReal top, TReal near, TReal far)
 {
   return {};
 }
 
-template <typename TType>
-DMatrix4<TType> OpenGlPersp(TReal fovY, TReal width, TReal height, TReal near, TReal far)
+template <EMatMajor TMajor, typename TType>
+DMatrix4<TType, TMajor> OpenGlPersp(TReal fovY, TReal width, TReal height, TReal near, TReal far)
 {
   const TType halfFovyTan = std::tan(fovY / TType(2));
   const TType aspect = width / height;
-  DMatrix4<TType> result{};
 
-  result[0][0] = TType(1) / (aspect * halfFovyTan);
-  result[1][1] = TType(1) / (halfFovyTan);
-  result[2][2] = -(far + near) / (far - near);
-  result[2][3] = -TType(1);
-  result[3][2] = -(TType(2) * far * near) / (far - near);
-  return result;
+  return 
+  {
+    TType(1) / (aspect * halfFovyTan), 0, 0, 0,
+    0, TType(1) / (halfFovyTan), 0, 0,
+    0, 0, -(far + near) / (far - near), -(TType(2) * far * near) / (far - near),
+    0, 0, -TType(1), 0
+  }
 }
 
-template <typename TType>
-DMatrix4<TType> OpenGlLookAt(
+template <EMatMajor TMajor, typename TType>
+DMatrix4<TType, TMajor> _CommonLookAt(
   const DVector3<TType>& position, 
   const DVector3<TType>& lookPosition,
   const DVector3<TType>& unitY)
@@ -85,116 +81,63 @@ DMatrix4<TType> OpenGlLookAt(
   const DVector3<TType> unitSide  = Cross(unitFront, unitY).Normalize();
   const DVector3<TType> unitUp    = Cross(unitSide, unitFront);
 
+  // in Row Major
   //  sx  sy  sz -dot(s,p)
   //  ux  uy  uz -dot(u,p)
   // -fx -fy -fz -dot(f,p)
   //   0   0   0     1
-  DMatrix4<TType> result{};
-  result[0][0] =  unitSide.X;
-  result[1][0] =  unitSide.Y;
-  result[2][0] =  unitSide.Z;
-  result[0][1] =  unitUp.X;
-  result[1][1] =  unitUp.Y;
-  result[2][1] =  unitUp.Z;
-  result[0][2] = -unitFront.X;
-  result[1][2] = -unitFront.Y;
-  result[2][2] = -unitFront.Z;
-  result[3][0] = -Dot(unitSide, position);
-  result[3][1] = -Dot(unitUp, position);
-  result[3][2] =  Dot(unitFront, position);  
-  result[3][3] =  1;
+  return
+  {
+    unitSide.X, unitSide.Y, unitSide.Z, -Dot(unitSide, position),
+    unitUp.X, unitUp.Y, unitUp.Z, -Dot(unitUp, position),
+    -unitFront.X, -unitFront.Y, -unitFront.Z, Dot(unitFront, position),
+    0, 0, 0, 1
+  };
+}
 
-  return result;;
+template <EMatMajor TMajor, typename TType>
+DMatrix4<TType, TMajor> _CommonTranslate(const DMatrix4<TType, TMajor>& matrix, const DVector3<TType>& position)
+{
+  auto result = matrix;
+  if constexpr (TMajor == EMatMajor::Column)
+  {
+    result[3][0] += position.X;
+    result[3][1] += position.Y;
+    result[3][2] += position.Z;
+  }
+  else
+  {
+    result[0][3] += position.X;
+    result[1][3] += position.Y;
+    result[2][3] += position.Z;
+  }
+
+  return result;
+}
+
+template <EMatMajor TMajor, typename TType>
+DMatrix4<TType, TMajor> _CommonRotate(const DMatrix4<TType, TMajor>& matrix, const DVector3<TType>& radianEuler)
+{
+  return DQuaternion<TReal>(radianEuler, false).ToMatrix4<TMajor>() * matrix;
+}
+
+template <EMatMajor TMajor, typename TType>
+DMatrix4<TType, TMajor> _CommonScale(const DMatrix4<TType, TMajor>& matrix, const DVector3<TType>& scale)
+{
+  auto result = matrix;
+  result[0][0] *= scale.X;
+  result[1][1] *= scale.Y;
+  result[2][2] *= scale.Z;
+  return result;
 }
 
 } /// ::dy::math::detail namespace
 
-namespace dy::math::detail::opengl
-{
-
-template <typename TType>
-DMatrix4<TType> _Translate(
-  const DMatrix4<TType>& matrix,
-  const DVector3<TType>& position)
-{
-  auto result = matrix;
-  result[3][0] += position.X;
-  result[3][1] += position.Y;
-  result[3][2] += position.Z;
-
-  return result;
-}
-
-template <typename TType>
-DMatrix4<TType> _Rotate(
-  const DMatrix4<TType>& matrix,
-  const DVector3<TType>& radianEuler)
-{
-  return DQuaternion<TReal>(radianEuler, false).ToMatrix4() * matrix;
-}
-
-template <typename TType>
-DMatrix4<TType> _Scale(
-  const DMatrix4<TType>& matrix,
-  const DVector3<TType>& scale)
-{
-  auto result = matrix;
-  result[0][0] *= scale.X;
-  result[1][1] *= scale.Y;
-  result[2][2] *= scale.Z;
-  return result;
-}
-
-} /// ::dy::math::detail::opengl namespace
-
-namespace dy::math::detail::directx
-{
-
-template <typename TType>
-DMatrix4<TType> _LookAt(
-  const DVector3<TType>& position, 
-  const DVector3<TType>& lookPosition,
-  const DVector3<TType>& unitY)
-{
-  return OpenGlLookAt(position, lookPosition, unitY).Transpose();
-}
-
-template <typename TType>
-DMatrix4<TType> _Translate(
-  const DMatrix4<TType>& matrix,
-  const DVector3<TType>& position)
-{
-  // Temporary 
-  return opengl::_Translate(matrix, position).Transpose();
-}
-
-template <typename TType>
-DMatrix4<TType> _Rotate(
-  const DMatrix4<TType>& matrix,
-  const DVector3<TType>& radianEuler)
-{
-  return opengl::_Rotate(matrix, radianEuler).Transpose();
-}
-
-template <typename TType>
-DMatrix4<TType> _Scale(
-  const DMatrix4<TType>& matrix,
-  const DVector3<TType>& scale)
-{
-  auto result = matrix;
-  result[0][0] *= scale.X;
-  result[1][1] *= scale.Y;
-  result[2][2] *= scale.Z;
-  return result;
-}
-
-} /// ::dy::math::detail::directx namespace
-
 namespace dy::math
 {
 
-template <typename TType>
-DMatrix4<TType> ProjectionMatrix(
+template <EMatMajor TMajor, typename TType>
+DMatrix4<TType, TMajor> ProjectionMatrix(
   EGraphics graphics, EProjection project,
   TReal left, TReal right, TReal bottom, TReal top, TReal near, TReal far)
 {
@@ -204,11 +147,11 @@ DMatrix4<TType> ProjectionMatrix(
   {
     if (project == EProjection::Orthogonal) 
     { 
-      return detail::OpenGlOrtho<TType>(left, right, bottom, top, near, far);
+      return detail::OpenGlOrtho<TMajor, TType>(left, right, bottom, top, near, far);
     }
     else
     {
-      return detail::OpenGlPersp<TType>(left, right, bottom, top, near, far);
+      return detail::OpenGlPersp<TMajor, TType>(left, right, bottom, top, near, far);
     }
   } break;
   default: break;
@@ -216,8 +159,8 @@ DMatrix4<TType> ProjectionMatrix(
   return {};
 }
 
-template <typename TType>
-DMatrix4<TType> ProjectionMatrix(
+template <EMatMajor TMajor, typename TType>
+DMatrix4<TType, TMajor> ProjectionMatrix(
   EGraphics graphics, EProjection project, 
   TReal fovY, TReal width, TReal height, TReal near, TReal far)
 {
@@ -227,11 +170,11 @@ DMatrix4<TType> ProjectionMatrix(
   {
     if (project == EProjection::Orthogonal) 
     { 
-      return detail::OpenGlOrtho<TType>(fovY, width, height, near, far);
+      return detail::OpenGlOrtho<TMajor, TType>(fovY, width, height, near, far);
     }
     else
     {
-      return detail::OpenGlPersp<TType>(fovY, width, height, near, far);
+      return detail::OpenGlPersp<TMajor, TType>(fovY, width, height, near, far);
     }
   } break;
   default: break;
@@ -239,50 +182,25 @@ DMatrix4<TType> ProjectionMatrix(
   return {};
 }
 
-template <typename TType>
-DMatrix4<TType> LookAt(
+template <EMatMajor TMajor, typename TType>
+DMatrix4<TType, TMajor> LookAt2(
   const DVector3<TType>& position, 
   const DVector3<TType>& lookPosition,
   const DVector3<TType>& unitY)
 {
-  return detail::OpenGlLookAt(position, lookPosition, unitY);
+  return detail::_CommonLookAt<TMajor>(position, lookPosition, unitY);
 }
 
-template <typename TType>
-DMatrix4<TType> LookAt2(
-  EGraphics graphics,
-  const DVector3<TType>& position, 
-  const DVector3<TType>& lookPosition,
-  const DVector3<TType>& unitY)
-{
-  switch (graphics)
-  {
-  case EGraphics::OpenGL:   return detail::OpenGlLookAt(position, lookPosition, unitY);
-  case EGraphics::DirectX:  return detail::directx::_LookAt(position, lookPosition, unitY);
-  default: throw std::runtime_error("Unexpected error");
-  }
-}
-
-template <typename TType>
-DMatrix4<TType> Translate(
-  EGraphics graphics,
-  const DMatrix4<TType>& matrix,
+template <EMatMajor TMajor, typename TType>
+DMatrix4<TType, TMajor> Translate(
+  const DMatrix4<TType, TMajor>& matrix,
   const DVector3<TType>& position)
 {
-  switch (graphics)
-  {
-  case EGraphics::OpenGL:   return detail::opengl::_Translate(matrix, position);
-  case EGraphics::DirectX:  return detail::directx::_Translate(matrix, position);
-  default: throw std::runtime_error("Unexpected error");
-  }
+  return detail::_CommonTranslate<TMajor>(matrix, position);
 }
 
-template <typename TType>
-DMatrix4<TType> Rotate(
-  EGraphics graphics,
-  const DMatrix4<TType>& matrix,
-  const DVector3<TType>& eulerAngle,
-  bool isDegree)
+template <EMatMajor TMajor, typename TType>
+DMatrix4<TType, TMajor> Rotate(const DMatrix4<TType, TMajor>& matrix, const DVector3<TType>& eulerAngle, bool isDegree)
 {
   auto radianAngle = eulerAngle;
   if (isDegree == true)
@@ -290,60 +208,29 @@ DMatrix4<TType> Rotate(
     radianAngle *= kToRadian<TReal>;
   }
 
-  switch (graphics)
-  {
-  case EGraphics::OpenGL:   return detail::opengl::_Rotate(matrix, radianAngle);
-  case EGraphics::DirectX:  return detail::directx::_Rotate(matrix, radianAngle);
-  default: throw std::runtime_error("Unexpected error");
-  }
+  return detail::_CommonRotate(matrix, radianAngle);
 }
 
-template <typename TType>
-DMatrix4<TType> Scale(
-  EGraphics graphics,
-  const DMatrix4<TType>& matrix,
-  const DVector3<TType>& scale)
+template <EMatMajor TMajor, typename TType>
+DMatrix4<TType, TMajor> Scale(const DMatrix4<TType, TMajor>& matrix, const DVector3<TType>& scale)
 {
-  switch (graphics)
-  {
-  case EGraphics::OpenGL:   return detail::opengl::_Scale(matrix, scale);
-  case EGraphics::DirectX:  return detail::directx::_Scale(matrix, scale);
-  default: throw std::runtime_error("Unexpected error");
-  }
+  return detail::_CommonScale(matrix, scale);
 }
 
-template <typename TType>
-DMatrix4<TType> CreateModelMatrix(
-  EGraphics graphics,
+template <EMatMajor TMajor, typename TType>
+DMatrix4<TType, TMajor> CreateModelMatrix(
   const DVector3<TType>& position,
   const DVector3<TType>& eulerAngle,
   const DVector3<TType>& scale,
   bool isDegree)
 {
-  switch (graphics)
-  {
-  case EGraphics::OpenGL:
-  {
-    return Translate<TReal>(EGraphics::OpenGL, 
-      Rotate<TReal>(EGraphics::OpenGL, 
-        Scale<TReal>(EGraphics::OpenGL, 
-          DMatrix4<TReal>::Identity(), scale
-        ), eulerAngle, isDegree
-      ), position
-    );
-  } break;
-  case EGraphics::DirectX:
-  {
-    return Translate<TReal>(EGraphics::OpenGL, 
-      Rotate<TReal>(EGraphics::OpenGL, 
-        Scale<TReal>(EGraphics::OpenGL, 
-          DMatrix4<TReal>::Identity(), scale
-        ), eulerAngle, isDegree
-      ), position
-    ).Transpose();
-  } break;
-  default: throw std::runtime_error("Unexpected error");
-  }
+  return Translate<TReal>( 
+    Rotate<TReal>( 
+      Scale<TReal>( 
+        DMatrix4<TReal, TMajor>::Identity(), scale
+      ), eulerAngle, isDegree
+    ), position
+  ).Transpose();
 }
 
 } /// ::dy::math namespace
