@@ -206,6 +206,18 @@ std::vector<DVector4<TType>> DMatrix4<TType, EMatMajor::Column>::ToVector() cons
   };
 }
 
+template<typename TType>
+DMatrix4<TType,EMatMajor::Row> DMatrix4<TType, EMatMajor::Column>::ConvertToRowMatrix() const
+{
+  return
+  {
+    (*this)[0][0], (*this)[1][0], (*this)[2][0], (*this)[3][0],
+    (*this)[0][1], (*this)[1][1], (*this)[2][1], (*this)[3][1],
+    (*this)[0][2], (*this)[1][2], (*this)[2][2], (*this)[3][2],
+    (*this)[0][3], (*this)[1][3], (*this)[2][3], (*this)[3][3],
+  };
+}
+
 template <typename TType>
 DMatrix4<TType, EMatMajor::Column> DMatrix4<TType, EMatMajor::Column>::Identity() noexcept
 {
@@ -410,6 +422,18 @@ std::vector<DVector4<TType>> DMatrix4<TType, EMatMajor::Row>::ToVector() const n
   return std::vector<DVector4<TType>>
   {
     (*this)[0], (*this)[1], (*this)[2], (*this)[3]
+  };
+}
+
+template<typename TType>
+DMatrix4<TType,EMatMajor::Column> DMatrix4<TType, EMatMajor::Row>::ConvertToColumnMatrix() const
+{
+  return
+  {
+    (*this)[0][0], (*this)[0][1], (*this)[0][2], (*this)[0][3],
+    (*this)[1][0], (*this)[1][1], (*this)[1][2], (*this)[1][3],
+    (*this)[2][0], (*this)[2][1], (*this)[2][2], (*this)[2][3],
+    (*this)[3][0], (*this)[3][1], (*this)[3][2], (*this)[3][3],
   };
 }
 
