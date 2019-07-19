@@ -169,7 +169,12 @@ DMatrix3<TType, EMatMajor::Column> DMatrix3<TType, EMatMajor::Column>::Identity(
 template<typename TType>
 DMatrix3<TType, EMatMajor::Row> DMatrix3<TType, EMatMajor::Column>::ConvertToRowMatrix() const
 {
-  return {this->operator[](0), this->operator[](1), this->operator[](2)};
+  return 
+  {
+    (*this)[0][0], (*this)[1][0], (*this)[2][0],
+    (*this)[0][1], (*this)[1][1], (*this)[2][1],
+    (*this)[0][2], (*this)[1][2], (*this)[2][2],
+  };
 }
 
 } /// ::dy::math namespace
@@ -329,7 +334,12 @@ DMatrix3<TType, EMatMajor::Row> DMatrix3<TType, EMatMajor::Row>::Identity() noex
 template<typename TType>
 DMatrix3<TType, EMatMajor::Column> DMatrix3<TType, EMatMajor::Row>::ConvertToColumnMatrix() const
 {
-  return {this->operator[](0), this->operator[](1), this->operator[](2)};
+  return 
+  {
+    (*this)[0][0], (*this)[0][1], (*this)[0][2],
+    (*this)[1][0], (*this)[1][1], (*this)[1][2],
+    (*this)[2][0], (*this)[2][1], (*this)[2][2],
+  };
 }
 
 
