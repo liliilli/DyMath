@@ -142,7 +142,7 @@ DMatrix4<TType, EMatMajor::Column> DMatrix4<TType, EMatMajor::Column>::Inverse()
 
   DVector4<TType> signA(+1, -1, +1, -1);
   DVector4<TType> signB(-1, +1, -1, +1);
-  DMatrix4<TType> inverse(inv0 * signA, inv1 * signB, inv2 * signA, inv3 * signB);
+  DMatrix4<TType, EMatMajor::Column> inverse(inv0 * signA, inv1 * signB, inv2 * signA, inv3 * signB);
 
   DVector4<TType> row0(inverse[0][0], inverse[1][0], inverse[2][0], inverse[3][0]);
 
@@ -349,7 +349,7 @@ DMatrix4<TType, EMatMajor::Row> DMatrix4<TType, EMatMajor::Row>::Inverse() const
 
   DVector4<TType> signA(+1, -1, +1, -1);
   DVector4<TType> signB(-1, +1, -1, +1);
-  DMatrix4<TType> inverse(inv0 * signA, inv1 * signB, inv2 * signA, inv3 * signB);
+  DMatrix4<TType, EMatMajor::Row> inverse(inv0 * signA, inv1 * signB, inv2 * signA, inv3 * signB);
 
   DVector4<TType> row0(inverse[0][0], inverse[1][0], inverse[2][0], inverse[3][0]);
 
