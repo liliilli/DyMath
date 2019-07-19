@@ -79,6 +79,8 @@ public:
 
   /// @brief Convert to vector that has values.
   std::vector<DVector3<TValueType>> ToVector() const noexcept;
+  /// @brief Convert to Row Major Matrix.
+  DMatrix3<TType, EMatMajor::Row> ConvertToRowMatrix() const;
 
   /// @brief Get identity matrix.
   static DMatrix3 Identity() noexcept;
@@ -145,6 +147,8 @@ public:
 
   /// @brief Convert to vector that has values.
   std::vector<DVector3<TValueType>> ToVector() const noexcept;
+  /// @brief Convert to Row Major Matrix.
+  DMatrix3<TType, EMatMajor::Column> ConvertToColumnMatrix() const;
 
   /// @brief Get identity matrix.
   static DMatrix3 Identity() noexcept;

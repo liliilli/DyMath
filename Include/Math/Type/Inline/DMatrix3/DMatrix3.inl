@@ -166,6 +166,12 @@ DMatrix3<TType, EMatMajor::Column> DMatrix3<TType, EMatMajor::Column>::Identity(
   return identity;
 }
 
+template<typename TType>
+DMatrix3<TType, EMatMajor::Row> DMatrix3<TType, EMatMajor::Column>::ConvertToRowMatrix() const
+{
+  return {this->operator[](0), this->operator[](1), this->operator[](2)};
+}
+
 } /// ::dy::math namespace
 
 // Row Major
@@ -319,6 +325,13 @@ DMatrix3<TType, EMatMajor::Row> DMatrix3<TType, EMatMajor::Row>::Identity() noex
   };
   return identity;
 }
+
+template<typename TType>
+DMatrix3<TType, EMatMajor::Column> DMatrix3<TType, EMatMajor::Row>::ConvertToColumnMatrix() const
+{
+  return {this->operator[](0), this->operator[](1), this->operator[](2)};
+}
+
 
 } /// ::dy::math namespace
 
