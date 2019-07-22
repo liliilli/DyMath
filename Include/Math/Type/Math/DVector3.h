@@ -15,6 +15,7 @@
 #include <Math/Common/Inline/TGlobalTypes.inl>
 #include <Math/Common/XGlobalMacroes.h>
 #include <Math/Type/Math/DVector2.h>
+#include <Math/Common/XRttrEntry.h>
 
 //!
 //! Forward declaration 
@@ -93,6 +94,10 @@ struct MATH_NODISCARD DVector3<TType, std::enable_if_t<kIsIntegerType<TType>>> f
   static DVector3 UnitY() noexcept;
   /// @brief Return {0, 0, 1} front DVector3 vector.
   static DVector3 UnitZ() noexcept;
+
+#ifdef MATH_ENABLE_RTTR
+  EXPR_BIND_REFLECTION();
+#endif
 };
 
 template <typename TType>
@@ -150,6 +155,10 @@ struct MATH_NODISCARD DVector3<TType, std::enable_if_t<kIsRealType<TType>>> fina
   static DVector3 UnitY() noexcept;
   /// @brief Return {0, 0, 1} front DVector3 vector.
   static DVector3 UnitZ() noexcept;
+
+#ifdef MATH_ENABLE_RTTR
+  EXPR_BIND_REFLECTION();
+#endif
 };
 
 } /// ::dy::math namespace
