@@ -22,8 +22,8 @@ namespace dy::math
 {
 
 /// @brief Get uniform random Integer value.
-template <typename TType, typename = std::enable_if_t<kIsIntegerType<TType>>>
-TI32 RandomUniformInteger(TType start = kMinValueOf<TType>, TType inclusiveEnd = kMaxValueOf<TType>) noexcept;
+template <typename TType = TI32, typename = std::enable_if_t<kIsIntegerType<TType>>>
+TType RandomUniformInteger(TType start = kMinValueOf<TType>, TType inclusiveEnd = kMaxValueOf<TType>) noexcept;
 
 /// @brief Get uniform random real value.
 template <typename TType, typename = std::enable_if_t<kIsRealType<TType>>>

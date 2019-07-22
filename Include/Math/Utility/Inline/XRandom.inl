@@ -42,7 +42,7 @@ inline std::mt19937& GetRandomDevice() noexcept
 } /// ::dy::math::details namespace
 
 template<typename TType, typename>
-TI32 RandomUniformInteger(TType start, TType inclusiveEnd) noexcept
+TType RandomUniformInteger(TType start, TType inclusiveEnd) noexcept
 {
   std::uniform_int_distribution<TType> dist{start, inclusiveEnd};
   return dist(details::GetRandomDevice());
