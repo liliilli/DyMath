@@ -8,7 +8,9 @@ set(CMAKE_VERBOSE_MAKEFILE true)
 
 OPTION(MATH_BUILD_LIB "Build as library" OFF)
 OPTION(MATH_BUILD_WITH_EXPR "Build as DyExpression" OFF)
+OPTION(MATH_BUILD_WITH_RTTR "Build with dy::expr::reflect (Refection)" OFF)
 OPTION(MATH_BUILD_WITH_BOOST "Build with boost" OFF)
+
 if (${UTIL_BUILD_WITH_MT} STREQUAL "ON")
 	OPTION(MATH_BUILD_WITH_MT "Build as MTd or MT" ON)
 else()
@@ -58,17 +60,32 @@ file(GLOB_RECURSE SOURCE RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/Source" "*.cc")
 
 if (MATH_BUILD_LIB)
 	message(STATUS "BUild DyMath as library file...")
+	set(SOURCE 
+		Source/Utility/XMath.cc
+	)
+	# If math library `.lib` `.so` should be built with `boost`...
 	if (MATH_BUILD_WITH_BOOST)
 		message(STATUS "Build DyMath with boost...")
 		set(SOURCE
+			${SOURCE}
 			Source/Math/Type/Micellanous/DUuid.cc
 			Source/Utility/XBoost.cc
-			Source/Utility/XMath.cc
 		)
-	else()
-		set(SOURCE
-			Source/Utility/XMath.cc
-		)		
+	endif()
+
+	# If math library `.lib` `.so` should be built with `dy::expr::reflect`...
+	if (MATH_BUILD_WITH_RTTR)
+		# Fatal error case.
+		if (NOT MATH_BUILD_WITH_EXPR)
+			message(FATAL_ERROR "To build DyMath with dy::expr::reflect, \"MATH_BUILD_WITH_EXPR\" must be enabled as a \"ON\"")
+		endif()
+		message(STATUS "Build DyMath with dy::expr::reflect...")
+		# Set ENABLE macro.
+		add_definitions(-DMATH_ENABLE_RTTR)
+		# Bind RTTR sources.
+		set(SOURCE ${SOURCE}
+			Source/Math/Common/XRttrEntry.cc
+		)
 	endif()
 endif()
 
