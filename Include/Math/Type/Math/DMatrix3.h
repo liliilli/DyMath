@@ -15,6 +15,7 @@
 #include <array>
 #include <Math/Type/Math/DVector3.h>
 #include <Math/Common/TGlobalTypes.h>
+#include <Math/Common/XRttrEntry.h>
 
 namespace dy::math
 {
@@ -85,10 +86,16 @@ public:
   /// @brief Get identity matrix.
   static DMatrix3 Identity() noexcept;
   
-private:
   /// Column major
-  std::array<DVector3<TValueType>, 3> mValues;
+  std::array<DVector3<TValueType>, 3> __mValues;
+
+#ifdef MATH_ENABLE_RTTR
+  EXPR_BIND_REFLECTION();
+#endif
 };
+
+template <typename TType>
+using DColumnMatrix3 = DMatrix3<TType, EMatMajor::Column>;
 
 } /// ::dy::math namespace
 
@@ -153,10 +160,16 @@ public:
   /// @brief Get identity matrix.
   static DMatrix3 Identity() noexcept;
   
-private:
   /// Row major
-  std::array<DVector3<TValueType>, 3> mValues;
+  std::array<DVector3<TValueType>, 3> __mValues;
+
+#ifdef MATH_ENABLE_RTTR
+  EXPR_BIND_REFLECTION();
+#endif
 };
+
+template <typename TType>
+using DRowMatrix3 = DMatrix3<TType, EMatMajor::Row>;
 
 } /// ::dy::math namespace
 
