@@ -21,26 +21,26 @@ namespace dy::math
 
 template <typename TType>
 DMatrix2<TType, EMatMajor::Column>::DMatrix2(TValueType _00, TValueType _01, TValueType _10, TValueType _11)
-  : mValues{DVector2<TValueType>{_00, _10}, DVector2<TValueType>{_01, _11}} 
+  : __mValues{DVector2<TValueType>{_00, _10}, DVector2<TValueType>{_01, _11}} 
 { }
 
 template<typename TType>
 DMatrix2<TType, EMatMajor::Column>::DMatrix2(const DVector2<TValueType>& _0, const DVector2<TValueType>& _1)
-  : mValues{_0, _1}
+  : __mValues{_0, _1}
 { }
 
 template <typename TType>
 DVector2<typename DMatrix2<TType, EMatMajor::Column>::TValueType>& 
 DMatrix2<TType, EMatMajor::Column>::operator[](TIndex index) noexcept
 {
-  return this->mValues[index];
+  return this->__mValues[index];
 }
 
 template <typename TType>
 const DVector2<typename DMatrix2<TType, EMatMajor::Column>::TValueType>& 
 DMatrix2<TType, EMatMajor::Column>::operator[](TIndex index) const noexcept
 {
-  return this->mValues[index];
+  return this->__mValues[index];
 }
 
 template <typename TType>
@@ -48,10 +48,10 @@ DMatrix2<TType, EMatMajor::Column> DMatrix2<TType, EMatMajor::Column>::Transpose
 {
   return DMatrix2
   {
-    this->mValues[0][0], 
-    this->mValues[0][1],
-    this->mValues[1][0], 
-    this->mValues[1][1]
+    this->__mValues[0][0], 
+    this->__mValues[0][1],
+    this->__mValues[1][0], 
+    this->__mValues[1][1]
   };
 }
 
@@ -92,7 +92,7 @@ DMatrix2<TType,EMatMajor::Row> DMatrix2<TType, EMatMajor::Column>::ConvertToRowM
 template <typename TType>
 bool DMatrix2<TType, EMatMajor::Column>::HasNaN() const noexcept
 {
-  for (const auto& value : this->mValues)
+  for (const auto& value : this->__mValues)
   {
     if (value.HasNaN() == true) { return true; }
   }
@@ -103,7 +103,7 @@ bool DMatrix2<TType, EMatMajor::Column>::HasNaN() const noexcept
 template <typename TType>
 bool DMatrix2<TType, EMatMajor::Column>::HasInfinity() const noexcept
 {
-  for (const auto& value : this->mValues)
+  for (const auto& value : this->__mValues)
   {
     if (value.HasInfinity() == true) { return true; }
   }
@@ -114,7 +114,7 @@ bool DMatrix2<TType, EMatMajor::Column>::HasInfinity() const noexcept
 template <typename TType>
 bool DMatrix2<TType, EMatMajor::Column>::HasOnlyNormal() const noexcept
 {
-  for (const auto& value : this->mValues)
+  for (const auto& value : this->__mValues)
   {
     if (value.HasOnlyNormal() == false) { return false; }
   }
@@ -125,13 +125,13 @@ bool DMatrix2<TType, EMatMajor::Column>::HasOnlyNormal() const noexcept
 template <typename TType>
 typename DMatrix2<TType, EMatMajor::Column>::TValueType* DMatrix2<TType, EMatMajor::Column>::Data() noexcept
 {
-  return this->mValues.front().Data();
+  return this->__mValues.front().Data();
 }
 
 template <typename TType>
 const typename DMatrix2<TType, EMatMajor::Column>::TValueType* DMatrix2<TType, EMatMajor::Column>::Data() const noexcept
 {
-  return this->mValues.front().Data();
+  return this->__mValues.front().Data();
 }
 
 template <typename TType>
@@ -158,26 +158,26 @@ namespace dy::math
 
 template <typename TType>
 DMatrix2<TType, EMatMajor::Row>::DMatrix2(TValueType _00, TValueType _01, TValueType _10, TValueType _11)
-  : mValues{DVector2<TValueType>{_00, _01}, DVector2<TValueType>{_10, _11}} 
+  : __mValues{DVector2<TValueType>{_00, _01}, DVector2<TValueType>{_10, _11}} 
 { }
 
 template<typename TType>
 DMatrix2<TType, EMatMajor::Row>::DMatrix2(const DVector2<TValueType>& _0, const DVector2<TValueType>& _1)
-  : mValues{_0, _1}
+  : __mValues{_0, _1}
 { }
 
 template <typename TType>
 DVector2<typename DMatrix2<TType, EMatMajor::Row>::TValueType>& 
 DMatrix2<TType, EMatMajor::Row>::operator[](TIndex index) noexcept
 {
-  return this->mValues[index];
+  return this->__mValues[index];
 }
 
 template <typename TType>
 const DVector2<typename DMatrix2<TType, EMatMajor::Row>::TValueType>& 
 DMatrix2<TType, EMatMajor::Row>::operator[](TIndex index) const noexcept
 {
-  return this->mValues[index];
+  return this->__mValues[index];
 }
 
 template <typename TType>
@@ -185,10 +185,10 @@ DMatrix2<TType, EMatMajor::Row> DMatrix2<TType, EMatMajor::Row>::Transpose() con
 {
   return DMatrix2
   {
-    this->mValues[0][0], 
-    this->mValues[1][0], 
-    this->mValues[0][1],
-    this->mValues[1][1]
+    this->__mValues[0][0], 
+    this->__mValues[1][0], 
+    this->__mValues[0][1],
+    this->__mValues[1][1]
   };
 }
 
@@ -228,7 +228,7 @@ DMatrix2<TType, EMatMajor::Column> DMatrix2<TType, EMatMajor::Row>::ConvertToCol
 template <typename TType>
 bool DMatrix2<TType, EMatMajor::Row>::HasNaN() const noexcept
 {
-  for (const auto& value : this->mValues)
+  for (const auto& value : this->__mValues)
   {
     if (value.HasNaN() == true) { return true; }
   }
@@ -239,7 +239,7 @@ bool DMatrix2<TType, EMatMajor::Row>::HasNaN() const noexcept
 template <typename TType>
 bool DMatrix2<TType, EMatMajor::Row>::HasInfinity() const noexcept
 {
-  for (const auto& value : this->mValues)
+  for (const auto& value : this->__mValues)
   {
     if (value.HasInfinity() == true) { return true; }
   }
@@ -250,7 +250,7 @@ bool DMatrix2<TType, EMatMajor::Row>::HasInfinity() const noexcept
 template <typename TType>
 bool DMatrix2<TType, EMatMajor::Row>::HasOnlyNormal() const noexcept
 {
-  for (const auto& value : this->mValues)
+  for (const auto& value : this->__mValues)
   {
     if (value.HasOnlyNormal() == false) { return false; }
   }
@@ -261,13 +261,13 @@ bool DMatrix2<TType, EMatMajor::Row>::HasOnlyNormal() const noexcept
 template <typename TType>
 typename DMatrix2<TType, EMatMajor::Row>::TValueType* DMatrix2<TType, EMatMajor::Row>::Data() noexcept
 {
-  return this->mValues.front().Data();
+  return this->__mValues.front().Data();
 }
 
 template <typename TType>
 const typename DMatrix2<TType, EMatMajor::Row>::TValueType* DMatrix2<TType, EMatMajor::Row>::Data() const noexcept
 {
-  return this->mValues.front().Data();
+  return this->__mValues.front().Data();
 }
 
 template <typename TType>

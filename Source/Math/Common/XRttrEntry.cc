@@ -18,6 +18,7 @@
 #include <Math/Type/Math/DVector2.h>
 #include <Math/Type/Math/DVector3.h>
 #include <Math/Type/Math/DVector4.h>
+#include <Math/Type/Math/DMatrix2.h>
 
 namespace dy::math
 {
@@ -304,11 +305,50 @@ static void __InitDVector4()
 
 };
 
+//!
+//! Matrix2 Series
+//!
+
+__EXPR_REFLECTION_INSTANCE_INITIALIZE(DColumnMatrix2<TF32>);
+__EXPR_REFLECTION_INSTANCE_INITIALIZE(DColumnMatrix2<TF64>);
+__EXPR_REFLECTION_INSTANCE_INITIALIZE(DRowMatrix2<TF32>);
+__EXPR_REFLECTION_INSTANCE_INITIALIZE(DRowMatrix2<TF64>);
+
+namespace detail
+{
+  
+static void __InitDMatrix2()
+{
+  __EXPR_REFLECTION_INSTANCE_START(DColumnMatrix2<TF32>)
+  {
+    EXPR_REGISTER_TYPE(DColumnMatrix2<TF32>)
+      .EXPR_REGISTER_VARIABLE(DColumnMatrix2<TF32>, __mValues)
+  };
+  __EXPR_REFLECTION_INSTANCE_START(DColumnMatrix2<TF64>)
+  {
+    EXPR_REGISTER_TYPE(DColumnMatrix2<TF64>)
+      .EXPR_REGISTER_VARIABLE(DColumnMatrix2<TF64>, __mValues)
+  };
+  __EXPR_REFLECTION_INSTANCE_START(DRowMatrix2<TF32>)
+  {
+    EXPR_REGISTER_TYPE(DRowMatrix2<TF32>)
+      .EXPR_REGISTER_VARIABLE(DRowMatrix2<TF32>, __mValues)
+  };
+  __EXPR_REFLECTION_INSTANCE_START(DRowMatrix2<TF64>)
+  {
+    EXPR_REGISTER_TYPE(DRowMatrix2<TF64>)
+      .EXPR_REGISTER_VARIABLE(DRowMatrix2<TF64>, __mValues)
+  };
+}
+
+} /// ::detail namespace
+
 void InitializeMathReflections()
 {
   detail::__InitDVector2();
   detail::__InitDVector3();
   detail::__InitDVector4();
+  detail::__InitDMatrix2();
 }
 
 } /// ::dy::math namespace

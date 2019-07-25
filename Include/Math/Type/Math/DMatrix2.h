@@ -15,6 +15,7 @@
 #include <array>
 #include <vector>
 #include <Math/Type/Math/DVector2.h>
+#include <Math/Common/XRttrEntry.h>
 
 namespace dy::math
 {
@@ -79,10 +80,16 @@ public:
   /// @brief Get identity matrix.
   static DMatrix2 Identity() noexcept;
 
-private:
   /// Column major
-  std::array<DVector2<TValueType>, 2> mValues;
+  std::array<DVector2<TValueType>, 2> __mValues;
+
+#ifdef MATH_ENABLE_RTTR
+  EXPR_BIND_REFLECTION();
+#endif
 };
+
+template <typename TType>
+using DColumnMatrix2 = DMatrix2<TType, EMatMajor::Column>;
 
 } /// ::dy::math namespace
 
@@ -141,10 +148,16 @@ public:
   /// @brief Get identity matrix.
   static DMatrix2 Identity() noexcept;
   
-private:
   /// Column major
-  std::array<DVector2<TValueType>, 2> mValues;
+  std::array<DVector2<TValueType>, 2> __mValues;
+
+#ifdef MATH_ENABLE_RTTR
+  EXPR_BIND_REFLECTION();
+#endif
 };
+
+template <typename TType>
+using DRowMatrix2 = DMatrix2<TType, EMatMajor::Row>;
 
 } /// ::dy::math namespace
 
