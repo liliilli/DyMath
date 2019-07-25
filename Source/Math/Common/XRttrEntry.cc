@@ -21,6 +21,7 @@
 #include <Math/Type/Math/DMatrix2.h>
 #include <Math/Type/Math/DMatrix3.h>
 #include <Math/Type/Math/DMatrix4.h>
+#include <Math/Type/Math/DQuat.h>
 
 namespace dy::math
 {
@@ -421,6 +422,38 @@ static void __InitDMatrix4()
 
 } /// ::detail namespace
 
+//!
+//! Quaternion Series
+//!
+
+__EXPR_REFLECTION_INSTANCE_INITIALIZE(DQuaternion<TF32>);
+__EXPR_REFLECTION_INSTANCE_INITIALIZE(DQuaternion<TF64>);
+
+namespace detail
+{
+  
+static void __InitDQuaternion()
+{
+  __EXPR_REFLECTION_INSTANCE_START(DQuaternion<TF32>)
+  {
+    EXPR_REGISTER_TYPE(DQuaternion<TF32>)
+      .EXPR_REGISTER_VARIABLE(DQuaternion<TF32>, mX)
+      .EXPR_REGISTER_VARIABLE(DQuaternion<TF32>, mY)
+      .EXPR_REGISTER_VARIABLE(DQuaternion<TF32>, mZ)
+      .EXPR_REGISTER_VARIABLE(DQuaternion<TF32>, mW)
+  };
+  __EXPR_REFLECTION_INSTANCE_START(DQuaternion<TF64>)
+  {
+    EXPR_REGISTER_TYPE(DQuaternion<TF64>)
+      .EXPR_REGISTER_VARIABLE(DQuaternion<TF64>, mX)
+      .EXPR_REGISTER_VARIABLE(DQuaternion<TF64>, mY)
+      .EXPR_REGISTER_VARIABLE(DQuaternion<TF64>, mZ)
+      .EXPR_REGISTER_VARIABLE(DQuaternion<TF64>, mW)
+  };
+}
+
+} /// ::detail namespace
+
 void InitializeMathReflections()
 {
   detail::__InitDVector2();
@@ -429,6 +462,7 @@ void InitializeMathReflections()
   detail::__InitDMatrix2();
   detail::__InitDMatrix3();
   detail::__InitDMatrix4();
+  detail::__InitDQuaternion();
 }
 
 } /// ::dy::math namespace

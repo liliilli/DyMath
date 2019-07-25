@@ -18,6 +18,7 @@
 #include <Math/Type/Math/DMatrix4.h>
 #include <Math/Type/Math/DMatrix3.h>
 #include <Math/Type/Math/EAxis.h>
+#include <Math/Common/XRttrEntry.h>
 
 namespace dy::math 
 {
@@ -88,8 +89,11 @@ public:
   TValueType Z() const noexcept;
   TValueType W() const noexcept;
 
-private:
   TValueType mX = 0, mY = 0, mZ = 0, mW = TValueType(1);
+
+#ifdef MATH_ENABLE_RTTR
+  EXPR_BIND_REFLECTION();
+#endif
 };
 
 template<typename TType>
