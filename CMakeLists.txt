@@ -66,6 +66,9 @@ if (MATH_BUILD_LIB)
 	# If math library `.lib` `.so` should be built with `boost`...
 	if (MATH_BUILD_WITH_BOOST)
 		message(STATUS "Build DyMath with boost...")
+		# Set ENABLE macro.
+		add_compile_definitions(MATH_ENABLE_UUID)
+		# Bind Sources that uses boost source
 		set(SOURCE
 			${SOURCE}
 			Source/Math/Type/Micellanous/DUuid.cc

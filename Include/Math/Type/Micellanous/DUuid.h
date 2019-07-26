@@ -14,7 +14,9 @@
 
 #include <cstdint>
 #include <string>
+#include <Math/Common/XRttrEntry.h>
 
+#ifdef MATH_ENABLE_UUID
 namespace boost::uuids
 {
 
@@ -98,3 +100,67 @@ struct hash<::dy::math::DUuid>
 };
 
 } /// ::std for hashing of DUuid.
+
+namespace dy::math
+{
+
+/// @brief Create UUID instance.
+DUuid CreateUuid();
+
+} /// ::dy::math namespace
+
+#ifdef MATH_ENABLE_RTTR
+namespace dy::math
+{
+
+class DReflectionMathUuid final : public ::dy::expr::reflect::DTypeClass
+{
+public:
+  DReflectionMathUuid() : ::dy::expr::reflect::DTypeClass()
+  {
+    this->mTypeName   = "DUuid";
+    this->mHashValue  = ::dy::expr::ToHashCrc32("DUuid");
+    this->mTypeSize   = sizeof(DUuid);
+    this->mIsPod      = std::is_pod_v<DUuid>;
+  };
+  virtual ~DReflectionMathUuid() = default;
+
+private:
+  /// @brief
+  std::string DumpType(const void* pObj, std::size_t indent) const override final
+  {
+    const std::string indent0 = std::string(2 * indent, ' ');
+    const std::string indent1 = std::string(2 * (indent + 1), ' ');
+    const DUuid& obj = *(const DUuid*)pObj;
+
+    std::stringstream stream;
+    stream 
+      << DType::DumpType(pObj, indent)
+      << indent0 << R"("value" : )";
+    if (obj.HasValue() == false) 
+    {
+      stream << R"("uuid is not initialized yet.")";
+    }
+    else
+    {
+      stream << R"(")" << obj.ToString() << R"(")";
+    }
+    stream << "\n";
+    return stream.str();
+  }
+};
+
+} /// ::dy::math namespace
+
+template <>
+class ::dy::expr::reflect::RReflectionTypeResolver<::dy::math::DUuid> final
+{
+public:
+  static DType* Get() 
+  { 
+    static ::dy::math::DReflectionMathUuid instance;
+    return &instance;
+  }
+};
+#endif /// MATH_ENABLE_RTTR
+#endif /// MATH_ENABLE_UUID from Cmake.

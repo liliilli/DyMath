@@ -1,3 +1,4 @@
+#ifdef MATH_ENABLE_UUID
 ///
 /// MIT License
 /// Copyright (c) 2018-2019 Jongmin Yun
@@ -122,3 +123,16 @@ std::hash<dy::math::DUuid>::operator()(const argument_type& s) const noexcept
     return boost::hash<boost::uuids::uuid>()(*s.mUuid);
   }
 }
+
+namespace dy::math
+{
+
+/// @brief Create UUID instance.
+DUuid CreateUuid()
+{
+  return DUuid{true};
+}
+
+} /// ::dy::math namespace
+
+#endif /// DMATH_ENABLE_UUID
