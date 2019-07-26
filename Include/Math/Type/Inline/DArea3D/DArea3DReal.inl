@@ -1,4 +1,3 @@
-#include "..\..\Micellanous\DArea3D.h"
 #pragma once
 ///
 /// MIT License
@@ -19,8 +18,8 @@ namespace dy::math
 template <typename TType>
 DArea3D<TType, std::enable_if_t<kIsRealType<TType>>>
 ::DArea3D(const DVector3<TValueType>& iStartPoint, const DVector3<TValueType>& iLength)
-  : mStartPoint{iStartPoint},
-    mLength{iLength}
+  : __mStartPoint{iStartPoint},
+    __mLength{iLength}
 { 
   this->RelocatePosition();
 }
@@ -30,8 +29,8 @@ DArea3D<TType, std::enable_if_t<kIsRealType<TType>>>
 ::DArea3D(
   TValueType x, TValueType y, TValueType z, 
   TValueType width, TValueType height, TValueType depth)
-  : mStartPoint{x, y, z},
-    mLength{width, height, depth}
+  : __mStartPoint{x, y, z},
+    __mLength{width, height, depth}
 {
   this->RelocatePosition();
 }
@@ -48,8 +47,8 @@ DArea3D<TType, std::enable_if_t<kIsRealType<TType>>>
   using TVectorType = DVector3<AnotherType>;
   return DArea3D
   {
-    Cast<TVectorType>(this->mStartPoint), 
-    Cast<TVectorType>(this->mLength)
+    Cast<TVectorType>(this->__mStartPoint), 
+    Cast<TVectorType>(this->__mLength)
   };
 }
 
@@ -57,7 +56,7 @@ template <typename TType>
 TReal DArea3D<TType, std::enable_if_t<kIsRealType<TType>>>
 ::GetArea() const noexcept
 {
-  const auto& value = this->mLength;
+  const auto& value = this->__mLength;
   return static_cast<TReal>(value[0] * value[1] * value[2]);
 }
 
@@ -65,7 +64,7 @@ template <typename TType>
 void DArea3D<TType, std::enable_if_t<kIsRealType<TType>>>
 ::SetStartPoint(const DVector3<TValueType>& iStartPoint)
 {
-  this->mStartPoint = iStartPoint;
+  this->__mStartPoint = iStartPoint;
 }
 
 template <typename TType>
@@ -73,7 +72,7 @@ const DVector3<typename DArea3D<TType, std::enable_if_t<kIsRealType<TType>>>::TV
 DArea3D<TType, typename std::enable_if<kIsRealType<TType>>::type>
 ::GetStartPoint() const noexcept
 {
-  return this->mStartPoint;
+  return this->__mStartPoint;
 }
 
 template <typename TType>
@@ -81,14 +80,14 @@ DVector3<typename DArea3D<TType, std::enable_if_t<kIsRealType<TType>>>::TValueTy
 DArea3D<TType, typename std::enable_if<kIsRealType<TType>>::type>
 ::GetEndPoint() const noexcept
 {
-  return this->mStartPoint + this->mLength;
+  return this->__mStartPoint + this->__mLength;
 }
 
 template <typename TType>
 void DArea3D<TType, std::enable_if_t<kIsRealType<TType>>>
 ::SetWidth(TValueType width) noexcept
 {
-  this->mLength.X = width;
+  this->__mLength.X = width;
   this->RelocatePosition();
 }
 
@@ -97,14 +96,14 @@ typename DArea3D<TType, std::enable_if_t<kIsRealType<TType>>>::TValueType
 DArea3D<TType, typename std::enable_if<kIsRealType<TType>>::type>
 ::GetWidth() const noexcept
 {
-  return this->mLength.X;
+  return this->__mLength.X;
 }
 
 template <typename TType>
 void DArea3D<TType, std::enable_if_t<kIsRealType<TType>>>
 ::SetHeight(TValueType height) noexcept
 {
-  this->mLength.Y = height;
+  this->__mLength.Y = height;
   this->RelocatePosition();
 }
 
@@ -113,14 +112,14 @@ typename DArea3D<TType, std::enable_if_t<kIsRealType<TType>>>::TValueType
 DArea3D<TType, typename std::enable_if<kIsRealType<TType>>::type>
 ::GetHeight() const noexcept
 {
-  return this->mLength.Y;
+  return this->__mLength.Y;
 }
 
 template <typename TType>
 void DArea3D<TType, std::enable_if_t<kIsRealType<TType>>>
 ::SetDepth(TValueType depth) noexcept
 {
-  this->mLength.Z = depth;
+  this->__mLength.Z = depth;
   this->RelocatePosition();
 }
 
@@ -129,14 +128,14 @@ typename DArea3D<TType, std::enable_if_t<kIsRealType<TType>>>::TValueType
 DArea3D<TType, typename std::enable_if<kIsRealType<TType>>::type>
 ::GetDepth() const noexcept
 {
-  return this->mLength.Z;
+  return this->__mLength.Z;
 }
 
 template<typename TType>
 void DArea3D<TType, std::enable_if_t<kIsRealType<TType>>>
 ::SetWhd(const DVector3<TValueType>& whd)
 {
-  this->mLength = whd;
+  this->__mLength = whd;
   this->RelocatePosition();
 }
 
@@ -144,31 +143,31 @@ template<typename TType>
 DVector3<TType> DArea3D<TType, std::enable_if_t<kIsRealType<TType>>>
 ::GetWhd() const noexcept
 {
-  return this->mLength;
+  return this->__mLength;
 }
 
 template<typename TType>
 bool DArea3D<TType, std::enable_if_t<kIsRealType<TType>>>::HasNaN() const noexcept
 {
   return
-      this->mStartPoint.HasNaN() == true
-  ||  this->mLength.HasNaN() == true;
+      this->__mStartPoint.HasNaN() == true
+  ||  this->__mLength.HasNaN() == true;
 }
 
 template<typename TType>
 bool DArea3D<TType, std::enable_if_t<kIsRealType<TType>>>::HasInfinity() const noexcept
 {
   return
-      this->mStartPoint.HasInfinity() == true
-  ||  this->mLength.HasInfinity() == true;
+      this->__mStartPoint.HasInfinity() == true
+  ||  this->__mLength.HasInfinity() == true;
 }
 
 template<typename TType>
 bool DArea3D<TType, std::enable_if_t<kIsRealType<TType>>>::HasOnlyNormal() const noexcept
 {
   return
-      this->mStartPoint.HasOnlyNormal() == true
-  &&  this->mLength.HasOnlyNormal() == true;
+      this->__mStartPoint.HasOnlyNormal() == true
+  &&  this->__mLength.HasOnlyNormal() == true;
 }
 
 template <typename TType>
@@ -176,21 +175,21 @@ void DArea3D<TType, std::enable_if_t<kIsRealType<TType>>>
 ::RelocatePosition()
 {
   // When width is negative value.
-  if (this->mLength.X < 0) 
+  if (this->__mLength.X < 0) 
   { 
-    this->mStartPoint.X += this->mLength.X; 
-    this->mLength.X = std::abs(this->mLength.X); 
+    this->__mStartPoint.X += this->__mLength.X; 
+    this->__mLength.X = std::abs(this->__mLength.X); 
   }
   // When height is negative value.
-  if (this->mLength.Y < 0) 
+  if (this->__mLength.Y < 0) 
   { 
-    this->mStartPoint.Y += this->mLength.Y; 
-    this->mLength.Y = std::abs(this->mLength.Y); 
+    this->__mStartPoint.Y += this->__mLength.Y; 
+    this->__mLength.Y = std::abs(this->__mLength.Y); 
   }
-  if (this->mLength.Z < 0) 
+  if (this->__mLength.Z < 0) 
   { 
-    this->mStartPoint.Z += this->mLength.X; 
-    this->mLength.Z = std::abs(this->mLength.Z); 
+    this->__mStartPoint.Z += this->__mLength.X; 
+    this->__mLength.Z = std::abs(this->__mLength.Z); 
   }
 }
 

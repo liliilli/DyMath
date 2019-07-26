@@ -14,6 +14,7 @@
 
 #include <Math/Common/Inline/TGlobalTypes.inl>
 #include <Math/Type/Math/DVector3.h>
+#include <Math/Common/XRttrEntry.h>
 
 namespace dy::math
 {
@@ -83,12 +84,16 @@ public:
   /// @brief Get (width, height, depth) as vector3.
   DVector3<TValueType> GetWhd() const noexcept;
 
+  DVector3<TValueType> __mStartPoint = kMinValueOf<TValueType>;
+  DVector3<TValueType> __mLength     = kMaxValueOf<TValueType>; // RangeOf may lead to overflow.
+
 private:
   /// @brief Relocate position to be satisfied width, height and depth will be positive.
   void RelocatePosition();
 
-  DVector3<TValueType> mStartPoint = kMinValueOf<TValueType>;
-  DVector3<TValueType> mLength     = kMaxValueOf<TValueType>; // RangeOf may lead to overflow.
+#ifdef MATH_ENABLE_RTTR
+  EXPR_BIND_REFLECTION();
+#endif
 };
 
 template <typename TType>
@@ -147,12 +152,16 @@ public:
   /// @brief Check values are normal value, neither NaN nor Inf.
   bool HasOnlyNormal() const noexcept;
 
+  DVector3<TValueType> __mStartPoint = kMinValueOf<TValueType>;
+  DVector3<TValueType> __mLength     = kMaxValueOf<TValueType>; // RangeOf may lead to overflow.
+
 private:
   /// @brief Relocate position to be satisfied width, height and depth will be positive.
   void RelocatePosition();
 
-  DVector3<TValueType> mStartPoint = kMinValueOf<TValueType>;
-  DVector3<TValueType> mLength     = kMaxValueOf<TValueType>; // RangeOf may lead to overflow.
+#ifdef MATH_ENABLE_RTTR
+  EXPR_BIND_REFLECTION();
+#endif
 };
 
 } /// ::dy::math namespace

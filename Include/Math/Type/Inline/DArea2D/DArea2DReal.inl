@@ -18,8 +18,8 @@ namespace dy::math
 template <typename TType>
 DArea2D<TType, std::enable_if_t<kIsRealType<TType>>>
 ::DArea2D(const DVector2<TValueType>& iStartPoint, const DVector2<TValueType>& iLength)
-  : mStartPoint{iStartPoint},
-    mLength{iLength}
+  : __mStartPoint{iStartPoint},
+    __mLength{iLength}
 { 
   this->RelocatePosition();
 }
@@ -27,8 +27,8 @@ DArea2D<TType, std::enable_if_t<kIsRealType<TType>>>
 template <typename TType>
 DArea2D<TType, std::enable_if_t<kIsRealType<TType>>>
 ::DArea2D(TValueType x, TValueType y, TValueType width, TValueType height)
-  : mStartPoint{x, y},
-    mLength{width, height}
+  : __mStartPoint{x, y},
+    __mLength{width, height}
 {
   this->RelocatePosition();
 }
@@ -45,8 +45,8 @@ DArea2D<TType, std::enable_if_t<kIsRealType<TType>>>
   using TVectorType = DVector2<AnotherType>;
   return DArea2D
   {
-    Cast<TVectorType>(this->mStartPoint), 
-    Cast<TVectorType>(this->mLength)
+    Cast<TVectorType>(this->__mStartPoint), 
+    Cast<TVectorType>(this->__mLength)
   };
 }
 
@@ -54,7 +54,7 @@ template <typename TType>
 TReal DArea2D<TType, std::enable_if_t<kIsRealType<TType>>>
 ::GetArea() const noexcept
 {
-  const auto& value = this->mLength;
+  const auto& value = this->__mLength;
   return static_cast<TReal>(value[0] * value[1]);
 }
 
@@ -62,7 +62,7 @@ template <typename TType>
 void DArea2D<TType, std::enable_if_t<kIsRealType<TType>>>
 ::SetStartPoint(const DVector2<TValueType>& iStartPoint)
 {
-  this->mStartPoint = iStartPoint;
+  this->__mStartPoint = iStartPoint;
 }
 
 template <typename TType>
@@ -70,7 +70,7 @@ const DVector2<typename DArea2D<TType, std::enable_if_t<kIsRealType<TType>>>::TV
 DArea2D<TType, typename std::enable_if<kIsRealType<TType>>::type>
 ::GetStartPoint() const noexcept
 {
-  return this->mStartPoint;
+  return this->__mStartPoint;
 }
 
 template <typename TType>
@@ -78,14 +78,14 @@ DVector2<typename DArea2D<TType, std::enable_if_t<kIsRealType<TType>>>::TValueTy
 DArea2D<TType, typename std::enable_if<kIsRealType<TType>>::type>
 ::GetEndPoint() const noexcept
 {
-  return this->mStartPoint + this->mLength;
+  return this->__mStartPoint + this->__mLength;
 }
 
 template <typename TType>
 void DArea2D<TType, std::enable_if_t<kIsRealType<TType>>>
 ::SetWidth(TValueType width) noexcept
 {
-  this->mLength.X = width;
+  this->__mLength.X = width;
   this->RelocatePosition();
 }
 
@@ -94,14 +94,14 @@ typename DArea2D<TType, std::enable_if_t<kIsRealType<TType>>>::TValueType
 DArea2D<TType, typename std::enable_if<kIsRealType<TType>>::type>
 ::GetWidth() const noexcept
 {
-  return this->mLength.X;
+  return this->__mLength.X;
 }
 
 template <typename TType>
 void DArea2D<TType, std::enable_if_t<kIsRealType<TType>>>
 ::SetHeight(TValueType height) noexcept
 {
-  this->mLength.Y = height;
+  this->__mLength.Y = height;
   this->RelocatePosition();
 }
 
@@ -110,14 +110,14 @@ typename DArea2D<TType, std::enable_if_t<kIsRealType<TType>>>::TValueType
 DArea2D<TType, typename std::enable_if<kIsRealType<TType>>::type>
 ::GetHeight() const noexcept
 {
-  return this->mLength.Y;
+  return this->__mLength.Y;
 }
 
 template<typename TType>
 void DArea2D<TType, std::enable_if_t<kIsRealType<TType>>>
 ::SetWh(const DVector2<TValueType>& wh)
 {
-  this->mLength = wh;
+  this->__mLength = wh;
   this->RelocatePosition();
 }
 
@@ -133,21 +133,21 @@ template<typename TType>
 bool DArea2D<TType, std::enable_if_t<kIsRealType<TType>>>
 ::HasNaN() const noexcept
 {
-  return this->mStartPoint.HasNan() || this->mLength.HasNan();
+  return this->__mStartPoint.HasNan() || this->__mLength.HasNan();
 }
 
 template<typename TType>
 bool DArea2D<TType, std::enable_if_t<kIsRealType<TType>>>
 ::HasInfinity() const noexcept
 {
-  return this->mStartPoint.HasInfinity() || this->mLength.HasInfinity();
+  return this->__mStartPoint.HasInfinity() || this->__mLength.HasInfinity();
 }
 
 template<typename TType>
 bool DArea2D<TType, std::enable_if_t<kIsRealType<TType>>>
 ::HasOnlyNormal() const noexcept
 {
-  return this->mStartPoint.HasOnlyNormal() && this->mLength.HasOnlyNormal();
+  return this->__mStartPoint.HasOnlyNormal() && this->__mLength.HasOnlyNormal();
 }
 
 template <typename TType>
@@ -155,16 +155,16 @@ void DArea2D<TType, std::enable_if_t<kIsRealType<TType>>>
 ::RelocatePosition()
 {
   // When width is negative value.
-  if (this->mLength.X < 0) 
+  if (this->__mLength.X < 0) 
   { 
-    this->mStartPoint.X += this->mLength.X; 
-    this->mLength.X = std::abs(this->mLength.X); 
+    this->__mStartPoint.X += this->__mLength.X; 
+    this->__mLength.X = std::abs(this->__mLength.X); 
   }
   // When height is negative value.
-  if (this->mLength.Y < 0) 
+  if (this->__mLength.Y < 0) 
   { 
-    this->mStartPoint.Y += this->mLength.Y; 
-    this->mLength.Y = std::abs(this->mLength.Y); 
+    this->__mStartPoint.Y += this->__mLength.Y; 
+    this->__mLength.Y = std::abs(this->__mLength.Y); 
   }
 }
 
