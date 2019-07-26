@@ -454,6 +454,26 @@ static void __InitDQuaternion()
 
 } /// ::detail namespace
 
+//!
+//! EAxis
+//!
+
+namespace detail 
+{
+
+static void __InitEAxis()
+{
+  __EXPR_REFLECTION_INSTANCE_START(EAxis)
+  {
+    EXPR_REGISTER_TYPE(EAxis)
+      .EXPR_REGISTER_ENUM_VALUE(EAxis, X)
+      .EXPR_REGISTER_ENUM_VALUE(EAxis, Y)
+      .EXPR_REGISTER_ENUM_VALUE(EAxis, Z)
+  };
+}
+
+} /// ::detail namespace
+
 void InitializeMathReflections()
 {
   detail::__InitDVector2();
@@ -463,6 +483,7 @@ void InitializeMathReflections()
   detail::__InitDMatrix3();
   detail::__InitDMatrix4();
   detail::__InitDQuaternion();
+  detail::__InitEAxis();
 }
 
 } /// ::dy::math namespace

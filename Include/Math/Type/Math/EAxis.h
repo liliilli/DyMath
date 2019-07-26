@@ -12,6 +12,8 @@
 /// SOFTWARE.
 ///
 
+#include <Math/Common/XRttrEntry.h>
+
 namespace dy::math
 {
 
@@ -25,3 +27,8 @@ enum class EAxis
 };
 
 } /// ::dy::math namespace
+
+#ifdef MATH_ENABLE_RTTR
+EXPR_BIND_REFLECTION_ENUM(::dy::math::EAxis);
+#endif
+
