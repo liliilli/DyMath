@@ -18,47 +18,47 @@ namespace dy::math
 {
 
 inline DTristateBool::DTristateBool(bool parent, bool input) 
-  : mParent(parent), mInput(input), mOutput(parent && input)
+  : __mParent(parent), __mInput(input), __mOutput(parent && input)
 {
-  this->mOldOutput = this->mOutput;
+  this->__mOldOutput = this->__mOutput;
 }
 
 inline void DTristateBool::UpdateInput(bool newInput) noexcept
 {
-  this->mInput = newInput;
+  this->__mInput = newInput;
   this->pUpdateOutputs();
 }
 
 inline void DTristateBool::UpdateParent(bool newParent) noexcept
 {
-  this->mParent = newParent;
+  this->__mParent = newParent;
   this->pUpdateOutputs();
 }
 
 inline bool DTristateBool::GetParentFlag() const noexcept
 {
-  return this->mParent;
+  return this->__mParent;
 }
 
 inline bool DTristateBool::GetOutput() const noexcept
 {
-  return this->mOutput;
+  return this->__mOutput;
 }
 
 inline bool DTristateBool::IsOutputValueChanged() const noexcept
 {
-  return this->mOutput != this->mOldOutput;
+  return this->__mOutput != this->__mOldOutput;
 }
 
 inline DTristateBool::operator bool() const noexcept
 {
-  return this->mOutput;
+  return this->__mOutput;
 }
 
 inline void DTristateBool::pUpdateOutputs()
 {
-  this->mOldOutput = this->mOutput;
-  this->mOutput    = this->mParent && this->mInput;
+  this->__mOldOutput = this->__mOutput;
+  this->__mOutput    = this->__mParent && this->__mInput;
 }
 
 template <typename TChar, typename TTraits>

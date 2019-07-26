@@ -12,6 +12,8 @@
 /// SOFTWARE.
 ///
 
+#include <Math/Common/XRttrEntry.h>
+
 namespace dy::math
 {
 
@@ -47,10 +49,6 @@ public:
   /// @return Output value.
   operator bool() const noexcept;
 
-private:
-  /// @brief Update output / oldOutput value comparing parent and input.
-  void pUpdateOutputs();
-
   //! Tri-state boolean
   //!
   //!       mParent----.                Parent | Input | Output
@@ -62,16 +60,24 @@ private:
   //!
 
   /// Parent boolean value.
-  bool mParent = false;
+  bool __mParent = false;
 
   /// Input boolean value.
-  bool mInput = false;
+  bool __mInput = false;
 
   /// Output boolean value.
-  mutable bool mOutput = false;
+  mutable bool __mOutput = false;
 
   /// Old-output boolean value (previous output value)
-  mutable bool mOldOutput = false;
+  mutable bool __mOldOutput = false;
+
+private:
+  /// @brief Update output / oldOutput value comparing parent and input.
+  void pUpdateOutputs();
+
+#ifdef MATH_ENABLE_RTTR
+  EXPR_BIND_REFLECTION();
+#endif
 };
 
 } /// ::dy::math namespace
