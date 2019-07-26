@@ -26,6 +26,12 @@
 #include <Math/Type/Micellanous/DArea3D.h>
 #include <Math/Type/Micellanous/DBounds2D.h>
 #include <Math/Type/Micellanous/DBounds3D.h>
+#include <Math/Type/Micellanous/DClamp.h>
+#include <Math/Type/Micellanous/DTristateBool.h>
+#include <Math/Type/Micellanous/DUuid.h>
+#include <Math/Type/Micellanous/EGraphics.h>
+#include <Math/Type/Micellanous/EProjection.h>
+#include <Math/Type/Micellanous/ERandomPolicy.h>
 
 namespace dy::math
 {
@@ -770,6 +776,108 @@ static void __InitDBounds3D()
 
 } /// ::detail namespace
 
+//!
+//! Micellanous::DClamp default types.
+//!
+
+template <typename TType>
+using DClamp01 = DClamp<TType, 0, 1>;
+
+__EXPR_REFLECTION_INSTANCE_INITIALIZE(DClamp01<TF32>);
+__EXPR_REFLECTION_INSTANCE_INITIALIZE(DClamp01<TF64>);
+
+namespace detail
+{
+
+static void __InitDClampDefaults() 
+{
+  __EXPR_REFLECTION_INSTANCE_START(DClamp01<TF32>)
+  {
+    EXPR_REGISTER_TYPE(DClamp01<TF32>)
+      .EXPR_REGISTER_VARIABLE(DClamp01<TF32>, __mValue)
+  };
+  __EXPR_REFLECTION_INSTANCE_START(DClamp01<TF64>)
+  {
+    EXPR_REGISTER_TYPE(DClamp01<TF64>)
+      .EXPR_REGISTER_VARIABLE(DClamp01<TF64>, __mValue)
+  };
+}
+
+} /// ::detail namespace
+
+//!
+//! Micellanous::DTristateBool.
+//!
+
+__EXPR_REFLECTION_INSTANCE_INITIALIZE(DTristateBool);
+
+namespace detail
+{
+
+static void __InitDTristateBool() 
+{
+  __EXPR_REFLECTION_INSTANCE_START(DTristateBool)
+  {
+    EXPR_REGISTER_TYPE(DTristateBool)
+      .EXPR_REGISTER_VARIABLE(DTristateBool, __mParent)
+      .EXPR_REGISTER_VARIABLE(DTristateBool, __mInput)
+      .EXPR_REGISTER_VARIABLE(DTristateBool, __mOutput)
+      .EXPR_REGISTER_VARIABLE(DTristateBool, __mOldOutput)
+  };
+}
+
+} /// ::detail namespace
+
+//!
+//! Micellanous::DUuid.
+//!
+
+#ifdef MATH_ENABLE_UUID
+namespace detail
+{
+
+static void __InitDUuid() 
+{
+  __EXPR_REFLECTION_INSTANCE_START(DUuid)
+  {
+    EXPR_REGISTER_TYPE(DUuid)
+  };
+}
+
+} /// ::detail namespace
+#endif /// MATH_ENABLE_UUID
+
+//!
+//! Micellanous Enums.
+//!
+
+namespace detail
+{
+
+static void __InitMicellanousEnums() 
+{
+  __EXPR_REFLECTION_INSTANCE_START(EGraphics)
+  {
+    EXPR_REGISTER_TYPE(EGraphics)
+      .EXPR_REGISTER_ENUM_VALUE(EGraphics, OpenGL)
+      .EXPR_REGISTER_ENUM_VALUE(EGraphics, DirectX)
+  };
+  __EXPR_REFLECTION_INSTANCE_START(EProjection)
+  {
+    EXPR_REGISTER_TYPE(EProjection)
+      .EXPR_REGISTER_ENUM_VALUE(EProjection, Orthogonal)
+      .EXPR_REGISTER_ENUM_VALUE(EProjection, Perspective)
+  };
+  __EXPR_REFLECTION_INSTANCE_START(ERandomPolicy)
+  {
+    EXPR_REGISTER_TYPE(ERandomPolicy)
+      .EXPR_REGISTER_ENUM_VALUE(ERandomPolicy, Uniform)
+      .EXPR_REGISTER_ENUM_VALUE(ERandomPolicy, Discrete)
+  };
+}
+
+} /// ::detail namespace
+
 void InitializeMathReflections()
 {
   detail::__InitDVector2();
@@ -784,6 +892,12 @@ void InitializeMathReflections()
   detail::__InitDArea3D();
   detail::__InitDBounds2D();
   detail::__InitDBounds3D();
+  detail::__InitDClampDefaults();
+  detail::__InitDTristateBool();
+#ifdef MATH_ENABLE_UUID
+  detail::__InitDUuid();
+#endif /// MATH_ENABLE_UUID
+  detail::__InitMicellanousEnums();
 }
 
 } /// ::dy::math namespace

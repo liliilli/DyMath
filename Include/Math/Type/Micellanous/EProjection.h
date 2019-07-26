@@ -12,6 +12,8 @@
 /// SOFTWARE.
 ///
 
+#include <Math/Common/XRttrEntry.h>
+
 namespace dy::math
 {
 
@@ -24,3 +26,6 @@ enum class EProjection
 };
 
 } /// ::dy::math namespac
+#ifdef MATH_ENABLE_RTTR
+EXPR_BIND_REFLECTION_ENUM(::dy::math::EProjection);
+#endif
