@@ -15,6 +15,7 @@
 #include <vector>
 #include <Math/Common/Inline/TGlobalTypes.inl>
 #include <Math/Type/Math/DVector3.h>
+#include <Math/Common/XRttrEntry.h>
 
 namespace dy::math
 {
@@ -87,10 +88,16 @@ public:
   /// @brief Check bounds has infinite bound region.
   bool IsInfiniteBound() const noexcept;
 
-protected:
-  DVector3<TValueType> mMin = kMinValueOf<TValueType>;
-  DVector3<TValueType> mMax = kMaxValueOf<TValueType>;
+  DVector3<TValueType> __mMin = kMinValueOf<TValueType>;
+  DVector3<TValueType> __mMax = kMaxValueOf<TValueType>;
+  
+#ifdef MATH_ENABLE_RTTR
+  EXPR_BIND_REFLECTION();
+#endif
 };
 
 } /// ::dy::math namespace
+#ifdef MATH_ENABLE_RTTR
+EXPR_BIND_REFLECTION_ENUM(::dy::math::EBounds3D);
+#endif
 #include <Math/Type/Inline/DBounds3D/DBounds3D.inl>

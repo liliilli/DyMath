@@ -82,24 +82,24 @@ bool operator!=(const DBounds3D<TType>& lhs, const DBounds3D<TType>& rhs) noexce
   
 template <typename TType>
 DBounds3D<TType>::DBounds3D(const DVector3<TValueType>& point)
-  : mMin{point}, mMax{point}
+  : __mMin{point}, __mMax{point}
 { }
 
 template <typename TType>
 DBounds3D<TType>::DBounds3D(const DVector3<TValueType>& point1, const DVector3<TValueType>& point2)
-  : mMin{ExtractMin(point1, point2)},
-    mMax{ExtractMax(point1, point2)}
+  : __mMin{ExtractMin(point1, point2)},
+    __mMax{ExtractMax(point1, point2)}
 { }
 
 template <typename TType>
 DBounds3D<TType>::DBounds3D(const std::vector<DVector3<TValueType>>& list)
-  : mMin { kMaxValueOf<TValueType> },
-    mMax { kMinValueOf<TValueType> }
+  : __mMin { kMaxValueOf<TValueType> },
+    __mMax { kMinValueOf<TValueType> }
 {
   for (auto& point : list)
   {
-    this->mMin = ExtractMin(this->mMin, point);
-    this->mMax = ExtractMax(this->mMax, point);
+    this->__mMin = ExtractMin(this->__mMin, point);
+    this->__mMax = ExtractMax(this->__mMax, point);
   }
 }
 
@@ -144,7 +144,7 @@ DVector3<typename DBounds3D<TType>::TValueType> DBounds3D<TType>::GetLength() co
 template <typename TType>
 DVector3<typename DBounds3D<TType>::TValueType> DBounds3D<TType>::GetDiagonal() const noexcept
 {
-  return this->mMax - this->mMin;
+  return this->__mMax - this->__mMin;
 }
 
 template <typename TType>
@@ -156,7 +156,7 @@ const DVector3<TType>& DBounds3D<TType>::GetMinimumPoint() const noexcept
 template <typename TType>
 const DVector3<typename DBounds3D<TType>::TValueType>& DBounds3D<TType>::GetMin() const noexcept
 {
-  return this->mMin;
+  return this->__mMin;
 }
 
 template <typename TType>
@@ -168,7 +168,7 @@ const DVector3<typename DBounds3D<TType>::TValueType>& DBounds3D<TType>::GetMaxi
 template <typename TType>
 const DVector3<typename DBounds3D<TType>::TValueType>& DBounds3D<TType>::GetMax() const noexcept
 {
-  return this->mMax;
+  return this->__mMax;
 }
 
 template <typename TType>
@@ -177,9 +177,9 @@ DVector3<typename DBounds3D<TType>::TValueType> DBounds3D<TType>::GetPointOf(EBo
   const auto v = static_cast<std::underlying_type_t<EBounds3D>>(type);
   return DVector3<TValueType>
   {
-    (v >> 2) ? this->mMax.X : this->mMin.X,
-    (v & 0b10) >> 1 ? this->mMax.Y : this->mMin.Y,
-    (v & 0b1) ? this->mMax.Z : this->mMin.Z
+    (v >> 2) ? this->__mMax.X : this->__mMin.X,
+    (v & 0b10) >> 1 ? this->__mMax.Y : this->__mMin.Y,
+    (v & 0b1) ? this->__mMax.Z : this->__mMin.Z
   };
 }
 
@@ -200,32 +200,32 @@ template<typename TType>
 bool DBounds3D<TType>::IsInfiniteBound() const noexcept
 {
   return 
-      this->mMin == DVector3<TValueType>{kMinValueOf<TValueType>}
-  &&  this->mMax == DVector3<TValueType>{kMaxValueOf<TValueType>};
+      this->__mMin == DVector3<TValueType>{kMinValueOf<TValueType>}
+  &&  this->__mMax == DVector3<TValueType>{kMaxValueOf<TValueType>};
 }
 
 template<typename TType>
 bool DBounds3D<TType>::HasNaN() const noexcept
 {
   return 
-      this->mMin.HasNan() == true
-  ||  this->mMax.HasNan() == true; 
+      this->__mMin.HasNan() == true
+  ||  this->__mMax.HasNan() == true; 
 }
 
 template<typename TType>
 bool DBounds3D<TType>::HasInfinity() const noexcept
 {
   return 
-      this->mMin.HasInfinity() == true
-  ||  this->mMax.HasInfinity() == true;
+      this->__mMin.HasInfinity() == true
+  ||  this->__mMax.HasInfinity() == true;
 }
 
 template<typename TType>
 bool DBounds3D<TType>::HasOnlyNormal() const noexcept
 {
   return 
-      this->mMin.HasOnlyNormal() == true
-  &&  this->mMax.HasOnlyNormal() == true;
+      this->__mMin.HasOnlyNormal() == true
+  &&  this->__mMax.HasOnlyNormal() == true;
 }
 
 } /// ::dy::math namespace

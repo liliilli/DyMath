@@ -24,6 +24,8 @@
 #include <Math/Type/Math/DQuat.h>
 #include <Math/Type/Micellanous/DArea2D.h>
 #include <Math/Type/Micellanous/DArea3D.h>
+#include <Math/Type/Micellanous/DBounds2D.h>
+#include <Math/Type/Micellanous/DBounds3D.h>
 
 namespace dy::math
 {
@@ -644,6 +646,130 @@ static void __InitDArea3D()
 
 } /// ::detail namespace
 
+//!
+//! Micellanous::DBounds2D (2D AABB)
+//!
+
+__EXPR_REFLECTION_INSTANCE_INITIALIZE(DBounds2D<TU8>);
+__EXPR_REFLECTION_INSTANCE_INITIALIZE(DBounds2D<TU16>);
+__EXPR_REFLECTION_INSTANCE_INITIALIZE(DBounds2D<TU32>);
+__EXPR_REFLECTION_INSTANCE_INITIALIZE(DBounds2D<TU64>);
+__EXPR_REFLECTION_INSTANCE_INITIALIZE(DBounds2D<TI8>);
+__EXPR_REFLECTION_INSTANCE_INITIALIZE(DBounds2D<TI16>);
+__EXPR_REFLECTION_INSTANCE_INITIALIZE(DBounds2D<TI32>);
+__EXPR_REFLECTION_INSTANCE_INITIALIZE(DBounds2D<TI64>);
+__EXPR_REFLECTION_INSTANCE_INITIALIZE(DBounds2D<TF32>);
+__EXPR_REFLECTION_INSTANCE_INITIALIZE(DBounds2D<TF64>);
+
+namespace detail
+{
+  
+static void __InitDBounds2D()
+{
+  __EXPR_REFLECTION_INSTANCE_START(DBounds2D<TU8>)
+  {
+    EXPR_REGISTER_TYPE(DBounds2D<TU8>)
+      .EXPR_REGISTER_VARIABLE(DBounds2D<TU8>, __mMin)
+      .EXPR_REGISTER_VARIABLE(DBounds2D<TU8>, __mMax)
+  };
+  __EXPR_REFLECTION_INSTANCE_START(DBounds2D<TU16>)
+  {
+    EXPR_REGISTER_TYPE(DBounds2D<TU16>)
+      .EXPR_REGISTER_VARIABLE(DBounds2D<TU16>, __mMin)
+      .EXPR_REGISTER_VARIABLE(DBounds2D<TU16>, __mMax)
+  };
+  __EXPR_REFLECTION_INSTANCE_START(DBounds2D<TU32>)
+  {
+    EXPR_REGISTER_TYPE(DBounds2D<TU32>)
+      .EXPR_REGISTER_VARIABLE(DBounds2D<TU32>, __mMin)
+      .EXPR_REGISTER_VARIABLE(DBounds2D<TU32>, __mMax)
+  };
+  __EXPR_REFLECTION_INSTANCE_START(DBounds2D<TU64>)
+  {
+    EXPR_REGISTER_TYPE(DBounds2D<TU64>)
+      .EXPR_REGISTER_VARIABLE(DBounds2D<TU64>, __mMin)
+      .EXPR_REGISTER_VARIABLE(DBounds2D<TU64>, __mMax)
+  };
+  __EXPR_REFLECTION_INSTANCE_START(DBounds2D<TI8>)
+  {
+    EXPR_REGISTER_TYPE(DBounds2D<TI8>)
+      .EXPR_REGISTER_VARIABLE(DBounds2D<TI8>, __mMin)
+      .EXPR_REGISTER_VARIABLE(DBounds2D<TI8>, __mMax)
+  };
+  __EXPR_REFLECTION_INSTANCE_START(DBounds2D<TI16>)
+  {
+    EXPR_REGISTER_TYPE(DBounds2D<TI16>)
+      .EXPR_REGISTER_VARIABLE(DBounds2D<TI16>, __mMin)
+      .EXPR_REGISTER_VARIABLE(DBounds2D<TI16>, __mMax)
+  };
+  __EXPR_REFLECTION_INSTANCE_START(DBounds2D<TI32>)
+  {
+    EXPR_REGISTER_TYPE(DBounds2D<TI32>)
+      .EXPR_REGISTER_VARIABLE(DBounds2D<TI32>, __mMin)
+      .EXPR_REGISTER_VARIABLE(DBounds2D<TI32>, __mMax)
+  };
+  __EXPR_REFLECTION_INSTANCE_START(DBounds2D<TI64>)
+  {
+    EXPR_REGISTER_TYPE(DBounds2D<TI64>)
+      .EXPR_REGISTER_VARIABLE(DBounds2D<TI64>, __mMin)
+      .EXPR_REGISTER_VARIABLE(DBounds2D<TI64>, __mMax)
+  };
+  __EXPR_REFLECTION_INSTANCE_START(DBounds2D<TF32>)
+  {
+    EXPR_REGISTER_TYPE(DBounds2D<TF32>)
+      .EXPR_REGISTER_VARIABLE(DBounds2D<TF32>, __mMin)
+      .EXPR_REGISTER_VARIABLE(DBounds2D<TF32>, __mMax)
+  };
+  __EXPR_REFLECTION_INSTANCE_START(DBounds2D<TF64>)
+  {
+    EXPR_REGISTER_TYPE(DBounds2D<TF64>)
+      .EXPR_REGISTER_VARIABLE(DBounds2D<TF64>, __mMin)
+      .EXPR_REGISTER_VARIABLE(DBounds2D<TF64>, __mMax)
+  };
+}
+
+} /// ::detail namespace
+
+//!
+//! Micellanous::DBounds3D (3D AABB)
+//!
+
+__EXPR_REFLECTION_INSTANCE_INITIALIZE(DBounds3D<TF32>);
+__EXPR_REFLECTION_INSTANCE_INITIALIZE(DBounds3D<TF64>);
+
+namespace detail
+{
+  
+static void __InitDBounds3D()
+{
+  __EXPR_REFLECTION_INSTANCE_START(EBounds3D)
+  {
+    EXPR_REGISTER_TYPE(EBounds3D)
+      .EXPR_REGISTER_ENUM_VALUE(EBounds3D, LDB)
+      .EXPR_REGISTER_ENUM_VALUE(EBounds3D, LDF)
+      .EXPR_REGISTER_ENUM_VALUE(EBounds3D, LUB)
+      .EXPR_REGISTER_ENUM_VALUE(EBounds3D, LUF)
+      .EXPR_REGISTER_ENUM_VALUE(EBounds3D, RDB)
+      .EXPR_REGISTER_ENUM_VALUE(EBounds3D, RDF)
+      .EXPR_REGISTER_ENUM_VALUE(EBounds3D, RUB)
+      .EXPR_REGISTER_ENUM_VALUE(EBounds3D, RUF)
+  };
+  __EXPR_REFLECTION_INSTANCE_START(DBounds3D<TF32>)
+  {
+    EXPR_REGISTER_TYPE(DBounds3D<TF32>)
+      .EXPR_REGISTER_VARIABLE(DBounds3D<TF32>, __mMin)
+      .EXPR_REGISTER_VARIABLE(DBounds3D<TF32>, __mMax)
+  };
+  __EXPR_REFLECTION_INSTANCE_START(DBounds3D<TF64>)
+  {
+    EXPR_REGISTER_TYPE(DBounds3D<TF64>)
+      .EXPR_REGISTER_VARIABLE(DBounds3D<TF64>, __mMin)
+      .EXPR_REGISTER_VARIABLE(DBounds3D<TF64>, __mMax)
+  };
+}
+
+} /// ::detail namespace
+
 void InitializeMathReflections()
 {
   detail::__InitDVector2();
@@ -656,6 +782,8 @@ void InitializeMathReflections()
   detail::__InitEAxis();
   detail::__InitDArea2D();
   detail::__InitDArea3D();
+  detail::__InitDBounds2D();
+  detail::__InitDBounds3D();
 }
 
 } /// ::dy::math namespace

@@ -20,14 +20,14 @@ namespace dy::math
 template <typename TType>
 DBounds2D<TType, std::enable_if_t<kIsIntegerType<TType>>>
 ::DBounds2D(const DVector2<TValueType>& point)
-  : mMin{point}, mMax{point}
+  : __mMin{point}, __mMax{point}
 { }
 
 template <typename TType>
 DBounds2D<TType, std::enable_if_t<kIsIntegerType<TType>>>
 ::DBounds2D(const DVector2<TValueType>& point1, const DVector2<TValueType>& point2)
-  : mMin{std::min(point1.X, point2.X), std::min(point1.Y, point2.Y)},
-    mMax{std::max(point1.X, point2.X), std::max(point1.Y, point2.Y)}
+  : __mMin{std::min(point1.X, point2.X), std::min(point1.Y, point2.Y)},
+    __mMax{std::max(point1.X, point2.X), std::max(point1.Y, point2.Y)}
 { }
 
 template <typename TType>
@@ -53,7 +53,7 @@ template <typename TType>
 const DVector2<TType>& DBounds2D<TType, std::enable_if_t<kIsIntegerType<TType>>>
 ::GetMinimumPoint() const noexcept
 {
-  return this->mMin;
+  return this->__mMin;
 }
 
 template <typename TType>
@@ -61,7 +61,7 @@ const DVector2<typename DBounds2D<TType, std::enable_if_t<kIsIntegerType<TType>>
 DBounds2D<TType, std::enable_if_t<kIsIntegerType<TType>>>
 ::GetMaximumPoint() const noexcept
 {
-  return this->mMax;
+  return this->__mMax;
 }
 
 template <typename TType>
@@ -69,7 +69,7 @@ DVector2<typename DBounds2D<TType, std::enable_if_t<kIsIntegerType<TType>>>::TVa
 DBounds2D<TType, std::enable_if_t<kIsIntegerType<TType>>>
 ::GetDiagonal() const noexcept
 {
-  return this->mMax - this->mMin;
+  return this->__mMax - this->__mMin;
 }
 
 } /// ::dy::math namespace

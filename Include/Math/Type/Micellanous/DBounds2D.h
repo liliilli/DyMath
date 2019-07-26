@@ -14,6 +14,7 @@
 
 #include <Math/Common/Inline/TGlobalTypes.inl>
 #include <Math/Type/Math/DVector2.h>
+#include <Math/Common/XRttrEntry.h>
 
 namespace dy::math
 {
@@ -59,9 +60,12 @@ public:
   /// @brief Get maximum point of bounding box.
   const DVector2<TValueType>& GetMaximumPoint() const noexcept;
 
-private:
-  DVector2<TValueType> mMin = kMinValueOf<TValueType>;
-  DVector2<TValueType> mMax = kMaxValueOf<TValueType>;
+  DVector2<TValueType> __mMin = kMinValueOf<TValueType>;
+  DVector2<TValueType> __mMax = kMaxValueOf<TValueType>;
+  
+#ifdef MATH_ENABLE_RTTR
+  EXPR_BIND_REFLECTION();
+#endif
 };
 
 template <typename TType>
@@ -95,9 +99,12 @@ public:
   /// @brief Check values are normal value, neither NaN nor Inf.
   bool HasOnlyNormal() const noexcept;
 
-private:
-  DVector2<TValueType> mMin = kMinValueOf<TValueType>;
-  DVector2<TValueType> mMax = kMaxValueOf<TValueType>;
+  DVector2<TValueType> __mMin = kMinValueOf<TValueType>;
+  DVector2<TValueType> __mMax = kMaxValueOf<TValueType>;
+
+#ifdef MATH_ENABLE_RTTR
+  EXPR_BIND_REFLECTION();
+#endif
 };
 
 } /// ::dy::math namespace
