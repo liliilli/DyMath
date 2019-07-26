@@ -19,35 +19,35 @@ namespace dy::math
 
 template <typename TType, TI64 TStart, TI64 TEnd>
 constexpr DClamp<TType, TStart, TEnd>::DClamp(TType value) noexcept
-  : mValue{std::clamp(value, Cast<TType>(TStart), Cast<TType>(TEnd))}
+  : __mValue{std::clamp(value, Cast<TType>(TStart), Cast<TType>(TEnd))}
 { }
 
 template <typename TType, TI64 TStart, TI64 TEnd>
 constexpr DClamp<TType, TStart, TEnd>& 
 DClamp<TType, TStart, TEnd>::operator=(TType value) noexcept
 {
-  this->mValue = std::clamp(value, Cast<TType>(TStart), Cast<TType>(TEnd));
+  this->__mValue = std::clamp(value, Cast<TType>(TStart), Cast<TType>(TEnd));
   return *this;
 }
 
 template <typename TType, TI64 TStart, TI64 TEnd>
 constexpr DClamp<TType, TStart, TEnd>::operator TType() const noexcept
 {
-  return this->mValue;
+  return this->__mValue;
 }
 
 template <typename TType, TI64 TStart, TI64 TEnd>
 constexpr typename DClamp<TType, TStart, TEnd>::TValueType 
 DClamp<TType, TStart, TEnd>::operator()() const noexcept
 {
-  return this->mValue;
+  return this->__mValue;
 }
 
 template <typename TType, TI64 TStart, TI64 TEnd>
 const typename DClamp<TType, TStart, TEnd>::TValueType* 
 DClamp<TType, TStart, TEnd>::Data() const noexcept
 {
-  return &this->mValue;
+  return &this->__mValue;
 }
 
 } /// ::dy::math namespace

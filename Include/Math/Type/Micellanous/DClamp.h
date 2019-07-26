@@ -14,6 +14,7 @@
 
 #include <algorithm>
 #include <Math/Common/TGlobalTypes.h>
+#include <Math/Common/XRttrEntry.h>
 
 namespace dy::math
 {
@@ -60,11 +61,14 @@ public:
   /// @brief Return the pointer of Data.
   const TValueType* Data() const noexcept;
 
-private:
-  TValueType mValue = std::clamp(TValueType{}, TValueType(kStart), TValueType(kEnd));
+  TValueType __mValue = std::clamp(TValueType{}, TValueType(kStart), TValueType(kEnd));
+
+#ifdef MATH_ENABLE_RTTR
+  EXPR_BIND_REFLECTION();
+#endif
 };
 
 } /// ::dy::math namespace
-
+#include <Math/Type/Inline/DClamp/DClampRttr.inl>
 #include <Math/Type/Inline/DClamp/DClamp.inl>
 #include <Math/Type/Inline/DClamp/DClampOperator.inl>
