@@ -18,19 +18,20 @@ else()
 endif()
 
 # If GNU or Clang, Add common/debug/release flags.
-if(GNU)
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 	set(CMAKE_CXX_FLAGS_COMMON	"-std=c++17 -Wall -Werror -pedantic")
 	set(CMAKE_CXX_FLAGS_DEBUG	"-g -O0 -pg")
 	set(CMKAE_CXX_FLAGS_RELEASE "-s -O2 -DNDEBUG -march=native")
-endif(GNU)
-if(Clang)
+
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 	set(CMAKE_CXX_FLAGS_COMMON	"-std=c++17 -Wall -Werror -Wno-ignored-qualifiers -pedantic")
 	set(CMAKE_CXX_FLAGS_DEBUG	"-g -O0 -pg")
 	set(CMKAE_CXX_FLAGS_RELEASE "-s -O2 -DNDEBUG -march=native")
-endif(Clang)
-if(MSVC)
+
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
 	set(CMAKE_CXX_FLAGS_COMMON	"/std:c++17 /WX /MP")
-endif(MSVC)
+
+endif()
 
 # If MSVC, Convert MD and MDd to MT and MTd.
 if(${MATH_BUILD_WITH_MT} STREQUAL "ON")
