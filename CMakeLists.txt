@@ -6,179 +6,138 @@ set(CMAKE_CXX_STANDARD_REQAUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_VERBOSE_MAKEFILE true)
 
+# Option list
 OPTION(MATH_BUILD_LIB "Build as library" OFF)
 OPTION(MATH_BUILD_WITH_EXPR "Build as DyExpression" OFF)
 OPTION(MATH_BUILD_WITH_RTTR "Build with dy::expr::reflect (Refection)" OFF)
 OPTION(MATH_BUILD_WITH_BOOST "Build with boost" OFF)
 
-if (${UTIL_BUILD_WITH_MT} STREQUAL "ON")
+# Dependent option branches
+if ("${UTIL_BUILD_WITH_MT}" STREQUAL "ON")
 	OPTION(MATH_BUILD_WITH_MT "Build as MTd or MT" ON)
 else()
 	OPTION(MATH_BUILD_WITH_MT "Build as MTd or MT" OFF)
 endif()
 
-# If GNU or Clang, Add common/debug/release flags.
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-	set(CMAKE_CXX_FLAGS_COMMON	"-std=c++17 -Wall -Werror -pedantic")
-	set(CMAKE_CXX_FLAGS_DEBUG	"-g -O0 -pg")
-	set(CMKAE_CXX_FLAGS_RELEASE "-s -O2 -DNDEBUG -march=native")
+if ("${MATH_BUILD_LIB}" STREQUAL "ON")
+	# Add static library
+	add_library(${PROJECT_NAME} STATIC)
 
-elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-	set(CMAKE_CXX_FLAGS_COMMON	"-std=c++17 -Wall -Werror -Wno-ignored-qualifiers -pedantic")
-	set(CMAKE_CXX_FLAGS_DEBUG	"-g -O0 -pg")
-	set(CMKAE_CXX_FLAGS_RELEASE "-s -O2 -DNDEBUG -march=native")
+	# Common includes
+	target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Include)
+	# Common sources
+	target_sources(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Source/Utility/XMath.cc)
 
-elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-	set(CMAKE_CXX_FLAGS_COMMON	"/std:c++17 /WX /MP")
-
-endif()
-
-# If MSVC, Convert MD and MDd to MT and MTd.
-if(${MATH_BUILD_WITH_MT} STREQUAL "ON")
-	if (MSVC)
-		set(CompilerFlags
-			CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
-			CMAKE_C_FLAGS CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_RELEASE
-		)
-		if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-			foreach(CompilerFlag ${CompilerFlags}) 
-			string(REPLACE "/MDd" "/MTd" ${CompilerFlag} "${${CompilerFlag}}")
-			endforeach()
-		elseif (${CMAKE_BUILD_TYPE} STREQUAL "Release")
-			foreach(CompilerFlag ${CompilerFlags}) 
-			string(REPLACE "/MD" "/MT" ${CompilerFlag} "${${CompilerFlag}}")
-			endforeach()
-		else()
-			message(FATAL_ERROR "Unexpected error branch.")
-		endif()
-	endif(MSVC)
-endif(${MATH_BUILD_WITH_MT} STREQUAL "ON")
-
-# Find files
-file(GLOB_RECURSE INCLUDE RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/Include" "*.h")
-file(GLOB_RECURSE INLINE RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/Include" "*.inl")
-file(GLOB_RECURSE SOURCE RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/Source" "*.cc")
-
-if (MATH_BUILD_LIB)
-	message(STATUS "BUild DyMath as library file...")
-	set(SOURCE 
-		Source/Utility/XMath.cc
-	)
-	# If math library `.lib` `.so` should be built with `boost`...
-	if (MATH_BUILD_WITH_BOOST)
-		message(STATUS "Build DyMath with boost...")
-		# Set ENABLE macro.
-		add_compile_definitions(MATH_ENABLE_UUID)
-		# Bind Sources that uses boost source
-		set(SOURCE
-			${SOURCE}
-			Source/Math/Type/Micellanous/DUuid.cc
-			Source/Utility/XBoost.cc
-		)
-	endif()
-
-	# If math library `.lib` `.so` should be built with `dy::expr::reflect`...
-	if (MATH_BUILD_WITH_RTTR)
-		# Fatal error case.
-		if (NOT MATH_BUILD_WITH_EXPR)
-			message(FATAL_ERROR "To build DyMath with dy::expr::reflect, \"MATH_BUILD_WITH_EXPR\" must be enabled as a \"ON\"")
-		endif()
-		message(STATUS "Build DyMath with dy::expr::reflect...")
-		# Set ENABLE macro.
-		add_definitions(-DMATH_ENABLE_RTTR)
-		# Bind RTTR sources.
-		set(SOURCE ${SOURCE}
-			Source/Math/Common/XRttrEntry.cc
-		)
-	endif()
-endif()
-
-# Set static library setting.
-include_directories("./Include")
-if (${MATH_BUILD_WITH_BOOST} STREQUAL "ON")
-	set (Boost_DETAILED_FAILURE_MSG ON)
-	if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-		set (BOOST_DEBUG ON)
-	elseif (${CMAKE_BUILD_TYPE} STREQUAL "Release")
-		set (BOOST_DEBUG ON)
-	endif()
-
-	find_package(Boost)
-	if (Boost_FOUND)
-		message(STATUS "Found boost library ${Boost_VERSION}")
-		include_directories("${Boost_INCLUDE_DIRS}")
-	else()
-		message(FATAL_ERROR "Could not find boost library on ${BOOST_ROOT}.")
-	endif()
-endif()
-
-# Add library with include files.
-if (${MATH_BUILD_LIB} STREQUAL "ON")
-	add_library(DyMath STATIC ${SOURCE})
-	target_include_directories(DyMath
-	PRIVATE
-		${CMAKE_CURRENT_SOURCE_DIR}/Include
-	)
-
-	if (${MATH_BUILD_WITH_EXPR} STREQUAL "ON")
-		target_include_directories(DyMath
-		PRIVATE
+	# Add DyExpression when enabled.
+	if ("${MATH_BUILD_WITH_EXPR}" STREQUAL "ON")
+		target_include_directories(${PROJECT_NAME}
+		PUBLIC
 			${CMAKE_CURRENT_SOURCE_DIR}/../DyExpression/Include
 		)
 	endif()
 
-	if (${MATH_BUILD_WITH_BOOST} STREQUAL "ON")
-		target_include_directories(DyMath
-		PRIVATE
-			${Boost_INCLUDE_DIRS}
-		)
-	endif()
+	# Add boost when enabled.
+	if ("${MATH_BUILD_WITH_BOOST}" STREQUAL "ON")
+		set (Boost_DETAILED_FAILURE_MSG ON)
+		if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+			set (BOOST_DEBUG ON)
+		endif()
 
-	# Add dependencies.
-	# ADD_DEPENDENCIES(DyMath DyExpression)
-	set_target_properties(DyMath PROPERTIES 
-		LINKER_LANGUAGE CXX
-		OUTPUT_NAME "DyMath"
-	)
-	target_include_directories(DyMath PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+		find_package(Boost)
+		if (Boost_FOUND)
+			target_include_directories(${PROJECT_NAME} PUBLIC ${Boost_INCLUDE_DIRS})
+			target_compile_definitions(${PROJECT_NAME} PUBLIC MATH_ENABLE_UUID)
+
+			# Add boost sources
+			target_sources(${PROJECT_NAME}
+			PUBLIC
+				${CMAKE_CURRENT_SOURCE_DIR}/Source/Math/Type/Micellanous/DUuid.cc
+				${CMAKE_CURRENT_SOURCE_DIR}/Source/Utility/XBoost.cc
+			)
+		else()
+			message(FATAL_ERROR "Could not find boost library on ${BOOST_ROOT}.")
+		endif()
+	endif()
 
 	# Bind groups
 	source_group("Inline" FILES ${INLINE})
 	source_group("Include" FILES ${INCLUDE})
 
-	# Install Settings
-	set_target_properties(DyMath
-		PROPERTIES
-		ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}\\lib\\${CMAKE_BUILD_TYPE}"
-		LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}\\lib\\${CMAKE_BUILD_TYPE}"
-		RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}\\bin\\${CMAKE_BUILD_TYPE}"
-	)
+	# If math library `.lib` `.so` should be built with `dy::expr::reflect`...
+	if ("MATH_BUILD_WITH_RTTR" STREQUAL "ON")
+		# Fatal error case.
+		if (NOT MATH_BUILD_WITH_EXPR)
+			message(FATAL_ERROR "To build DyMath with dy::expr::reflect, \"MATH_BUILD_WITH_EXPR\" must be enabled as a \"ON\"")
+		endif()
 
-	# If compiler is GNUC, set flags following CMAKE variables.
-	message(STATUS "Build ${PROJECT_NAME} with ${CMAKE_CXX_COMPILER_ID} as ${CMAKE_BUILD_TYPE} mode...")
-	if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_COMMON}")
-		if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-			set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_DEBUG}")
-		elseif (${CMAKE_BUILD_TYPE} STREQUAL "Release")
-			set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMKAE_CXX_FLAGS_RELEASE}")
-		else()
-			message(FATAL_ERROR "CMAKE_BUILD_TYPE is not specified. Failed to build.")
-		endif()
-	elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-		# Warning level 4 as warning to error.
-		# Enable Multiple core building.
-		# Force to always compile with W4
-		if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
-			string(REGEX REPLACE "/W[0-4]" "/W4" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-		else()
-			set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
-		endif()
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_COMMON}")
-	else()
-		MESSAGE(FATAL_ERROR "Failed to link libraries. Compiler is not specified.")
+		message(STATUS "Build DyMath with dy::expr::reflect...")
+
+		# Set ENABLE macro.
+		target_compile_definitions(${PROJECT_NAME} PUBLIC MATH_ENABLE_RTTR)
+		# Bind RTTR sources.
+		target_sources(${PROJECT_NAME}
+		PUBLIC
+			${CMAKE_CURRENT_SOURCE_DIR}/Source/Math/Common/XRttrEntry.cc
+		)
 	endif()
+
 else()
 	add_library(${PROJECT_NAME} INTERFACE)
+	target_include_directories(DyMath INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/Include)
+
 endif()
+
+# If GNU, Clang or MSVC, Add common/debug/release flags.
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+	set(CMAKE_CXX_FLAGS	"${CMAKE_CXX_FLAGS} -std=c++17 -Wall -Werror -pedantic")
+	set(CMAKE_CXX_FLAGS_DEBUG	"-g -O0 -pg")
+	set(CMKAE_CXX_FLAGS_RELEASE "-s -O2 -DNDEBUG -march=native")
+
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wall -Werror -Wno-ignored-qualifiers -pedantic")
+	set(CMAKE_CXX_FLAGS_DEBUG	"-g -O0 -pg")
+	set(CMKAE_CXX_FLAGS_RELEASE "-s -O2 -DNDEBUG -march=native")
+
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++17 /WX /MP")
+
+	# If MSVC, Convert MD and MDd to MT and MTd.
+	if("${MATH_BUILD_WITH_MT}" STREQUAL "ON")
+		set(CompilerFlags
+			CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
+			CMAKE_C_FLAGS CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_RELEASE
+		)
+
+		if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+			foreach(CompilerFlag ${CompilerFlags}) 
+				string(REPLACE "/MDd" "/MTd" ${CompilerFlag} "${${CompilerFlag}}")
+			endforeach()
+
+		elseif ("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
+			foreach(CompilerFlag ${CompilerFlags}) 
+				string(REPLACE "/MD" "/MT" ${CompilerFlag} "${${CompilerFlag}}")
+			endforeach()
+
+		else()
+			message(FATAL_ERROR "Unexpected error branch.")
+
+		endif()
+	endif()
+
+	# Warning level 4 as warning to error. Force to always compile with W4
+	if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
+		string(REGEX REPLACE "/W[0-4]" "/W4" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+	else()
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
+	endif()
+endif()
+
+# Install Settings
+set_target_properties(${PROJECT_NAME}
+	PROPERTIES
+	LINKER_LANGUAGE CXX
+	ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}\\lib\\${CMAKE_BUILD_TYPE}"
+	LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}\\lib\\${CMAKE_BUILD_TYPE}"
+	RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}\\bin\\${CMAKE_BUILD_TYPE}"
+)
 
